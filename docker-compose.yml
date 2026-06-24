@@ -1,0 +1,46 @@
+version: "3.9"
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: maintenance_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: maintenance_db
+      MYSQL_USER: maintenance_user
+      MYSQL_PASSWORD: maintenance_pass
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+
+  backend:
+    build: ./backend
+    container_name: maintenance_backend
+    restart: unless-stopped
+    depends_on:
+      - mysql
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: maintenance_user
+      DB_PASSWORD: maintenance_pass
+      DB_NAME: maintenance_db
+      JWT_SECRET: change_this_secret_in_production
+    ports:
+      - "4000:4000"
+
+  frontend:
+    build: ./frontend
+    container_name: maintenance_frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "8080:80"
+
+volumes:
+  mysql_data:
