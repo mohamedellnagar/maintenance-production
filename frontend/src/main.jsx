@@ -1,5 +1,5 @@
 import React,{useEffect,useMemo,useState}from'react';import{createRoot}from'react-dom/client';import{Home,Users,Wrench,Building2,LayoutDashboard,FileText,Plus,Trash2,Edit,LogOut,Download,X}from'lucide-react';import{BarChart,Bar,XAxis,YAxis,Tooltip,ResponsiveContainer,CartesianGrid,LineChart,Line}from'recharts';import'./style.css';
-const API=location.hostname==='localhost'?'http://localhost:4000/api':'/api';
+const API=import.meta.env.VITE_API_URL||(location.hostname==='localhost'?'http://localhost:4000/api':'/api');
 
 let toastListeners=[];
 function showToast(msg,type='success'){toastListeners.forEach(l=>l(msg,type))}
