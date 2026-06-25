@@ -59,3 +59,5 @@ npm run dev
 - غيّر كلمة مرور MySQL.
 - اربط Nginx أو Reverse Proxy على دومينك.
 - استخدم HTTPS.
+
+

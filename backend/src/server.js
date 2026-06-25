@@ -35,12 +35,23 @@ app.post('/api/auth/login', wrap(async (req, res) => {
 }));
 
 app.get('/api/dashboard', auth, wrap(async (req, res) => {
+  const { from, to, villa_id, technician_id } = req.query;
+  const where = [];
+  const params = [];
+  if (from) { where.push('r.record_date>=?'); params.push(from); }
+  if (to) { where.push('r.record_date<=?'); params.push(to); }
+  if (villa_id) { where.push('r.villa_id=?'); params.push(villa_id); }
+  if (technician_id) { where.push('r.technician_id=?'); params.push(technician_id); }
+  const whereSql = where.length ? `WHERE ${where.join(' AND ')}` : '';
+  const andSql = where.length ? `AND ${where.join(' AND ')}` : '';
+
   const [[today]] = await pool.query(`SELECT COUNT(*) records, COALESCE(SUM(spare_part_cost),0) cost FROM maintenance_records WHERE record_date=CURDATE()`);
   const [[month]] = await pool.query(`SELECT COUNT(*) records, COALESCE(SUM(spare_part_cost),0) cost FROM maintenance_records WHERE YEAR(record_date)=YEAR(CURDATE()) AND MONTH(record_date)=MONTH(CURDATE())`);
-  const [byTech] = await pool.query(`SELECT t.name, COUNT(r.id) total, COALESCE(SUM(r.spare_part_cost),0) cost FROM technicians t LEFT JOIN maintenance_records r ON r.technician_id=t.id GROUP BY t.id ORDER BY total DESC LIMIT 8`);
-  const [byVilla] = await pool.query(`SELECT v.name, COUNT(r.id) total, COALESCE(SUM(r.spare_part_cost),0) cost FROM villas v LEFT JOIN maintenance_records r ON r.villa_id=v.id GROUP BY v.id ORDER BY total DESC LIMIT 8`);
-  const [recent] = await pool.query(`SELECT r.*,v.name villa_name,a.apartment_no,t.name technician_name FROM maintenance_records r JOIN villas v ON v.id=r.villa_id JOIN apartments a ON a.id=r.apartment_id JOIN technicians t ON t.id=r.technician_id ORDER BY r.record_date DESC,r.id DESC LIMIT 10`);
-  ok(res, { today, month, byTech, byVilla, recent });
+  const [[filtered]] = await pool.query(`SELECT COUNT(*) records, COALESCE(SUM(r.spare_part_cost),0) cost FROM maintenance_records r ${whereSql}`, params);
+  const [byTech] = await pool.query(`SELECT t.name, COUNT(r.id) total, COALESCE(SUM(r.spare_part_cost),0) cost FROM technicians t LEFT JOIN maintenance_records r ON r.technician_id=t.id ${andSql} GROUP BY t.id ORDER BY total DESC LIMIT 8`, params);
+  const [byVilla] = await pool.query(`SELECT v.name, COUNT(r.id) total, COALESCE(SUM(r.spare_part_cost),0) cost FROM villas v LEFT JOIN maintenance_records r ON r.villa_id=v.id ${andSql} GROUP BY v.id ORDER BY total DESC LIMIT 8`, params);
+  const [recent] = await pool.query(`SELECT r.*,v.name villa_name,a.apartment_no,t.name technician_name FROM maintenance_records r JOIN villas v ON v.id=r.villa_id JOIN apartments a ON a.id=r.apartment_id JOIN technicians t ON t.id=r.technician_id ${whereSql} ORDER BY r.record_date DESC,r.id DESC LIMIT 10`, params);
+  ok(res, { today, month, filtered, byTech, byVilla, recent });
 }));
 
 function crud(name, table, fields, required = []) {
