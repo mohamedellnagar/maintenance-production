@@ -54,8 +54,31 @@ app.get('/api/dashboard', auth, wrap(async (req, res) => {
   ok(res, { today, month, filtered, byTech, byVilla, recent });
 }));
 
-function crud(name, table, fields, required = []) {
-  app.get(`/api/${name}`, auth, wrap(async (req, res) => {
+function pageGuard(pageId) {
+  return wrap(async (req, res, next) => {
+    if (req.user.role === 'ADMIN') return next();
+    const [[row]] = await pool.query('SELECT allowed_pages FROM role_permissions WHERE role=?', [req.user.role]);
+    const allowed = row ? (typeof row.allowed_pages === 'string' ? JSON.parse(row.allowed_pages) : row.allowed_pages) : [];
+    if (!allowed.includes(pageId)) throw Object.assign(new Error('ليس لديك صلاحية الوصول لهذه الصفحة'), { status: 403 });
+    next();
+  });
+}
+
+app.get('/api/permissions', auth, wrap(async (req, res) => {
+  const [rows] = await pool.query('SELECT role, allowed_pages FROM role_permissions');
+  const map = {};
+  rows.forEach((r) => { map[r.role] = typeof r.allowed_pages === 'string' ? JSON.parse(r.allowed_pages) : r.allowed_pages; });
+  ok(res, map);
+}));
+app.put('/api/permissions/:role', auth, adminOnly, wrap(async (req, res) => {
+  const { allowed_pages } = req.body;
+  if (!Array.isArray(allowed_pages)) throw Object.assign(new Error('allowed_pages must be an array'), { status: 400 });
+  await pool.query('INSERT INTO role_permissions (role, allowed_pages) VALUES (?,?) ON DUPLICATE KEY UPDATE allowed_pages=?', [req.params.role, JSON.stringify(allowed_pages), JSON.stringify(allowed_pages)]);
+  ok(res, { role: req.params.role, allowed_pages });
+}));
+
+function crud(name, table, fields, required = [], pageId = null) {
+  app.get(`/api/${name}`, auth, ...(pageId ? [pageGuard(pageId)] : []), wrap(async (req, res) => {
     const [rows] = await pool.query(`SELECT * FROM ${table} ORDER BY id DESC`);
     ok(res, rows);
   }));
@@ -129,7 +152,7 @@ app.delete('/api/users/:id', auth, adminOnly, wrap(async (req, res) => {
   ok(res, { deleted: true });
 }));
 
-app.get('/api/records', auth, wrap(async (req, res) => {
+app.get('/api/records', auth, pageGuard('records'), wrap(async (req, res) => {
   const where = [];
   const p = [];
   ['record_date', 'villa_id', 'apartment_id', 'technician_id'].forEach((f) => {

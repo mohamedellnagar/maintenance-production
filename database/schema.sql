@@ -75,6 +75,14 @@ CREATE TABLE record_technicians (
   CONSTRAINT fk_rt_technician FOREIGN KEY (technician_id) REFERENCES technicians(id)
 );
 
+CREATE TABLE role_permissions (
+  role VARCHAR(20) PRIMARY KEY,
+  allowed_pages JSON NOT NULL
+);
+
+INSERT INTO role_permissions (role, allowed_pages) VALUES
+('SUPERVISOR', '["dashboard","records","villas","apartments","technicians"]');
+
 INSERT INTO users (name,email,password_hash,role) VALUES
 ('System Admin','admin@maintenance.local','$2a$10$aYeVnct/d.iH8u9uJMvmY.7yw692laU.Br.4qouKtjo4oM9slKNtS','ADMIN');
 -- password: Admin@12345
