@@ -135,19 +135,40 @@ app.get('/api/records', auth, wrap(async (req, res) => {
   ['record_date', 'villa_id', 'apartment_id', 'technician_id'].forEach((f) => {
     if (req.query[f]) { where.push(`r.${f}=?`); p.push(req.query[f]); }
   });
-  const sql = `SELECT r.*,v.name villa_name,a.apartment_no,t.name technician_name,u.name created_by_name FROM maintenance_records r JOIN villas v ON v.id=r.villa_id JOIN apartments a ON a.id=r.apartment_id JOIN technicians t ON t.id=r.technician_id LEFT JOIN users u ON u.id=r.created_by ${where.length ? 'WHERE ' + where.join(' AND ') : ''} ORDER BY r.record_date DESC,r.id DESC`;
+  const sql = `SELECT r.*,v.name villa_name,a.apartment_no,u.name created_by_name,
+    GROUP_CONCAT(DISTINCT t.name ORDER BY t.name SEPARATOR '، ') technician_name,
+    GROUP_CONCAT(DISTINCT t.id) technician_ids
+    FROM maintenance_records r
+    JOIN villas v ON v.id=r.villa_id
+    JOIN apartments a ON a.id=r.apartment_id
+    LEFT JOIN users u ON u.id=r.created_by
+    LEFT JOIN record_technicians rt ON rt.record_id=r.id
+    LEFT JOIN technicians t ON t.id=rt.technician_id
+    ${where.length ? 'WHERE ' + where.join(' AND ') : ''}
+    GROUP BY r.id ORDER BY r.record_date DESC,r.id DESC`;
   const [rows] = await pool.query(sql, p);
   ok(res, rows);
 }));
 app.post('/api/records', auth, wrap(async (req, res) => {
-  requireFields(req.body, ['record_date', 'villa_id', 'apartment_id', 'technician_id', 'description']);
-  const data = { ...req.body, created_by: req.user.id };
+  requireFields(req.body, ['record_date', 'villa_id', 'apartment_id', 'description']);
+  const technicianIds = req.body.technician_ids?.length ? req.body.technician_ids : (req.body.technician_id ? [req.body.technician_id] : []);
+  if (!technicianIds.length) throw Object.assign(new Error('يجب اختيار فني واحد على الأقل'), { status: 400 });
+  const { technician_ids, ...rest } = req.body;
+  const data = { ...rest, technician_id: technicianIds[0], created_by: req.user.id };
   const [r] = await pool.query('INSERT INTO maintenance_records SET ?', data);
+  await pool.query('INSERT INTO record_technicians (record_id, technician_id) VALUES ?', [technicianIds.map((tid) => [r.insertId, tid])]);
   ok(res, { id: r.insertId });
 }));
 app.put('/api/records/:id', auth, wrap(async (req, res) => {
   if (Object.keys(req.body).length === 0) throw Object.assign(new Error('No fields to update'), { status: 400 });
-  await pool.query('UPDATE maintenance_records SET ? WHERE id=?', [req.body, req.params.id]);
+  const { technician_ids, ...rest } = req.body;
+  const data = { ...rest };
+  if (technician_ids?.length) data.technician_id = technician_ids[0];
+  if (Object.keys(data).length) await pool.query('UPDATE maintenance_records SET ? WHERE id=?', [data, req.params.id]);
+  if (technician_ids?.length) {
+    await pool.query('DELETE FROM record_technicians WHERE record_id=?', [req.params.id]);
+    await pool.query('INSERT INTO record_technicians (record_id, technician_id) VALUES ?', [technician_ids.map((tid) => [req.params.id, tid])]);
+  }
   ok(res, { id: req.params.id });
 }));
 app.delete('/api/records/:id', auth, adminOnly, wrap(async (req, res) => {

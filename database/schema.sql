@@ -67,6 +67,14 @@ CREATE TABLE maintenance_records (
   CONSTRAINT fk_records_user FOREIGN KEY (created_by) REFERENCES users(id)
 );
 
+CREATE TABLE record_technicians (
+  record_id BIGINT NOT NULL,
+  technician_id BIGINT NOT NULL,
+  PRIMARY KEY (record_id, technician_id),
+  CONSTRAINT fk_rt_record FOREIGN KEY (record_id) REFERENCES maintenance_records(id) ON DELETE CASCADE,
+  CONSTRAINT fk_rt_technician FOREIGN KEY (technician_id) REFERENCES technicians(id)
+);
+
 INSERT INTO users (name,email,password_hash,role) VALUES
 ('System Admin','admin@maintenance.local','$2a$10$aYeVnct/d.iH8u9uJMvmY.7yw692laU.Br.4qouKtjo4oM9slKNtS','ADMIN');
 -- password: Admin@12345
