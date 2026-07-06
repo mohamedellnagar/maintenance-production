@@ -170,3 +170,38 @@ button.danger{background:#fee2e2;color:var(--danger)}.actionsCell{display:flex;g
 .instProgress{display:flex;align-items:center;gap:10px;margin-top:8px}
 .instProgressBar{height:6px;background:var(--brand);border-radius:4px;transition:width .4s}
 .instProgress span{font-size:11px;color:var(--muted);white-space:nowrap}
+
+/* ── Tenant detail header ──────────────────────────────────────────── */
+.tenantDetailHeader{display:flex;align-items:center;gap:16px;flex-wrap:wrap;background:#fff;border-radius:20px;padding:20px 24px;margin-bottom:16px;border:1px solid var(--line);box-shadow:0 2px 8px #0001}
+.tenantDetailInfo{display:flex;align-items:center;gap:14px;flex:1;min-width:0}
+.tenantDetailAvatar{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--brand),#0e7490);color:#fff;display:grid;place-items:center;font-size:22px;font-weight:700;flex-shrink:0}
+.tenantDetailName{margin:0;font-size:18px;font-weight:700}
+.tenantDetailMeta{display:flex;gap:12px;flex-wrap:wrap;margin-top:4px}
+.tenantDetailMeta span{font-size:12px;color:var(--muted)}
+.tenantDetailActions{display:flex;gap:8px;flex-wrap:wrap}
+
+/* ── Lease block ───────────────────────────────────────────────────── */
+.leaseBlock{background:#fff;border-radius:20px;border:2px solid var(--brand);padding:0;margin-bottom:20px;overflow:hidden;box-shadow:0 4px 16px #0f766e18}
+.leaseBlockExpired{border-color:var(--line);box-shadow:none;opacity:.85}
+.leaseBlockHeader{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding:18px 20px 14px}
+.leaseBlockLeft{display:flex;flex-direction:column;gap:6px}
+.leaseBlockBadge{display:inline-flex;align-items:center;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;width:fit-content}
+.leaseBlockBadgeActive{background:#dcfce7;color:#15803d}
+.leaseBlockBadgeExpired{background:#f1f5f9;color:#94a3b8}
+.leaseBlockLocation{display:flex;align-items:center;gap:6px;font-weight:600;font-size:15px}
+.leaseBlockDates{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--muted)}
+.leaseBlockRight{display:flex;gap:20px}
+.leaseBlockAmounts{display:flex;flex-direction:column;align-items:center;gap:2px}
+.leaseBlockTotal{font-size:15px;font-weight:700;color:var(--text)}
+.leaseBlockCollected{font-size:15px;font-weight:700;color:#15803d}
+.leaseBlockRemaining{font-size:15px;font-weight:700;color:var(--muted)}
+.leaseBlockRemainingDue{color:#dc2626}
+.leaseBlockSub{font-size:10px;color:var(--muted)}
+.leaseBlockProgress{height:5px;background:#f1f5f9;margin:0 0 0}
+.leaseBlockProgressBar{height:100%;background:linear-gradient(90deg,var(--brand),#0e7490);transition:width .5s;border-radius:0}
+.leaseBlockExpired .leaseBlockProgressBar{background:#94a3b8}
+.leaseBlockInstHeader{display:flex;align-items:center;justify-content:space-between;padding:14px 20px 10px;border-top:1px solid var(--line)}
+.leaseBlockInstTitle{font-size:13px;font-weight:600;color:var(--muted)}
+.leaseBlockEmpty{font-size:13px;color:var(--muted);text-align:center;padding:12px 20px 16px;margin:0}
+.leaseBlock .instList{padding:0 16px 16px}
+.leaseBlock .instCard{background:#f8fafc}

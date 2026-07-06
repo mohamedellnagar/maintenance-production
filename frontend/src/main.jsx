@@ -156,82 +156,147 @@ function formatCell(c,v){if(c==='status'){if(INST_STATUS_LABELS[v])return <span 
 const PAGE_SIZE=10;
 function Table({rows,cols,actions,searchable}){const[q,setQ]=useState('');const[page,setPage]=useState(0);const filtered=useMemo(()=>{if(!q)return rows;const s=q.trim().toLowerCase();return rows.filter(r=>cols.some(c=>String(r[c]??'').toLowerCase().includes(s)))},[rows,q,cols]);const pageCount=Math.max(1,Math.ceil(filtered.length/PAGE_SIZE));const pageRows=filtered.slice(page*PAGE_SIZE,page*PAGE_SIZE+PAGE_SIZE);useEffect(()=>{setPage(0)},[q,rows.length]);return <div>{searchable&&<input className="tableSearch" placeholder="بحث..." value={q} onChange={e=>setQ(e.target.value)}/>}<div className="table"><table><thead><tr>{cols.map(c=><th key={c}>{FIELD_LABELS[c]||c}</th>)}{actions&&<th></th>}</tr></thead><tbody>{pageRows.length===0&&<tr><td colSpan={cols.length+(actions?1:0)} className="empty">لا توجد بيانات</td></tr>}{pageRows.map(r=><tr key={r.id}>{cols.map(c=><td key={c} data-label={FIELD_LABELS[c]||c}>{formatCell(c,r[c])}</td>)}{actions&&<td data-label="" className="actionsCell">{actions(r)}</td>}</tr>)}</tbody></table></div>{pageCount>1&&<div className="pagination"><button type="button" disabled={page===0} onClick={()=>setPage(p=>p-1)}>السابق</button><span>{page+1} / {pageCount}</span><button type="button" disabled={page>=pageCount-1} onClick={()=>setPage(p=>p+1)}>التالي</button></div>}</div>}
 
+function leaseStatus(l){const today=new Date().toISOString().slice(0,10);if(!l.is_active||l.end_date<today)return 'expired';return 'active';}
+const LEASE_STATUS_LABEL={active:'فعّال',expired:'منتهي'};
+const LEASE_STATUS_CSS={active:'status-on',expired:'status-off'};
+
 function TenantsMgmt({user}){
 const api=useApi();const isAdmin=user?.role==='ADMIN';
 const[rows,setRows]=useState([]);
-const[selected,setSelected]=useState(null); // {tenant, leases, leaseDetail, selectedLeaseId}
+const[villas,setVillas]=useState([]);const[apts,setApts]=useState([]);
+// tenant detail
+const[selected,setSelected]=useState(null); // {tenant, leasesDetail:[{lease,installments},...]}
+// tenant form
 const empty={name:'',phone:'',national_id:'',email:'',notes:''};
-const[form,setForm]=useState(empty);const[editing,setEditing]=useState(null);const[open,setOpen]=useState(false);
-// installment payment states
+const[form,setForm]=useState(empty);const[editing,setEditing]=useState(null);const[tenantOpen,setTenantOpen]=useState(false);
+// new lease form
+const emptyLease={apartment_id:'',_villa_id:'',start_date:'',end_date:'',total_amount:'',notes:''};
+const[leaseForm,setLeaseForm]=useState(emptyLease);const[leaseOpen,setLeaseOpen]=useState(false);
+// installment
+const[instForm,setInstForm]=useState({due_date:'',amount:'',notes:''});const[instOpen,setInstOpen]=useState(false);const[editingInst,setEditingInst]=useState(null);const[targetLeaseId,setTargetLeaseId]=useState(null);
+// payments
 const[paymentsInst,setPaymentsInst]=useState(null);const[payments,setPayments]=useState([]);
-const[payForm,setPayForm]=useState({amount:'',payment_date:new Date().toISOString().slice(0,10),notes:''});
-const[payOpen,setPayOpen]=useState(false);
-const[instForm,setInstForm]=useState({due_date:'',amount:'',notes:''});const[instOpen,setInstOpen]=useState(false);const[editingInst,setEditingInst]=useState(null);
+const[payForm,setPayForm]=useState({amount:'',payment_date:new Date().toISOString().slice(0,10),notes:''});const[payOpen,setPayOpen]=useState(false);
 
 const load=()=>api('/tenants').then(setRows);
-useEffect(()=>{load()},[]);
+useEffect(()=>{load();api('/villas').then(setVillas);api('/apartments').then(setApts)},[]);
 
+async function loadTenantLeases(tenantId){
+  const leases=await api('/leases?tenant_id='+tenantId);
+  const leasesDetail=await Promise.all((leases||[]).map(l=>api('/leases/'+l.id)));
+  return leasesDetail;
+}
 async function openTenant(t){
-  const leases=await api('/leases?tenant_id='+t.id);
-  let leaseDetail=null,selectedLeaseId=null;
-  if(leases&&leases.length){leaseDetail=await api('/leases/'+leases[0].id);selectedLeaseId=leases[0].id;}
-  setSelected({tenant:t,leases:leases||[],leaseDetail,selectedLeaseId});
+  const leasesDetail=await loadTenantLeases(t.id);
+  setSelected({tenant:t,leasesDetail});
 }
-async function switchLease(id){
-  const leaseDetail=await api('/leases/'+id);
-  setSelected(s=>({...s,leaseDetail,selectedLeaseId:id}));
+async function reloadSelected(){
+  if(!selected)return;
+  const leasesDetail=await loadTenantLeases(selected.tenant.id);
+  setSelected(s=>({...s,leasesDetail}));
 }
-async function reloadDetail(){if(selected?.selectedLeaseId){const leaseDetail=await api('/leases/'+selected.selectedLeaseId);setSelected(s=>({...s,leaseDetail}));}}
 
-function openAdd(){setEditing(null);setForm(empty);setOpen(true)}
-function closeModal(){setOpen(false)}
-async function save(e){e.preventDefault();await runAction(async()=>{await api(editing?'/tenants/'+editing:'/tenants',{method:editing?'PUT':'POST',body:JSON.stringify(form)});setForm(empty);setEditing(null);setOpen(false);load();if(selected&&editing===selected.tenant.id)setSelected(s=>({...s,tenant:{...s.tenant,...form}}))},editing?'تم حفظ التعديل':'تمت إضافة المستأجر')}
-async function remove(r){if(!confirm('تأكيد حذف المستأجر؟'))return;await runAction(async()=>{await api('/tenants/'+r.id,{method:'DELETE'});load();if(selected?.tenant.id===r.id)setSelected(null)},'تم الحذف')}
+async function saveTenant(e){e.preventDefault();await runAction(async()=>{await api(editing?'/tenants/'+editing:'/tenants',{method:editing?'PUT':'POST',body:JSON.stringify(form)});setForm(empty);setEditing(null);setTenantOpen(false);load();if(selected&&editing===selected.tenant.id)setSelected(s=>({...s,tenant:{...s.tenant,...form}}))},editing?'تم حفظ التعديل':'تمت إضافة المستأجر')}
+async function removeTenant(r){if(!confirm('تأكيد حذف المستأجر؟'))return;await runAction(async()=>{await api('/tenants/'+r.id,{method:'DELETE'});load();if(selected?.tenant.id===r.id)setSelected(null)},'تم الحذف')}
 
-async function saveInst(e){e.preventDefault();await runAction(async()=>{if(editingInst){await api('/installments/'+editingInst,{method:'PUT',body:JSON.stringify(instForm)})}else{await api('/leases/'+selected.selectedLeaseId+'/installments',{method:'POST',body:JSON.stringify(instForm)})}setInstForm({due_date:'',amount:'',notes:''});setEditingInst(null);setInstOpen(false);reloadDetail()},editingInst?'تم تعديل الدفعة':'تمت إضافة الدفعة')}
-async function removeInst(id){if(!confirm('تأكيد حذف الدفعة؟'))return;await runAction(async()=>{await api('/installments/'+id,{method:'DELETE'});reloadDetail()},'تم الحذف')}
+async function saveLease(e){e.preventDefault();await runAction(async()=>{const{_villa_id,...rest}=leaseForm;await api('/leases',{method:'POST',body:JSON.stringify({...rest,tenant_id:selected.tenant.id})});setLeaseForm(emptyLease);setLeaseOpen(false);reloadSelected()},'تمت إضافة العقد الجديد')}
+
+async function saveInst(e){e.preventDefault();await runAction(async()=>{if(editingInst){await api('/installments/'+editingInst,{method:'PUT',body:JSON.stringify(instForm)})}else{await api('/leases/'+targetLeaseId+'/installments',{method:'POST',body:JSON.stringify(instForm)})}setInstForm({due_date:'',amount:'',notes:''});setEditingInst(null);setInstOpen(false);reloadSelected()},editingInst?'تم تعديل الدفعة':'تمت إضافة الدفعة')}
+async function removeInst(id){if(!confirm('تأكيد حذف الدفعة؟'))return;await runAction(async()=>{await api('/installments/'+id,{method:'DELETE'});reloadSelected()},'تم الحذف')}
+
 async function openPayments(inst){setPaymentsInst(inst);const p=await api('/installments/'+inst.id+'/payments');setPayments(p||[]);setPayOpen(true)}
-async function addPayment(e){e.preventDefault();await runAction(async()=>{await api('/installments/'+paymentsInst.id+'/payments',{method:'POST',body:JSON.stringify(payForm)});const p=await api('/installments/'+paymentsInst.id+'/payments');setPayments(p||[]);setPayForm({amount:'',payment_date:new Date().toISOString().slice(0,10),notes:''});reloadDetail()},'تم تسجيل الدفعة')}
-async function removePayment(id){if(!confirm('تأكيد حذف هذا الدفع؟'))return;await runAction(async()=>{await api('/payments/'+id,{method:'DELETE'});const p=await api('/installments/'+paymentsInst.id+'/payments');setPayments(p||[]);reloadDetail()},'تم الحذف')}
+async function addPayment(e){e.preventDefault();await runAction(async()=>{await api('/installments/'+paymentsInst.id+'/payments',{method:'POST',body:JSON.stringify(payForm)});const p=await api('/installments/'+paymentsInst.id+'/payments');setPayments(p||[]);setPayForm({amount:'',payment_date:new Date().toISOString().slice(0,10),notes:''});reloadSelected()},'تم تسجيل الدفعة')}
+async function removePayment(id){if(!confirm('تأكيد حذف هذا الدفع؟'))return;await runAction(async()=>{await api('/payments/'+id,{method:'DELETE'});const p=await api('/installments/'+paymentsInst.id+'/payments');setPayments(p||[]);reloadSelected()},'تم الحذف')}
 
 if(selected){
-  const{tenant,leases,leaseDetail,selectedLeaseId}=selected;
-  const inst=leaseDetail?.installments||[];
-  const totalCollected=inst.reduce((s,i)=>s+Number(i.collected_amount),0);
+  const{tenant,leasesDetail}=selected;
+  const sorted=[...leasesDetail].sort((a,b)=>new Date(b.lease.start_date)-new Date(a.lease.start_date));
   return <>
-  <Panel title={<span className="leaseDetailTitle"><button type="button" className="backBtn" onClick={()=>setSelected(null)}><ChevronRight size={18}/>رجوع</button><UserCheck size={18}/>{tenant.name}{tenant.phone&&<span className="tenantPhone">{tenant.phone}</span>}</span>}>
-    {leases.length===0&&<div className="empty" style={{padding:20,textAlign:'center'}}>لا يوجد عقد لهذا المستأجر بعد</div>}
-    {leases.length>1&&<div className="leaseTabsRow">{leases.map(l=><button key={l.id} type="button" className={'leaseTab'+(l.id===selectedLeaseId?' leaseTabActive':'')} onClick={()=>switchLease(l.id)}>{l.villa_name} / {l.apartment_no}</button>)}</div>}
-    {leaseDetail&&<>
-      <div className="leaseSummary">
-        <div className="leaseStat"><Calendar size={15}/><span>من {new Date(leaseDetail.lease.start_date).toLocaleDateString('ar-AE')} إلى {new Date(leaseDetail.lease.end_date).toLocaleDateString('ar-AE')}</span></div>
-        <div className="leaseStat"><DollarSign size={15}/><span>الإجمالي: {Number(leaseDetail.lease.total_amount).toFixed(2)} AED</span></div>
-        <div className="leaseStat"><Wallet size={15}/><span>المحصّل: {totalCollected.toFixed(2)} AED</span></div>
-        <div className="leaseStat"><Banknote size={15}/><span>المتبقي: {(Number(leaseDetail.lease.total_amount)-totalCollected).toFixed(2)} AED</span></div>
-      </div>
-      <div className="panelActions" style={{marginTop:12}}><button onClick={()=>{setEditingInst(null);setInstForm({due_date:'',amount:'',notes:''});setInstOpen(true)}}><Plus size={16}/>إضافة دفعة</button></div>
-      <div className="instList">{inst.length===0&&<div className="empty" style={{padding:20,textAlign:'center'}}>لا توجد دفعات بعد</div>}{inst.map(i=><div key={i.id} className="instCard">
-        <div className="instCardHead">
-          <div><span className="instAmount">{Number(i.amount).toFixed(2)} AED</span><span className="instDate"><Calendar size={12}/>{new Date(i.due_date).toLocaleDateString('ar-AE')}</span></div>
-          <div className="instCardActions">
-            <span className={'statusBadge '+INST_STATUS_CSS[i.status]}>{INST_STATUS_LABELS[i.status]}</span>
-            <button className="secondary" onClick={()=>openPayments(i)}><DollarSign size={14}/>المدفوعات ({Number(i.collected_amount).toFixed(0)})</button>
-            <button onClick={()=>{setEditingInst(i.id);setInstForm({due_date:String(i.due_date).slice(0,10),amount:i.amount,notes:i.notes||''});setInstOpen(true)}}><Edit size={14}/></button>
-            {isAdmin&&<button className="danger" onClick={()=>removeInst(i.id)}><Trash2 size={14}/></button>}
+  <div className="tenantDetailHeader">
+    <button type="button" className="backBtn" onClick={()=>setSelected(null)}><ChevronRight size={18}/>رجوع</button>
+    <div className="tenantDetailInfo">
+      <div className="tenantDetailAvatar">{tenant.name[0]}</div>
+      <div><h3 className="tenantDetailName">{tenant.name}</h3><div className="tenantDetailMeta">{tenant.phone&&<span>{tenant.phone}</span>}{tenant.national_id&&<span>هوية: {tenant.national_id}</span>}{tenant.email&&<span>{tenant.email}</span>}</div></div>
+    </div>
+    <div className="tenantDetailActions">
+      <button onClick={()=>setLeaseOpen(true)}><Plus size={15}/>عقد جديد</button>
+      <button className="secondary" onClick={()=>{setEditing(tenant.id);setForm({name:tenant.name,phone:tenant.phone||'',national_id:tenant.national_id||'',email:tenant.email||'',notes:tenant.notes||''});setTenantOpen(true)}}><Edit size={15}/>تعديل البيانات</button>
+    </div>
+  </div>
+
+  {sorted.length===0&&<div className="panel"><div className="empty" style={{padding:32,textAlign:'center',color:'var(--muted)'}}>لا يوجد عقد لهذا المستأجر بعد — اضغط "عقد جديد" لإنشاء أول عقد</div></div>}
+
+  {sorted.map(({lease,installments},idx)=>{
+    const st=leaseStatus(lease);
+    const collected=installments.reduce((s,i)=>s+Number(i.collected_amount),0);
+    const remaining=Number(lease.total_amount)-collected;
+    const pct=Number(lease.total_amount)>0?Math.min(100,collected/Number(lease.total_amount)*100):0;
+    return <div key={lease.id} className={'leaseBlock'+(st==='expired'?' leaseBlockExpired':'')}>
+      <div className="leaseBlockHeader">
+        <div className="leaseBlockLeft">
+          {idx===0&&st==='active'&&<span className="leaseBlockBadge leaseBlockBadgeActive">العقد الحالي</span>}
+          {st==='expired'&&<span className="leaseBlockBadge leaseBlockBadgeExpired">منتهي</span>}
+          <span className="leaseBlockLocation"><Building2 size={14}/>{lease.villa_name} / {lease.apartment_no}</span>
+          <span className="leaseBlockDates"><Calendar size={13}/>{new Date(lease.start_date).toLocaleDateString('ar-AE')} — {new Date(lease.end_date).toLocaleDateString('ar-AE')}</span>
+        </div>
+        <div className="leaseBlockRight">
+          <div className="leaseBlockAmounts">
+            <span className="leaseBlockTotal">{Number(lease.total_amount).toFixed(0)} AED</span>
+            <span className="leaseBlockSub">الإجمالي</span>
+          </div>
+          <div className="leaseBlockAmounts">
+            <span className="leaseBlockCollected">{collected.toFixed(0)} AED</span>
+            <span className="leaseBlockSub">محصّل</span>
+          </div>
+          <div className="leaseBlockAmounts">
+            <span className={'leaseBlockRemaining'+(remaining>0?' leaseBlockRemainingDue':'')}>{remaining.toFixed(0)} AED</span>
+            <span className="leaseBlockSub">متبقي</span>
           </div>
         </div>
-        {i.notes&&<p className="instNotes">{i.notes}</p>}
-        {Number(i.collected_amount)>0&&<div className="instProgress"><div className="instProgressBar" style={{width:Math.min(100,Number(i.collected_amount)/Number(i.amount)*100)+'%'}}/><span>{Number(i.collected_amount).toFixed(0)} / {Number(i.amount).toFixed(0)} AED</span></div>}
-      </div>)}</div>
-    </>}
-  </Panel>
+      </div>
+      <div className="leaseBlockProgress"><div className="leaseBlockProgressBar" style={{width:pct+'%'}}/></div>
+
+      <div className="leaseBlockInstHeader">
+        <span className="leaseBlockInstTitle">الدفعات ({installments.length})</span>
+        <button className="secondary" onClick={()=>{setTargetLeaseId(lease.id);setEditingInst(null);setInstForm({due_date:'',amount:'',notes:''});setInstOpen(true)}}><Plus size={13}/>إضافة دفعة</button>
+      </div>
+
+      {installments.length===0&&<p className="leaseBlockEmpty">لا توجد دفعات مضافة لهذا العقد بعد</p>}
+      <div className="instList">{installments.map(i=>{
+        const ipct=Number(i.amount)>0?Math.min(100,Number(i.collected_amount)/Number(i.amount)*100):0;
+        return <div key={i.id} className="instCard">
+          <div className="instCardHead">
+            <div><span className="instAmount">{Number(i.amount).toFixed(2)} AED</span><span className="instDate"><Calendar size={12}/>{new Date(i.due_date).toLocaleDateString('ar-AE')}</span></div>
+            <div className="instCardActions">
+              <span className={'statusBadge '+INST_STATUS_CSS[i.status]}>{INST_STATUS_LABELS[i.status]}</span>
+              <button className="secondary" onClick={()=>openPayments(i)}><DollarSign size={14}/>{Number(i.collected_amount).toFixed(0)} / {Number(i.amount).toFixed(0)}</button>
+              <button onClick={()=>{setTargetLeaseId(lease.id);setEditingInst(i.id);setInstForm({due_date:String(i.due_date).slice(0,10),amount:i.amount,notes:i.notes||''});setInstOpen(true)}}><Edit size={14}/></button>
+              {isAdmin&&<button className="danger" onClick={()=>removeInst(i.id)}><Trash2 size={14}/></button>}
+            </div>
+          </div>
+          {i.notes&&<p className="instNotes">{i.notes}</p>}
+          {Number(i.collected_amount)>0&&<div className="instProgress"><div className="instProgressBar" style={{width:ipct+'%'}}/><span>{Number(i.collected_amount).toFixed(0)} / {Number(i.amount).toFixed(0)} AED</span></div>}
+        </div>;
+      })}</div>
+    </div>;
+  })}
+
+  <Modal open={leaseOpen} onClose={()=>setLeaseOpen(false)} title="إضافة عقد إيجار جديد"><form className="form" onSubmit={saveLease}>
+    <Field label="الفيلا" required><select required value={leaseForm._villa_id} onChange={e=>setLeaseForm({...leaseForm,_villa_id:e.target.value,apartment_id:''})}><option value="">اختر الفيلا</option>{villas.map(v=><option key={v.id} value={v.id}>{v.name}</option>)}</select></Field>
+    <Field label="الشقة" required><select required value={leaseForm.apartment_id} onChange={e=>setLeaseForm({...leaseForm,apartment_id:e.target.value})} disabled={!leaseForm._villa_id}><option value="">اختر الشقة</option>{apts.filter(a=>a.villa_id==leaseForm._villa_id).map(a=><option key={a.id} value={a.id}>{a.apartment_no}</option>)}</select></Field>
+    <Field label="تاريخ البداية" required><input required type="date" value={leaseForm.start_date} onChange={e=>setLeaseForm({...leaseForm,start_date:e.target.value})}/></Field>
+    <Field label="تاريخ النهاية" required><input required type="date" value={leaseForm.end_date} onChange={e=>setLeaseForm({...leaseForm,end_date:e.target.value})}/></Field>
+    <Field label="إجمالي الإيجار (AED)" required><input required type="number" step="0.01" value={leaseForm.total_amount} onChange={e=>setLeaseForm({...leaseForm,total_amount:e.target.value})}/></Field>
+    <Field label="ملاحظات" wide><textarea value={leaseForm.notes} onChange={e=>setLeaseForm({...leaseForm,notes:e.target.value})}/></Field>
+    <button><Plus size={16}/>إضافة العقد</button><button type="button" className="secondary" onClick={()=>setLeaseOpen(false)}>إلغاء</button>
+  </form></Modal>
   <Modal open={instOpen} onClose={()=>setInstOpen(false)} title={editingInst?'تعديل دفعة':'إضافة دفعة'}><form className="form compact" onSubmit={saveInst}>
     <Field label="تاريخ الاستحقاق" required><input required type="date" value={instForm.due_date} onChange={e=>setInstForm({...instForm,due_date:e.target.value})}/></Field>
     <Field label="المبلغ (AED)" required><input required type="number" step="0.01" value={instForm.amount} onChange={e=>setInstForm({...instForm,amount:e.target.value})}/></Field>
     <Field label="ملاحظات" wide><textarea value={instForm.notes} onChange={e=>setInstForm({...instForm,notes:e.target.value})}/></Field>
     <button>{editingInst?'حفظ التعديل':'إضافة الدفعة'}</button><button type="button" className="secondary" onClick={()=>setInstOpen(false)}>إلغاء</button>
   </form></Modal>
-  <Modal open={payOpen} onClose={()=>setPayOpen(false)} title={`مدفوعات: ${Number(paymentsInst?.amount||0).toFixed(2)} AED`}>
+  <Modal open={payOpen} onClose={()=>setPayOpen(false)} title={`مدفوعات دفعة: ${Number(paymentsInst?.amount||0).toFixed(2)} AED`}>
     {paymentsInst&&<div className="paymentsModal">
       <div className="paymentsList">{payments.length===0&&<p className="empty" style={{padding:12,textAlign:'center'}}>لا توجد مدفوعات بعد</p>}{payments.map(p=><div key={p.id} className="paymentRow"><div><span className="payAmount">{Number(p.amount).toFixed(2)} AED</span><span className="payDate">{new Date(p.payment_date).toLocaleDateString('ar-AE')}</span>{p.notes&&<span className="payNotes">{p.notes}</span>}</div>{isAdmin&&<button className="danger iconBtn" onClick={()=>removePayment(p.id)}><Trash2 size={14}/></button>}</div>)}</div>
       <form className="form compact" style={{borderTop:'1px solid var(--line)',marginTop:12,paddingTop:12}} onSubmit={addPayment}>
@@ -245,20 +310,20 @@ if(selected){
   </>
 }
 
-return <><Panel title="المستأجرين"><div className="panelActions"><button onClick={openAdd}><Plus size={16}/>إضافة مستأجر</button></div>
+return <><Panel title="المستأجرين"><div className="panelActions"><button onClick={()=>{setEditing(null);setForm(empty);setTenantOpen(true)}}><Plus size={16}/>إضافة مستأجر</button></div>
 <Table rows={rows} cols={['name','phone','national_id','email']} searchable actions={r=><>
-  <button className="secondary" onClick={()=>openTenant(r)}><Eye size={15}/>العقد</button>
-  <button onClick={()=>{setEditing(r.id);setForm({name:r.name,phone:r.phone||'',national_id:r.national_id||'',email:r.email||'',notes:r.notes||''});setOpen(true)}}><Edit size={15}/></button>
-  {isAdmin&&<button className="danger" onClick={()=>remove(r)}><Trash2 size={15}/></button>}
+  <button className="secondary" onClick={()=>openTenant(r)}><Eye size={15}/>العقود</button>
+  <button onClick={()=>{setEditing(r.id);setForm({name:r.name,phone:r.phone||'',national_id:r.national_id||'',email:r.email||'',notes:r.notes||''});setTenantOpen(true)}}><Edit size={15}/></button>
+  {isAdmin&&<button className="danger" onClick={()=>removeTenant(r)}><Trash2 size={15}/></button>}
 </>}/>
 </Panel>
-<Modal open={open} onClose={closeModal} title={editing?'تعديل مستأجر':'إضافة مستأجر'}><form className="form compact" onSubmit={save}>
+<Modal open={tenantOpen} onClose={()=>setTenantOpen(false)} title={editing?'تعديل مستأجر':'إضافة مستأجر'}><form className="form compact" onSubmit={saveTenant}>
   <Field label="الاسم" required><input required value={form.name} onChange={e=>setForm({...form,name:e.target.value})}/></Field>
   <Field label="الهاتف"><input value={form.phone} onChange={e=>setForm({...form,phone:e.target.value})}/></Field>
   <Field label="رقم الهوية"><input value={form.national_id} onChange={e=>setForm({...form,national_id:e.target.value})}/></Field>
   <Field label="الإيميل"><input type="email" value={form.email} onChange={e=>setForm({...form,email:e.target.value})}/></Field>
   <Field label="ملاحظات" wide><textarea value={form.notes} onChange={e=>setForm({...form,notes:e.target.value})}/></Field>
-  <button>{editing?'حفظ التعديل':'إضافة'}</button><button type="button" className="secondary" onClick={closeModal}>إلغاء</button>
+  <button>{editing?'حفظ التعديل':'إضافة'}</button><button type="button" className="secondary" onClick={()=>setTenantOpen(false)}>إلغاء</button>
 </form></Modal></>
 }
 
