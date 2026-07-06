@@ -212,27 +212,58 @@ function Apartments({user}){
 const api=useApi();const isAdmin=user?.role==='ADMIN';
 const[villas,setVillas]=useState([]),[apts,setApts]=useState([]);
 const[selectedApt,setSelectedApt]=useState(null);
+const[q,setQ]=useState('');
 const emptyApt={villa_id:'',apartment_no:'',floor:''};const[apt,setApt]=useState(emptyApt);const[editingApt,setEditingApt]=useState(null);const[modalOpen,setModalOpen]=useState(false);
 const load=()=>{api('/villas').then(setVillas);api('/apartments').then(setApts)};
 useEffect(()=>{load()},[]);
-function openAdd(){setEditingApt(null);setApt(emptyApt);setModalOpen(true)}
+
+function openAdd(villaId=''){setEditingApt(null);setApt({...emptyApt,villa_id:villaId});setModalOpen(true)}
 async function saveApt(e){e.preventDefault();await runAction(async()=>{await api(editingApt?'/apartments/'+editingApt:'/apartments',{method:editingApt?'PUT':'POST',body:JSON.stringify(apt)});setApt(emptyApt);setEditingApt(null);setModalOpen(false);load()},editingApt?'تم تعديل الشقة':'تمت إضافة الشقة')}
 async function removeApt(r){if(!confirm(`تأكيد حذف الشقة "${r.apartment_no}"؟`))return;await runAction(async()=>{await api('/apartments/'+r.id,{method:'DELETE'});load()},'تم حذف الشقة')}
 
 if(selectedApt)return <AptLeasesView apt={selectedApt} api={api} isAdmin={isAdmin} onBack={()=>setSelectedApt(null)}/>;
 
-return <><Panel title="الشقق"><div className="panelActions"><button onClick={openAdd}><Plus size={16}/>إضافة شقة</button></div>
-<Table rows={apts} cols={['villa_name','apartment_no','floor']} searchable actions={r=><>
-  <button className="secondary" onClick={()=>setSelectedApt(r)}><Banknote size={15}/>العقود</button>
-  {isAdmin&&<><button onClick={()=>{setEditingApt(r.id);setApt({villa_id:r.villa_id,apartment_no:r.apartment_no,floor:r.floor||''});setModalOpen(true)}}><Edit size={15}/></button><button className="danger" onClick={()=>removeApt(r)}><Trash2 size={15}/></button></>}
-</>}/>
-</Panel>
-<Modal open={modalOpen} onClose={()=>setModalOpen(false)} title={editingApt?'تعديل شقة':'إضافة شقة داخل فيلا'}><form className="form compact" onSubmit={saveApt}>
+const qs=q.trim().toLowerCase();
+const filteredApts=qs?apts.filter(a=>a.apartment_no.toLowerCase().includes(qs)||a.villa_name?.toLowerCase().includes(qs)||String(a.floor||'').toLowerCase().includes(qs)):apts;
+const grouped=villas.map(v=>({villa:v,apts:filteredApts.filter(a=>a.villa_id===v.id)})).filter(g=>g.apts.length>0||!qs);
+
+return <>
+<div className="aptPageHeader">
+  <input className="tableSearch aptSearch" placeholder="بحث في الشقق..." value={q} onChange={e=>setQ(e.target.value)}/>
+  {isAdmin&&<button onClick={()=>openAdd()}><Plus size={15}/>إضافة شقة</button>}
+</div>
+{grouped.length===0&&<div className="panel"><div className="empty" style={{padding:32,textAlign:'center'}}>لا توجد شقق</div></div>}
+{grouped.map(({villa,apts:vapts})=>(
+<div key={villa.id} className="villaSection">
+  <div className="villaSectionHeader">
+    <div className="villaSectionTitle"><Building2 size={16}/>{villa.name}{villa.area&&<span className="villaSectionArea">{villa.area}</span>}</div>
+    <div className="villaSectionRight">
+      <span className="villaSectionCount">{vapts.length} شقة</span>
+      {isAdmin&&<button className="secondary villaSectionAdd" onClick={()=>openAdd(String(villa.id))}><Plus size={13}/>إضافة</button>}
+    </div>
+  </div>
+  <div className="aptGrid">
+    {vapts.map(r=>(
+    <div key={r.id} className="aptCard">
+      <div className="aptCardNum">{r.apartment_no}</div>
+      {r.floor&&<div className="aptCardFloor"><Home size={11}/>{r.floor}</div>}
+      <div className="aptCardActions">
+        <button className="secondary aptCardBtn" onClick={()=>setSelectedApt(r)}><Banknote size={13}/>العقود</button>
+        {isAdmin&&<>
+          <button className="secondary iconBtn aptCardIcon" onClick={()=>{setEditingApt(r.id);setApt({villa_id:r.villa_id,apartment_no:r.apartment_no,floor:r.floor||''});setModalOpen(true)}}><Edit size={13}/></button>
+          <button className="danger iconBtn aptCardIcon" onClick={()=>removeApt(r)}><Trash2 size={13}/></button>
+        </>}
+      </div>
+    </div>))}
+  </div>
+</div>))}
+<Modal open={modalOpen} onClose={()=>setModalOpen(false)} title={editingApt?'تعديل شقة':'إضافة شقة'}><form className="form compact" onSubmit={saveApt}>
   <Field label="الفيلا" required><select required value={apt.villa_id} onChange={e=>setApt({...apt,villa_id:e.target.value})}><option value="">اختر الفيلا</option>{villas.map(v=><option key={v.id} value={v.id}>{v.name}</option>)}</select></Field>
   <Field label="رقم الشقة" required><input required value={apt.apartment_no} onChange={e=>setApt({...apt,apartment_no:e.target.value})}/></Field>
   <Field label="الدور"><input value={apt.floor||''} onChange={e=>setApt({...apt,floor:e.target.value})}/></Field>
   <button>{editingApt?'حفظ التعديل':'إضافة'}</button><button type="button" className="secondary" onClick={()=>setModalOpen(false)}>إلغاء</button>
-</form></Modal></>
+</form></Modal>
+</>;
 }
 
 const emptyTech={name:'',specialty:'',phone:'',notes:''};
