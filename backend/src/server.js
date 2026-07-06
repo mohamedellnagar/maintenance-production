@@ -200,6 +200,119 @@ app.delete('/api/records/:id', auth, adminOnly, wrap(async (req, res) => {
   ok(res, { deleted: true });
 }));
 
+// ─── Tenants ──────────────────────────────────────────────────────────────
+crud('tenants', 'tenants', ['name', 'phone', 'national_id', 'email', 'notes'], ['name'], 'tenants_mgmt');
+
+// ─── Leases ───────────────────────────────────────────────────────────────
+app.get('/api/leases', auth, pageGuard('leases'), wrap(async (req, res) => {
+  const where = [];
+  const p = [];
+  if (req.query.apartment_id) { where.push('l.apartment_id=?'); p.push(req.query.apartment_id); }
+  if (req.query.tenant_id) { where.push('l.tenant_id=?'); p.push(req.query.tenant_id); }
+  if (req.query.is_active !== undefined) { where.push('l.is_active=?'); p.push(req.query.is_active); }
+  const [rows] = await pool.query(`
+    SELECT l.*, t.name tenant_name, t.phone tenant_phone,
+      a.apartment_no, v.name villa_name,
+      (SELECT COUNT(*) FROM lease_installments li WHERE li.lease_id=l.id) installments_count,
+      (SELECT COALESCE(SUM(ip.amount),0) FROM lease_installments li JOIN installment_payments ip ON ip.installment_id=li.id WHERE li.lease_id=l.id) collected_amount
+    FROM leases l
+    JOIN tenants t ON t.id=l.tenant_id
+    JOIN apartments a ON a.id=l.apartment_id
+    JOIN villas v ON v.id=a.villa_id
+    ${where.length ? 'WHERE ' + where.join(' AND ') : ''}
+    ORDER BY l.id DESC`, p);
+  ok(res, rows);
+}));
+app.get('/api/leases/:id', auth, pageGuard('leases'), wrap(async (req, res) => {
+  const [[lease]] = await pool.query(`
+    SELECT l.*, t.name tenant_name, t.phone tenant_phone,
+      a.apartment_no, v.name villa_name
+    FROM leases l
+    JOIN tenants t ON t.id=l.tenant_id
+    JOIN apartments a ON a.id=l.apartment_id
+    JOIN villas v ON v.id=a.villa_id
+    WHERE l.id=?`, [req.params.id]);
+  if (!lease) throw Object.assign(new Error('Not found'), { status: 404 });
+  const [installments] = await pool.query(`
+    SELECT li.*,
+      COALESCE(SUM(ip.amount),0) collected_amount,
+      CASE
+        WHEN COALESCE(SUM(ip.amount),0) >= li.amount THEN 'collected'
+        WHEN li.due_date < CURDATE() THEN 'overdue'
+        WHEN COALESCE(SUM(ip.amount),0) > 0 THEN 'partial'
+        WHEN li.due_date <= DATE_ADD(CURDATE(), INTERVAL 30 DAY) THEN 'due_soon'
+        ELSE 'upcoming'
+      END status
+    FROM lease_installments li
+    LEFT JOIN installment_payments ip ON ip.installment_id=li.id
+    WHERE li.lease_id=?
+    GROUP BY li.id
+    ORDER BY li.due_date`, [req.params.id]);
+  ok(res, { lease, installments });
+}));
+app.post('/api/leases', auth, wrap(async (req, res) => {
+  requireFields(req.body, ['apartment_id', 'tenant_id', 'start_date', 'end_date', 'total_amount']);
+  const { apartment_id, tenant_id, start_date, end_date, total_amount, notes, is_active } = req.body;
+  const [r] = await pool.query('INSERT INTO leases SET ?', { apartment_id, tenant_id, start_date, end_date, total_amount, notes, is_active: is_active ?? 1 });
+  ok(res, { id: r.insertId });
+}));
+app.put('/api/leases/:id', auth, wrap(async (req, res) => {
+  if (Object.keys(req.body).length === 0) throw Object.assign(new Error('No fields to update'), { status: 400 });
+  const { apartment_id, tenant_id, start_date, end_date, total_amount, notes, is_active } = req.body;
+  const data = {};
+  if (apartment_id !== undefined) data.apartment_id = apartment_id;
+  if (tenant_id !== undefined) data.tenant_id = tenant_id;
+  if (start_date !== undefined) data.start_date = start_date;
+  if (end_date !== undefined) data.end_date = end_date;
+  if (total_amount !== undefined) data.total_amount = total_amount;
+  if (notes !== undefined) data.notes = notes;
+  if (is_active !== undefined) data.is_active = is_active;
+  await pool.query('UPDATE leases SET ? WHERE id=?', [data, req.params.id]);
+  ok(res, { id: req.params.id });
+}));
+app.delete('/api/leases/:id', auth, adminOnly, wrap(async (req, res) => {
+  await pool.query('DELETE FROM leases WHERE id=?', [req.params.id]);
+  ok(res, { deleted: true });
+}));
+
+// ─── Installments ─────────────────────────────────────────────────────────
+app.post('/api/leases/:leaseId/installments', auth, wrap(async (req, res) => {
+  requireFields(req.body, ['due_date', 'amount']);
+  const { due_date, amount, notes } = req.body;
+  const [r] = await pool.query('INSERT INTO lease_installments SET ?', { lease_id: req.params.leaseId, due_date, amount, notes });
+  ok(res, { id: r.insertId });
+}));
+app.put('/api/installments/:id', auth, wrap(async (req, res) => {
+  const { due_date, amount, notes } = req.body;
+  const data = {};
+  if (due_date !== undefined) data.due_date = due_date;
+  if (amount !== undefined) data.amount = amount;
+  if (notes !== undefined) data.notes = notes;
+  if (Object.keys(data).length === 0) throw Object.assign(new Error('No fields to update'), { status: 400 });
+  await pool.query('UPDATE lease_installments SET ? WHERE id=?', [data, req.params.id]);
+  ok(res, { id: req.params.id });
+}));
+app.delete('/api/installments/:id', auth, adminOnly, wrap(async (req, res) => {
+  await pool.query('DELETE FROM lease_installments WHERE id=?', [req.params.id]);
+  ok(res, { deleted: true });
+}));
+
+// ─── Payments ─────────────────────────────────────────────────────────────
+app.get('/api/installments/:installmentId/payments', auth, wrap(async (req, res) => {
+  const [rows] = await pool.query('SELECT * FROM installment_payments WHERE installment_id=? ORDER BY payment_date', [req.params.installmentId]);
+  ok(res, rows);
+}));
+app.post('/api/installments/:installmentId/payments', auth, wrap(async (req, res) => {
+  requireFields(req.body, ['amount', 'payment_date']);
+  const { amount, payment_date, notes } = req.body;
+  const [r] = await pool.query('INSERT INTO installment_payments SET ?', { installment_id: req.params.installmentId, amount, payment_date, notes });
+  ok(res, { id: r.insertId });
+}));
+app.delete('/api/payments/:id', auth, adminOnly, wrap(async (req, res) => {
+  await pool.query('DELETE FROM installment_payments WHERE id=?', [req.params.id]);
+  ok(res, { deleted: true });
+}));
+
 app.get('/api/reports/summary', auth, wrap(async (req, res) => {
   const from = req.query.from || '2000-01-01', to = req.query.to || '2999-12-31';
   const [rows] = await pool.query(`SELECT record_date, COUNT(*) total_records, COALESCE(SUM(spare_part_cost),0) total_cost FROM maintenance_records WHERE record_date BETWEEN ? AND ? GROUP BY record_date ORDER BY record_date DESC`, [from, to]);

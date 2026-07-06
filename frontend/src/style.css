@@ -132,3 +132,31 @@ button.danger{background:#fee2e2;color:var(--danger)}.actionsCell{display:flex;g
   .modalBox{width:100%;border-radius:28px 28px 0 0;max-height:92vh;animation:sheetIn .28s cubic-bezier(.32,.72,0,1)}
   @keyframes sheetIn{from{transform:translateY(100%)}to{transform:translateY(0)}}
 }
+
+/* ── Installment status badges ───────────────────────────────────── */
+.status-danger{background:#fee2e2;color:#dc2626}
+.status-partial{background:#fef3c7;color:#b45309}
+.status-warn{background:#dbeafe;color:#1d4ed8}
+
+/* ── Lease detail ─────────────────────────────────────────────────── */
+.leaseDetailTitle{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.backBtn{background:#f1f5f9;color:var(--text);padding:7px 12px;border-radius:10px;font-size:14px;gap:4px}
+.backBtn:hover{background:#e2e8f0}
+.leaseSummary{display:flex;flex-wrap:wrap;gap:16px;padding:12px 0;border-bottom:1px solid var(--line);margin-bottom:8px}
+.leaseStat{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)}
+.leaseStat span{color:var(--text);font-weight:600}
+.instList{display:flex;flex-direction:column;gap:10px;margin-top:8px}
+.instCard{border:1px solid var(--line);border-radius:14px;padding:12px 16px;background:#fafafa}
+.instCardHead{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.instCardActions{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.instAmount{font-size:16px;font-weight:700;margin-left:12px}
+.instDate{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--muted)}
+.instNotes{margin:6px 0 0;font-size:12px;color:var(--muted)}
+
+/* ── Payments modal ───────────────────────────────────────────────── */
+.paymentsModal{display:flex;flex-direction:column;gap:4px}
+.paymentsList{display:flex;flex-direction:column;gap:8px;max-height:220px;overflow-y:auto}
+.paymentRow{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#f8fafc;border-radius:10px;border:1px solid var(--line)}
+.payAmount{font-weight:700;margin-left:10px}
+.payDate{font-size:12px;color:var(--muted)}
+.payNotes{font-size:12px;color:var(--muted);margin-right:8px}

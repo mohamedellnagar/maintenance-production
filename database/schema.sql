@@ -82,7 +82,52 @@ CREATE TABLE role_permissions (
 );
 
 INSERT INTO role_permissions (role, allowed_pages) VALUES
-('SUPERVISOR', '["dashboard","records","villas","apartments","technicians"]');
+('SUPERVISOR', '["dashboard","records","villas","apartments","technicians","tenants_mgmt","leases"]');
+
+CREATE TABLE tenants (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  name VARCHAR(150) NOT NULL,
+  phone VARCHAR(30) NULL,
+  national_id VARCHAR(50) NULL,
+  email VARCHAR(150) NULL,
+  notes TEXT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE leases (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  apartment_id BIGINT NOT NULL,
+  tenant_id BIGINT NOT NULL,
+  start_date DATE NOT NULL,
+  end_date DATE NOT NULL,
+  total_amount DECIMAL(12,2) NOT NULL DEFAULT 0,
+  notes TEXT NULL,
+  is_active BOOLEAN NOT NULL DEFAULT TRUE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_lease_apt FOREIGN KEY (apartment_id) REFERENCES apartments(id),
+  CONSTRAINT fk_lease_tenant FOREIGN KEY (tenant_id) REFERENCES tenants(id)
+);
+
+CREATE TABLE lease_installments (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  lease_id BIGINT NOT NULL,
+  due_date DATE NOT NULL,
+  amount DECIMAL(12,2) NOT NULL,
+  notes TEXT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_inst_lease FOREIGN KEY (lease_id) REFERENCES leases(id) ON DELETE CASCADE
+);
+
+CREATE TABLE installment_payments (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  installment_id BIGINT NOT NULL,
+  amount DECIMAL(12,2) NOT NULL,
+  payment_date DATE NOT NULL,
+  notes TEXT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_pay_inst FOREIGN KEY (installment_id) REFERENCES lease_installments(id) ON DELETE CASCADE
+);
 
 INSERT INTO users (name,email,password_hash,role) VALUES
 ('System Admin','admin@maintenance.local','$2a$10$aYeVnct/d.iH8u9uJMvmY.7yw692laU.Br.4qouKtjo4oM9slKNtS','ADMIN');
