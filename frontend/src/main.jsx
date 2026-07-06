@@ -159,41 +159,25 @@ return <>
   const remaining=Number(lease.total_amount)-collected;
   const pct=Number(lease.total_amount)>0?Math.min(100,collected/Number(lease.total_amount)*100):0;
   return <div key={lease.id} className={'leaseBlock'+(st==='expired'?' leaseBlockExpired':'')}>
-    <div className="leaseBlockHeader">
-      <div className="leaseBlockLeft">
-        {idx===0&&st==='active'&&<span className="leaseBlockBadge leaseBlockBadgeActive">العقد الحالي</span>}
-        {st==='expired'&&<span className="leaseBlockBadge leaseBlockBadgeExpired">منتهي</span>}
-        <span className="leaseBlockLocation"><UserCheck size={14}/>{lease.tenant_name}{lease.tenant_phone&&<span style={{fontWeight:400,color:'var(--muted)',fontSize:12}}> — {lease.tenant_phone}</span>}</span>
-        <span className="leaseBlockDates"><Calendar size={13}/>{new Date(lease.start_date).toLocaleDateString('ar-AE')} — {new Date(lease.end_date).toLocaleDateString('ar-AE')}</span>
+    <div className="leaseBlockStrip">
+      <div className="leaseBlockMeta">
+        {idx===0&&st==='active'?<span className="leaseBlockBadge leaseBlockBadgeActive">الحالي</span>:<span className="leaseBlockBadge leaseBlockBadgeExpired">منتهي</span>}
+        <span className="leaseBlockLocation"><UserCheck size={13}/>{lease.tenant_name}{lease.tenant_phone&&<span className="leaseBlockPhone"> · {lease.tenant_phone}</span>}</span>
+        <span className="leaseBlockDates"><Calendar size={12}/>{new Date(lease.start_date).toLocaleDateString('ar-AE')} — {new Date(lease.end_date).toLocaleDateString('ar-AE')}</span>
       </div>
-      <div className="leaseBlockRight">
-        <div className="leaseBlockAmounts"><span className="leaseBlockTotal">{Number(lease.total_amount).toFixed(0)} AED</span><span className="leaseBlockSub">الإجمالي</span></div>
-        <div className="leaseBlockAmounts"><span className="leaseBlockCollected">{collected.toFixed(0)} AED</span><span className="leaseBlockSub">محصّل</span></div>
-        <div className="leaseBlockAmounts"><span className={'leaseBlockRemaining'+(remaining>0?' leaseBlockRemainingDue':'')}>{remaining.toFixed(0)} AED</span><span className="leaseBlockSub">متبقي</span></div>
+      <div className="leaseBlockFin">
+        <span className="leaseBlockFinItem"><span className="leaseBlockFinVal">{Number(lease.total_amount).toFixed(0)}</span><span className="leaseBlockFinLbl">AED إجمالي</span></span>
+        <span className="leaseBlockSep"/>
+        <span className="leaseBlockFinItem"><span className="leaseBlockFinVal leaseBlockFinGreen">{collected.toFixed(0)}</span><span className="leaseBlockFinLbl">محصّل</span></span>
+        <span className="leaseBlockSep"/>
+        <span className="leaseBlockFinItem"><span className={'leaseBlockFinVal'+(remaining>0?' leaseBlockFinRed':'')}>{remaining.toFixed(0)}</span><span className="leaseBlockFinLbl">متبقي</span></span>
       </div>
     </div>
-    <div className="leaseBlockProgress"><div className="leaseBlockProgressBar" style={{width:pct+'%'}}/></div>
-    <div className="leaseBlockInstHeader">
-      <span className="leaseBlockInstTitle">الدفعات ({installments.length})</span>
-      <button className="secondary" onClick={()=>{setTargetLeaseId(lease.id);setEditingInst(null);setInstForm({due_date:'',amount:'',notes:''});setInstOpen(true)}}><Plus size={13}/>إضافة دفعة</button>
-    </div>
-    {installments.length===0&&<p className="leaseBlockEmpty">لا توجد دفعات مضافة لهذا العقد</p>}
-    <div className="instList">{installments.map(i=>{
-      const ipct=Number(i.amount)>0?Math.min(100,Number(i.collected_amount)/Number(i.amount)*100):0;
-      return <div key={i.id} className="instCard">
-        <div className="instCardHead">
-          <div><span className="instAmount">{Number(i.amount).toFixed(2)} AED</span><span className="instDate"><Calendar size={12}/>{new Date(i.due_date).toLocaleDateString('ar-AE')}</span></div>
-          <div className="instCardActions">
-            <span className={'statusBadge '+INST_STATUS_CSS[i.status]}>{INST_STATUS_LABELS[i.status]}</span>
-            <button className="secondary" onClick={()=>openPayments(i)}><DollarSign size={14}/>{Number(i.collected_amount).toFixed(0)} / {Number(i.amount).toFixed(0)}</button>
-            <button onClick={()=>{setTargetLeaseId(lease.id);setEditingInst(i.id);setInstForm({due_date:String(i.due_date).slice(0,10),amount:i.amount,notes:i.notes||''});setInstOpen(true)}}><Edit size={14}/></button>
-            {isAdmin&&<button className="danger" onClick={()=>removeInst(i.id)}><Trash2 size={14}/></button>}
-          </div>
-        </div>
-        {i.notes&&<p className="instNotes">{i.notes}</p>}
-        {Number(i.collected_amount)>0&&<div className="instProgress"><div className="instProgressBar" style={{width:ipct+'%'}}/><span>{Number(i.collected_amount).toFixed(0)} / {Number(i.amount).toFixed(0)} AED</span></div>}
-      </div>;
-    })}</div>
+    <div className="leaseBlockBar"><div className="leaseBlockBarFill" style={{width:pct+'%'}}/></div>
+    <InstTable installments={installments} isAdmin={isAdmin} leaseId={lease.id}
+      onAdd={id=>{setTargetLeaseId(id);setEditingInst(null);setInstForm({due_date:'',amount:'',notes:''});setInstOpen(true)}}
+      onEdit={(i,lid)=>{setTargetLeaseId(lid);setEditingInst(i.id);setInstForm({due_date:String(i.due_date).slice(0,10),amount:i.amount,notes:i.notes||''});setInstOpen(true)}}
+      onDelete={removeInst} onPayments={openPayments}/>
   </div>;
 })}
 <Modal open={leaseOpen} onClose={()=>setLeaseOpen(false)} title="إضافة عقد إيجار جديد"><form className="form" onSubmit={saveLease}>
@@ -287,6 +271,24 @@ const PAGE_SIZE=10;
 function Table({rows,cols,actions,searchable}){const[q,setQ]=useState('');const[page,setPage]=useState(0);const filtered=useMemo(()=>{if(!q)return rows;const s=q.trim().toLowerCase();return rows.filter(r=>cols.some(c=>String(r[c]??'').toLowerCase().includes(s)))},[rows,q,cols]);const pageCount=Math.max(1,Math.ceil(filtered.length/PAGE_SIZE));const pageRows=filtered.slice(page*PAGE_SIZE,page*PAGE_SIZE+PAGE_SIZE);useEffect(()=>{setPage(0)},[q,rows.length]);return <div>{searchable&&<input className="tableSearch" placeholder="بحث..." value={q} onChange={e=>setQ(e.target.value)}/>}<div className="table"><table><thead><tr>{cols.map(c=><th key={c}>{FIELD_LABELS[c]||c}</th>)}{actions&&<th></th>}</tr></thead><tbody>{pageRows.length===0&&<tr><td colSpan={cols.length+(actions?1:0)} className="empty">لا توجد بيانات</td></tr>}{pageRows.map(r=><tr key={r.id}>{cols.map(c=><td key={c} data-label={FIELD_LABELS[c]||c}>{formatCell(c,r[c])}</td>)}{actions&&<td data-label="" className="actionsCell">{actions(r)}</td>}</tr>)}</tbody></table></div>{pageCount>1&&<div className="pagination"><button type="button" disabled={page===0} onClick={()=>setPage(p=>p-1)}>السابق</button><span>{page+1} / {pageCount}</span><button type="button" disabled={page>=pageCount-1} onClick={()=>setPage(p=>p+1)}>التالي</button></div>}</div>}
 
 function leaseStatus(l){const today=new Date().toISOString().slice(0,10);if(!l.is_active||l.end_date<today)return 'expired';return 'active';}
+function InstTable({installments,isAdmin,leaseId,onAdd,onEdit,onDelete,onPayments}){return(
+<div className="instTable">
+  <div className="instTableHead"><span className="instTableTitle">الدفعات ({installments.length})</span><button className="secondary instTableAdd" onClick={()=>onAdd(leaseId)}><Plus size={12}/>إضافة</button></div>
+  {installments.length===0?<p className="instTableEmpty">لا توجد دفعات</p>:
+  <table className="instTbl"><thead><tr><th>التاريخ</th><th>المبلغ</th><th>التقدم</th><th>الحالة</th><th></th></tr></thead>
+  <tbody>{installments.map(i=>{const pct=Number(i.amount)>0?Math.min(100,Number(i.collected_amount)/Number(i.amount)*100):0;return(
+  <tr key={i.id}>
+    <td className="instTblDate">{new Date(i.due_date).toLocaleDateString('ar-AE')}</td>
+    <td className="instTblAmt">{Number(i.amount).toFixed(0)} <span className="instTblCur">AED</span></td>
+    <td className="instTblBarCell"><div className="instTblBar"><div className="instTblBarFill" style={{width:pct+'%'}}/></div><span className="instTblPct">{Math.round(pct)}%</span></td>
+    <td><span className={'statusBadge statusBadgeSm '+INST_STATUS_CSS[i.status]}>{INST_STATUS_LABELS[i.status]}</span></td>
+    <td className="instTblActions">
+      <button className="secondary iconBtn" title="المدفوعات" onClick={()=>onPayments(i)}><DollarSign size={13}/></button>
+      <button className="secondary iconBtn" onClick={()=>onEdit(i,leaseId)}><Edit size={13}/></button>
+      {isAdmin&&<button className="danger iconBtn" onClick={()=>onDelete(i.id)}><Trash2 size={13}/></button>}
+    </td>
+  </tr>);})}</tbody></table>}
+</div>);}
 const LEASE_STATUS_LABEL={active:'فعّال',expired:'منتهي'};
 const LEASE_STATUS_CSS={active:'status-on',expired:'status-off'};
 
@@ -362,52 +364,25 @@ if(selected){
     const remaining=Number(lease.total_amount)-collected;
     const pct=Number(lease.total_amount)>0?Math.min(100,collected/Number(lease.total_amount)*100):0;
     return <div key={lease.id} className={'leaseBlock'+(st==='expired'?' leaseBlockExpired':'')}>
-      <div className="leaseBlockHeader">
-        <div className="leaseBlockLeft">
-          {idx===0&&st==='active'&&<span className="leaseBlockBadge leaseBlockBadgeActive">العقد الحالي</span>}
-          {st==='expired'&&<span className="leaseBlockBadge leaseBlockBadgeExpired">منتهي</span>}
-          <span className="leaseBlockLocation"><Building2 size={14}/>{lease.villa_name} / {lease.apartment_no}</span>
-          <span className="leaseBlockDates"><Calendar size={13}/>{new Date(lease.start_date).toLocaleDateString('ar-AE')} — {new Date(lease.end_date).toLocaleDateString('ar-AE')}</span>
+      <div className="leaseBlockStrip">
+        <div className="leaseBlockMeta">
+          {idx===0&&st==='active'?<span className="leaseBlockBadge leaseBlockBadgeActive">الحالي</span>:<span className="leaseBlockBadge leaseBlockBadgeExpired">منتهي</span>}
+          <span className="leaseBlockLocation"><Building2 size={13}/>{lease.villa_name} / {lease.apartment_no}</span>
+          <span className="leaseBlockDates"><Calendar size={12}/>{new Date(lease.start_date).toLocaleDateString('ar-AE')} — {new Date(lease.end_date).toLocaleDateString('ar-AE')}</span>
         </div>
-        <div className="leaseBlockRight">
-          <div className="leaseBlockAmounts">
-            <span className="leaseBlockTotal">{Number(lease.total_amount).toFixed(0)} AED</span>
-            <span className="leaseBlockSub">الإجمالي</span>
-          </div>
-          <div className="leaseBlockAmounts">
-            <span className="leaseBlockCollected">{collected.toFixed(0)} AED</span>
-            <span className="leaseBlockSub">محصّل</span>
-          </div>
-          <div className="leaseBlockAmounts">
-            <span className={'leaseBlockRemaining'+(remaining>0?' leaseBlockRemainingDue':'')}>{remaining.toFixed(0)} AED</span>
-            <span className="leaseBlockSub">متبقي</span>
-          </div>
+        <div className="leaseBlockFin">
+          <span className="leaseBlockFinItem"><span className="leaseBlockFinVal">{Number(lease.total_amount).toFixed(0)}</span><span className="leaseBlockFinLbl">AED إجمالي</span></span>
+          <span className="leaseBlockSep"/>
+          <span className="leaseBlockFinItem"><span className="leaseBlockFinVal leaseBlockFinGreen">{collected.toFixed(0)}</span><span className="leaseBlockFinLbl">محصّل</span></span>
+          <span className="leaseBlockSep"/>
+          <span className="leaseBlockFinItem"><span className={'leaseBlockFinVal'+(remaining>0?' leaseBlockFinRed':'')}>{remaining.toFixed(0)}</span><span className="leaseBlockFinLbl">متبقي</span></span>
         </div>
       </div>
-      <div className="leaseBlockProgress"><div className="leaseBlockProgressBar" style={{width:pct+'%'}}/></div>
-
-      <div className="leaseBlockInstHeader">
-        <span className="leaseBlockInstTitle">الدفعات ({installments.length})</span>
-        <button className="secondary" onClick={()=>{setTargetLeaseId(lease.id);setEditingInst(null);setInstForm({due_date:'',amount:'',notes:''});setInstOpen(true)}}><Plus size={13}/>إضافة دفعة</button>
-      </div>
-
-      {installments.length===0&&<p className="leaseBlockEmpty">لا توجد دفعات مضافة لهذا العقد بعد</p>}
-      <div className="instList">{installments.map(i=>{
-        const ipct=Number(i.amount)>0?Math.min(100,Number(i.collected_amount)/Number(i.amount)*100):0;
-        return <div key={i.id} className="instCard">
-          <div className="instCardHead">
-            <div><span className="instAmount">{Number(i.amount).toFixed(2)} AED</span><span className="instDate"><Calendar size={12}/>{new Date(i.due_date).toLocaleDateString('ar-AE')}</span></div>
-            <div className="instCardActions">
-              <span className={'statusBadge '+INST_STATUS_CSS[i.status]}>{INST_STATUS_LABELS[i.status]}</span>
-              <button className="secondary" onClick={()=>openPayments(i)}><DollarSign size={14}/>{Number(i.collected_amount).toFixed(0)} / {Number(i.amount).toFixed(0)}</button>
-              <button onClick={()=>{setTargetLeaseId(lease.id);setEditingInst(i.id);setInstForm({due_date:String(i.due_date).slice(0,10),amount:i.amount,notes:i.notes||''});setInstOpen(true)}}><Edit size={14}/></button>
-              {isAdmin&&<button className="danger" onClick={()=>removeInst(i.id)}><Trash2 size={14}/></button>}
-            </div>
-          </div>
-          {i.notes&&<p className="instNotes">{i.notes}</p>}
-          {Number(i.collected_amount)>0&&<div className="instProgress"><div className="instProgressBar" style={{width:ipct+'%'}}/><span>{Number(i.collected_amount).toFixed(0)} / {Number(i.amount).toFixed(0)} AED</span></div>}
-        </div>;
-      })}</div>
+      <div className="leaseBlockBar"><div className="leaseBlockBarFill" style={{width:pct+'%'}}/></div>
+      <InstTable installments={installments} isAdmin={isAdmin} leaseId={lease.id}
+        onAdd={id=>{setTargetLeaseId(id);setEditingInst(null);setInstForm({due_date:'',amount:'',notes:''});setInstOpen(true)}}
+        onEdit={(i,lid)=>{setTargetLeaseId(lid);setEditingInst(i.id);setInstForm({due_date:String(i.due_date).slice(0,10),amount:i.amount,notes:i.notes||''});setInstOpen(true)}}
+        onDelete={removeInst} onPayments={openPayments}/>
     </div>;
   })}
 
