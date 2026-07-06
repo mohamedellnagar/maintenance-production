@@ -160,3 +160,13 @@ button.danger{background:#fee2e2;color:var(--danger)}.actionsCell{display:flex;g
 .payAmount{font-weight:700;margin-left:10px}
 .payDate{font-size:12px;color:var(--muted)}
 .payNotes{font-size:12px;color:var(--muted);margin-right:8px}
+
+/* ── Tenant detail ─────────────────────────────────────────────────── */
+.tenantPhone{font-size:13px;color:var(--muted);font-weight:400;margin-right:8px}
+.leaseTabsRow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.leaseTab{background:#f1f5f9;color:var(--muted);padding:7px 14px;border-radius:10px;font-size:13px}
+.leaseTab:hover{background:#e2e8f0}
+.leaseTabActive{background:var(--brand);color:#fff}
+.instProgress{display:flex;align-items:center;gap:10px;margin-top:8px}
+.instProgressBar{height:6px;background:var(--brand);border-radius:4px;transition:width .4s}
+.instProgress span{font-size:11px;color:var(--muted);white-space:nowrap}
