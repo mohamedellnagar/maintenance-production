@@ -890,10 +890,10 @@ return <>
     {label:'قادمة',icon:'📅',count:kpiUpcoming.length,amt:kpiUpcoming.reduce((s,r)=>s+Number(r.amount),0),color:'#0f766e',bg:'#f8fafc',border:'#e2e8f0',status:'upcoming'},
   ].map(k=><button key={k.status} className={'ptKpiCard'+(statusFilter===k.status?' ptKpiCardActive':'')} style={statusFilter===k.status?{background:k.bg,borderColor:k.color}:{}} onClick={()=>setStatusFilter(s=>s===k.status?'all':k.status)}>
     <div className="ptKpiTop"><span className="ptKpiIcon">{k.icon}</span>{k.count>0&&statusFilter!==k.status&&k.status==='overdue'&&<span className="ptKpiPulse"/>}</div>
-    <span className="ptKpiCount" style={{color:k.color}}>{k.count}</span>
+    <span className="ptKpiCount" style={{color:k.color}}>{k.amt.toLocaleString()}</span>
+    <span className="ptKpiAmtCur" style={{color:k.color}}>AED</span>
     <span className="ptKpiLabel">{k.label}</span>
-    <span className="ptKpiAmt">{k.amt.toLocaleString()}</span>
-    <span className="ptKpiAmtCur">AED</span>
+    <span className="ptKpiSub">{k.count} دفعة</span>
   </button>)}
 </div>
 
