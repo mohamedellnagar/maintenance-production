@@ -163,6 +163,11 @@ function crud(name, table, fields, required = [], pageId = null) {
 
 crud('villas', 'villas', ['name', 'area', 'notes', 'is_active'], ['name']);
 crud('technicians', 'technicians', ['name', 'specialty', 'phone', 'notes', 'is_active'], ['name']);
+// Active technicians only — used in records/dropdowns
+app.get('/api/technicians/active', auth, wrap(async (req, res) => {
+  const [rows] = await pool.query('SELECT id,name,specialty FROM technicians WHERE is_active=1 ORDER BY name');
+  ok(res, rows);
+}));
 
 app.get('/api/apartments', auth, wrap(async (req, res) => {
   const q = req.query.villa_id ? 'WHERE a.villa_id=?' : '';
@@ -202,16 +207,23 @@ app.get('/api/users', auth, adminOnly, wrap(async (req, res) => {
   const [rows] = await pool.query('SELECT id,name,email,role,is_active,created_at FROM users ORDER BY id DESC');
   ok(res, rows);
 }));
+function validatePassword(pwd) {
+  if (!pwd || pwd.length < 8) throw Object.assign(new Error('كلمة المرور يجب أن تكون 8 أحرف على الأقل'), { status: 400 });
+  if (!/[A-Z]/.test(pwd)) throw Object.assign(new Error('كلمة المرور يجب أن تحتوي على حرف كبير'), { status: 400 });
+  if (!/[0-9]/.test(pwd)) throw Object.assign(new Error('كلمة المرور يجب أن تحتوي على رقم'), { status: 400 });
+}
 app.post('/api/users', auth, adminOnly, wrap(async (req, res) => {
-  requireFields(req.body, ['name', 'email']);
+  requireFields(req.body, ['name', 'email', 'password']);
   const { name, email, password, role, is_active } = req.body;
-  const password_hash = await bcrypt.hash(password || 'User@12345', 10);
+  validatePassword(password);
+  const password_hash = await bcrypt.hash(password, 10);
   const [r] = await pool.query('INSERT INTO users SET ?', { name, email, password_hash, role: role || 'SUPERVISOR', is_active: is_active ?? 1 });
   ok(res, { id: r.insertId });
 }));
 app.put('/api/users/:id', auth, adminOnly, wrap(async (req, res) => {
   requireFields(req.body, ['name', 'email']);
   const { name, email, password, role, is_active } = req.body;
+  if (password) validatePassword(password);
   const data = { name, email, role: role || 'SUPERVISOR', is_active: is_active ?? 1 };
   if (password) data.password_hash = await bcrypt.hash(password, 10);
   await pool.query('UPDATE users SET ? WHERE id=?', [data, req.params.id]);
