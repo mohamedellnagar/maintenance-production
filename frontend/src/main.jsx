@@ -1,5 +1,6 @@
 import React,{useEffect,useMemo,useState,useCallback}from'react';import{createRoot}from'react-dom/client';import{Home,Users,Wrench,Building2,LayoutDashboard,FileText,Plus,Trash2,Edit,LogOut,Download,X,Mail,Lock,Eye,EyeOff,Loader2,ShieldCheck,Filter,RotateCcw,ClipboardList,Wallet,TrendingUp,Coins,Check,Settings as SettingsIcon,UserCheck,Banknote,ChevronRight,Calendar,DollarSign,ListChecks,AlertCircle,CheckCircle2,Clock,ChevronDown,RefreshCw,Activity,KeyRound,BarChart2,BedDouble,DoorOpen,ArrowUpRight,ArrowDownRight,Zap}from'lucide-react';import{BarChart,Bar,XAxis,YAxis,Tooltip,ResponsiveContainer,CartesianGrid,LabelList,AreaChart,Area}from'recharts';import'./style.css';
 const API=import.meta.env.VITE_API_URL||(location.hostname==='localhost'?'http://localhost:4000/api':'/api');
+const AR_MONTHS=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
 
 let toastListeners=[];
 function showToast(msg,type='success'){toastListeners.forEach(l=>l(msg,type))}
@@ -85,7 +86,6 @@ useEffect(()=>{const id=setInterval(()=>setTick(t=>(t+1)%60),1000);return()=>cle
 
 if(!d)return <Loader/>;
 
-const AR_MONTHS=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
 const trendData=(d.monthlyTrend||[]).map(r=>{const[y,m]=r.mo.split('-');return{label:AR_MONTHS[parseInt(m,10)-1],cnt:Number(r.cnt),cost:Number(r.cost)};});
 
 const overdueAmt=Number(d.installmentKpi?.overdue_amount||0);
@@ -286,7 +286,7 @@ function Loader(){return <div className="panel">جاري التحميل...</div>
 function Field({label,required,wide,children}){return <label className={'field'+(wide?' wide':'')}><span>{label}{required&&<b className="req">*</b>}</span>{children}</label>}
 function Modal({open,onClose,title,children}){useEffect(()=>{if(!open)return;const onKey=e=>{if(e.key==='Escape')onClose()};document.addEventListener('keydown',onKey);return()=>document.removeEventListener('keydown',onKey)},[open,onClose]);if(!open)return null;return <div className="modalOverlay" onClick={onClose}><div className="modalBox" onClick={e=>e.stopPropagation()}><div className="modalHead"><h3>{title}</h3><button type="button" className="iconBtn" onClick={onClose}><X size={18}/></button></div>{children}</div></div>}
 
-function Records(){const api=useApi();const[rows,setRows]=useState([]),[villas,setVillas]=useState([]),[apts,setApts]=useState([]),[techs,setTechs]=useState([]);const empty={record_date:new Date().toISOString().slice(0,10),villa_id:'',apartment_id:'',issue_type:'',description:'',technician_ids:[],reported_time:'',completed_time:'',spare_part:'',spare_part_cost:0,notes:''};const[form,setForm]=useState(empty);const[editing,setEditing]=useState(null);const[modalOpen,setModalOpen]=useState(false);const[viewing,setViewing]=useState(null);const load=()=>{api('/records').then(setRows);api('/villas').then(setVillas);api('/apartments').then(setApts);api('/technicians/active').then(setTechs)};useEffect(()=>{load()},[]);function openAdd(){setEditing(null);setForm(empty);setModalOpen(true)}function closeModal(){setModalOpen(false)}async function save(e){e.preventDefault();if(form.technician_ids.length===0)return showToast('اختر فنيًا واحدًا على الأقل','error');await runAction(async()=>{await api(editing?'/records/'+editing:'/records',{method:editing?'PUT':'POST',body:JSON.stringify(form)});setForm(empty);setEditing(null);setModalOpen(false);load()},editing?'تم حفظ التعديل':'تمت إضافة السجل')}function edit(r){setEditing(r.id);setForm({...r,record_date:String(r.record_date).slice(0,10),reported_time:r.reported_time||'',completed_time:r.completed_time||'',technician_ids:r.technician_ids?String(r.technician_ids).split(',').map(Number):[]});setModalOpen(true)}async function remove(r){if(!confirm('تأكيد حذف سجل الصيانة هذا؟ لا يمكن التراجع.'))return;await runAction(async()=>{await api('/records/'+r.id,{method:'DELETE'});load()},'تم حذف السجل')}function csv(){let c='Date,Villa,Apartment,IssueType,Description,Technician,Reported,Completed,Part,Cost\n'+rows.map(r=>[r.record_date,r.villa_name,r.apartment_no,ISSUE_TYPE_LABELS[r.issue_type]||r.issue_type,r.description,r.technician_name,r.reported_time,r.completed_time,r.spare_part,r.spare_part_cost].map(x=>'"'+(x??'')+'"').join(',')).join('\n');let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([c]));a.download='maintenance-records.csv';a.click()}return <><Panel title="كشف الصيانة"><div className="panelActions"><button onClick={openAdd}><Plus size={16}/>إضافة سجل صيانة</button><button className="secondary" onClick={csv}><Download size={16}/>تصدير CSV / Excel</button></div><Table rows={rows.map(r=>({...r,status:r.completed_time?'مكتمل':'قيد التنفيذ'}))} cols={['record_date','villa_name','apartment_no','issue_type','technician_name','status','spare_part_cost']} searchable actions={r=><><button className="secondary" onClick={()=>setViewing(r)}><Eye size={15}/></button><button onClick={()=>edit(r)}><Edit size={15}/></button><button className="danger" onClick={()=>remove(r)}><Trash2 size={15}/></button></>}/></Panel>
+function Records(){const api=useApi();const[rows,setRows]=useState([]),[villas,setVillas]=useState([]),[apts,setApts]=useState([]),[techs,setTechs]=useState([]);const empty={record_date:new Date().toISOString().slice(0,10),villa_id:'',apartment_id:'',issue_type:'',description:'',technician_ids:[],reported_time:'',completed_time:'',spare_part:'',spare_part_cost:0,notes:''};const[form,setForm]=useState(empty);const[editing,setEditing]=useState(null);const[modalOpen,setModalOpen]=useState(false);const[viewing,setViewing]=useState(null);const load=()=>{api('/records').then(setRows);api('/villas').then(setVillas);api('/apartments').then(setApts);api('/technicians/active').then(setTechs)};useEffect(()=>{load()},[]);function openAdd(){setEditing(null);setForm(empty);setModalOpen(true)}function closeModal(){setModalOpen(false)}async function save(e){e.preventDefault();if(form.technician_ids.length===0)return showToast('اختر فنيًا واحدًا على الأقل','error');await runAction(async()=>{await api(editing?'/records/'+editing:'/records',{method:editing?'PUT':'POST',body:JSON.stringify(form)});setForm(empty);setEditing(null);setModalOpen(false);load()},editing?'تم حفظ التعديل':'تمت إضافة السجل')}function edit(r){setEditing(r.id);setForm({...r,record_date:String(r.record_date).slice(0,10),reported_time:r.reported_time||'',completed_time:r.completed_time||'',technician_ids:r.technician_ids?String(r.technician_ids).split(',').map(Number):[]});setModalOpen(true)}async function remove(r){if(!confirm('تأكيد حذف سجل الصيانة هذا؟ لا يمكن التراجع.'))return;await runAction(async()=>{await api('/records/'+r.id,{method:'DELETE'});load()},'تم حذف السجل')}function csv(){const BOM='﻿';let c=BOM+'التاريخ,الفيلا,رقم الشقة,نوع المشكلة,الوصف,الفني,وقت الورود,وقت الانتهاء,قطعة الغيار,التكلفة\n'+rows.map(r=>[r.record_date,r.villa_name,r.apartment_no,ISSUE_TYPE_LABELS[r.issue_type]||r.issue_type,r.description,r.technician_name,r.reported_time,r.completed_time,r.spare_part,r.spare_part_cost].map(x=>'"'+(x??'')+'"').join(',')).join('\n');let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([c],{type:'text/csv;charset=utf-8'}));a.download='كشوف-الصيانة.csv';a.click()}return <><Panel title="كشف الصيانة"><div className="panelActions"><button onClick={openAdd}><Plus size={16}/>إضافة سجل صيانة</button><button className="secondary" onClick={csv}><Download size={16}/>تصدير CSV / Excel</button></div><Table rows={rows.map(r=>({...r,status:r.completed_time?'مكتمل':'قيد التنفيذ'}))} cols={['record_date','villa_name','apartment_no','issue_type','technician_name','status','spare_part_cost']} searchable actions={r=><><button className="secondary" onClick={()=>setViewing(r)}><Eye size={15}/></button><button onClick={()=>edit(r)}><Edit size={15}/></button><button className="danger" onClick={()=>remove(r)}><Trash2 size={15}/></button></>}/></Panel>
 <Modal open={!!viewing} onClose={()=>setViewing(null)} title="تفاصيل السجل">{viewing&&<div className="viewDetails"><div><b>الوصف</b><p>{viewing.description||'-'}</p></div><div><b>ملاحظات</b><p>{viewing.notes||'-'}</p></div></div>}</Modal>
 <Modal open={modalOpen} onClose={closeModal} title={editing?'تعديل سجل صيانة':'إضافة سجل صيانة'}><form className="form" onSubmit={save}>
 <div className="formSection wide"><span className="formSectionTitle">بيانات الموقع</span></div>
@@ -299,7 +299,7 @@ function Records(){const api=useApi();const[rows,setRows]=useState([]),[villas,s
 <Field label="وقت الورود"><input type="time" value={form.reported_time} onChange={e=>setForm({...form,reported_time:e.target.value})}/></Field>
 <Field label="وقت الانتهاء"><input type="time" value={form.completed_time} onChange={e=>setForm({...form,completed_time:e.target.value})}/></Field>
 <Field label="قطعة الغيار"><input value={form.spare_part||''} onChange={e=>setForm({...form,spare_part:e.target.value})}/></Field>
-<Field label="التكلفة (AED)"><input type="number" value={form.spare_part_cost} onChange={e=>setForm({...form,spare_part_cost:e.target.value})}/></Field>
+<Field label="التكلفة (AED)"><input type="number" min="0" step="0.01" value={form.spare_part_cost} onChange={e=>setForm({...form,spare_part_cost:e.target.value})}/></Field>
 <div className="formSection wide"><span className="formSectionTitle">التفاصيل</span></div>
 <Field label="الوصف" required wide><textarea required value={form.description} onChange={e=>setForm({...form,description:e.target.value})}/></Field>
 <Field label="ملاحظات" wide><textarea value={form.notes||''} onChange={e=>setForm({...form,notes:e.target.value})}/></Field>
@@ -433,13 +433,13 @@ return <>
   <Field label="المستأجر" required><select required value={leaseForm.tenant_id} onChange={e=>setLeaseForm({...leaseForm,tenant_id:e.target.value})}><option value="">اختر المستأجر</option>{tenants.map(t=><option key={t.id} value={t.id}>{t.name}</option>)}</select></Field>
   <Field label="تاريخ البداية" required><input required type="date" value={leaseForm.start_date} onChange={e=>setLeaseForm({...leaseForm,start_date:e.target.value})}/></Field>
   <Field label="تاريخ النهاية" required><input required type="date" value={leaseForm.end_date} onChange={e=>setLeaseForm({...leaseForm,end_date:e.target.value})}/></Field>
-  <Field label="إجمالي الإيجار (AED)" required><input required type="number" step="0.01" value={leaseForm.total_amount} onChange={e=>setLeaseForm({...leaseForm,total_amount:e.target.value})}/></Field>
+  <Field label="إجمالي الإيجار (AED)" required><input required type="number" min="0.01" step="0.01" value={leaseForm.total_amount} onChange={e=>setLeaseForm({...leaseForm,total_amount:e.target.value})}/></Field>
   <Field label="ملاحظات" wide><textarea value={leaseForm.notes} onChange={e=>setLeaseForm({...leaseForm,notes:e.target.value})}/></Field>
   <button><Plus size={16}/>إضافة العقد</button><button type="button" className="secondary" onClick={()=>setLeaseOpen(false)}>إلغاء</button>
 </form></Modal>
 <Modal open={instOpen} onClose={()=>setInstOpen(false)} title={editingInst?'تعديل دفعة':'إضافة دفعة'}><form className="form compact" onSubmit={saveInst}>
   <Field label="تاريخ الاستحقاق" required><input required type="date" value={instForm.due_date} onChange={e=>setInstForm({...instForm,due_date:e.target.value})}/></Field>
-  <Field label="المبلغ (AED)" required><input required type="number" step="0.01" value={instForm.amount} onChange={e=>setInstForm({...instForm,amount:e.target.value})}/></Field>
+  <Field label="المبلغ (AED)" required><input required type="number" min="0.01" step="0.01" value={instForm.amount} onChange={e=>setInstForm({...instForm,amount:e.target.value})}/></Field>
   <Field label="ملاحظات" wide><textarea value={instForm.notes} onChange={e=>setInstForm({...instForm,notes:e.target.value})}/></Field>
   <button>{editingInst?'حفظ التعديل':'إضافة الدفعة'}</button><button type="button" className="secondary" onClick={()=>setInstOpen(false)}>إلغاء</button>
 </form></Modal>
@@ -447,7 +447,7 @@ return <>
   {paymentsInst&&<div className="paymentsModal">
     <div className="paymentsList">{payments.length===0&&<p className="empty" style={{padding:12,textAlign:'center'}}>لا توجد مدفوعات بعد</p>}{payments.map(p=><div key={p.id} className="paymentRow"><div><span className="payAmount">{Number(p.amount).toFixed(2)} AED</span><span className="payDate">{new Date(p.payment_date).toLocaleDateString('ar-AE')}</span>{p.notes&&<span className="payNotes">{p.notes}</span>}</div>{isAdmin&&<button className="danger iconBtn" onClick={()=>removePayment(p.id)}><Trash2 size={14}/></button>}</div>)}</div>
     <form className="form compact" style={{borderTop:'1px solid var(--line)',marginTop:12,paddingTop:12}} onSubmit={addPayment}>
-      <Field label="المبلغ المدفوع (AED)" required><input required type="number" step="0.01" value={payForm.amount} onChange={e=>setPayForm({...payForm,amount:e.target.value})}/></Field>
+      <Field label="المبلغ المدفوع (AED)" required><input required type="number" min="0.01" step="0.01" value={payForm.amount} onChange={e=>setPayForm({...payForm,amount:e.target.value})}/></Field>
       <Field label="تاريخ الدفع" required><input required type="date" value={payForm.payment_date} onChange={e=>setPayForm({...payForm,payment_date:e.target.value})}/></Field>
       <Field label="ملاحظات" wide><input value={payForm.notes} onChange={e=>setPayForm({...payForm,notes:e.target.value})}/></Field>
       <button><Plus size={14}/>تسجيل دفع</button>
@@ -573,7 +573,7 @@ const ISSUE_TYPES=[['electricity','كهرباء'],['plumbing','سباكة'],['ac
 const ISSUE_TYPE_LABELS=Object.fromEntries(ISSUE_TYPES);
 const INST_STATUS_LABELS={collected:'تم التحصيل',overdue:'متأخرة',partial:'جزئي',due_soon:'قيد التحصيل',upcoming:'قادمة'};
 const INST_STATUS_CSS={collected:'status-on',overdue:'status-danger',partial:'status-partial',due_soon:'status-warn',upcoming:'status-off'};
-function formatCell(c,v){if(c==='status'){if(INST_STATUS_LABELS[v])return <span className={'statusBadge '+INST_STATUS_CSS[v]}>{INST_STATUS_LABELS[v]}</span>;return <span className={'statusBadge '+(v==='مكتمل'?'status-on':'status-pending')}>{v}</span>}if(v===null||v===undefined||v==='')return'-';if(c==='record_date'||c==='start_date'||c==='end_date'||c==='due_date'||c==='payment_date')return new Date(v).toLocaleDateString('ar-AE');if(c.endsWith('_time'))return String(v).slice(0,5);if(c==='spare_part_cost'||c==='total_amount'||c==='collected_amount'||c==='amount')return Number(v).toFixed(2)+' AED';if(c==='role')return <span className={'roleBadge role-'+v}>{ROLE_LABELS[v]||v}</span>;if(c==='is_active')return <span className={'statusBadge '+(v?'status-on':'status-off')}>{v?'فعّال':'موقوف'}</span>;if(c==='issue_type')return ISSUE_TYPE_LABELS[v]||v;return String(v)}
+function formatCell(c,v){if(c==='status'){if(INST_STATUS_LABELS[v])return <span className={'statusBadge '+INST_STATUS_CSS[v]}>{INST_STATUS_LABELS[v]}</span>;return <span className={'statusBadge '+(v==='مكتمل'?'status-on':'status-pending')}>{v}</span>}if(v===null||v===undefined||v==='')return'-';if(c==='record_date'||c==='start_date'||c==='end_date'||c==='due_date'||c==='payment_date'){const d=new Date(v);return`${d.getDate()} ${AR_MONTHS[d.getMonth()]} ${d.getFullYear()}`}if(c.endsWith('_time'))return String(v).slice(0,5);if(c==='spare_part_cost'||c==='total_amount'||c==='collected_amount'||c==='amount')return Number(v).toFixed(2)+' AED';if(c==='role')return <span className={'roleBadge role-'+v}>{ROLE_LABELS[v]||v}</span>;if(c==='is_active')return <span className={'statusBadge '+(v?'status-on':'status-off')}>{v?'فعّال':'موقوف'}</span>;if(c==='issue_type')return ISSUE_TYPE_LABELS[v]||v;return String(v)}
 const PAGE_SIZE=10;
 function Table({rows,cols,actions,searchable}){const[q,setQ]=useState('');const[page,setPage]=useState(0);const filtered=useMemo(()=>{if(!q)return rows;const s=q.trim().toLowerCase();return rows.filter(r=>cols.some(c=>String(r[c]??'').toLowerCase().includes(s)))},[rows,q,cols]);const pageCount=Math.max(1,Math.ceil(filtered.length/PAGE_SIZE));const pageRows=filtered.slice(page*PAGE_SIZE,page*PAGE_SIZE+PAGE_SIZE);useEffect(()=>{setPage(0)},[q,rows.length]);return <div>{searchable&&<input className="tableSearch" placeholder="بحث..." value={q} onChange={e=>setQ(e.target.value)}/>}<div className="table"><table><thead><tr>{cols.map(c=><th key={c}>{FIELD_LABELS[c]||c}</th>)}{actions&&<th></th>}</tr></thead><tbody>{pageRows.length===0&&<tr><td colSpan={cols.length+(actions?1:0)} className="empty">لا توجد بيانات</td></tr>}{pageRows.map(r=><tr key={r.id}>{cols.map(c=><td key={c} data-label={FIELD_LABELS[c]||c}>{formatCell(c,r[c])}</td>)}{actions&&<td data-label="" className="actionsCell">{actions(r)}</td>}</tr>)}</tbody></table></div>{pageCount>1&&<div className="pagination"><button type="button" disabled={page===0} onClick={()=>setPage(p=>p-1)}>السابق</button><span>{page+1} / {pageCount}</span><button type="button" disabled={page>=pageCount-1} onClick={()=>setPage(p=>p+1)}>التالي</button></div>}</div>}
 
@@ -714,13 +714,13 @@ if(selected){
     <Field label="الشقة" required><select required value={leaseForm.apartment_id} onChange={e=>setLeaseForm({...leaseForm,apartment_id:e.target.value})} disabled={!leaseForm._villa_id}><option value="">اختر الشقة</option>{apts.filter(a=>a.villa_id==leaseForm._villa_id).map(a=><option key={a.id} value={a.id}>{a.apartment_no}</option>)}</select></Field>
     <Field label="تاريخ البداية" required><input required type="date" value={leaseForm.start_date} onChange={e=>setLeaseForm({...leaseForm,start_date:e.target.value})}/></Field>
     <Field label="تاريخ النهاية" required><input required type="date" value={leaseForm.end_date} onChange={e=>setLeaseForm({...leaseForm,end_date:e.target.value})}/></Field>
-    <Field label="إجمالي الإيجار (AED)" required><input required type="number" step="0.01" value={leaseForm.total_amount} onChange={e=>setLeaseForm({...leaseForm,total_amount:e.target.value})}/></Field>
+    <Field label="إجمالي الإيجار (AED)" required><input required type="number" min="0.01" step="0.01" value={leaseForm.total_amount} onChange={e=>setLeaseForm({...leaseForm,total_amount:e.target.value})}/></Field>
     <Field label="ملاحظات" wide><textarea value={leaseForm.notes} onChange={e=>setLeaseForm({...leaseForm,notes:e.target.value})}/></Field>
     <button><Plus size={16}/>إضافة العقد</button><button type="button" className="secondary" onClick={()=>setLeaseOpen(false)}>إلغاء</button>
   </form></Modal>
   <Modal open={instOpen} onClose={()=>setInstOpen(false)} title={editingInst?'تعديل دفعة':'إضافة دفعة'}><form className="form compact" onSubmit={saveInst}>
     <Field label="تاريخ الاستحقاق" required><input required type="date" value={instForm.due_date} onChange={e=>setInstForm({...instForm,due_date:e.target.value})}/></Field>
-    <Field label="المبلغ (AED)" required><input required type="number" step="0.01" value={instForm.amount} onChange={e=>setInstForm({...instForm,amount:e.target.value})}/></Field>
+    <Field label="المبلغ (AED)" required><input required type="number" min="0.01" step="0.01" value={instForm.amount} onChange={e=>setInstForm({...instForm,amount:e.target.value})}/></Field>
     <Field label="ملاحظات" wide><textarea value={instForm.notes} onChange={e=>setInstForm({...instForm,notes:e.target.value})}/></Field>
     <button>{editingInst?'حفظ التعديل':'إضافة الدفعة'}</button><button type="button" className="secondary" onClick={()=>setInstOpen(false)}>إلغاء</button>
   </form></Modal>
@@ -728,7 +728,7 @@ if(selected){
     {paymentsInst&&<div className="paymentsModal">
       <div className="paymentsList">{payments.length===0&&<p className="empty" style={{padding:12,textAlign:'center'}}>لا توجد مدفوعات بعد</p>}{payments.map(p=><div key={p.id} className="paymentRow"><div><span className="payAmount">{Number(p.amount).toFixed(2)} AED</span><span className="payDate">{new Date(p.payment_date).toLocaleDateString('ar-AE')}</span>{p.notes&&<span className="payNotes">{p.notes}</span>}</div>{isAdmin&&<button className="danger iconBtn" onClick={()=>removePayment(p.id)}><Trash2 size={14}/></button>}</div>)}</div>
       <form className="form compact" style={{borderTop:'1px solid var(--line)',marginTop:12,paddingTop:12}} onSubmit={addPayment}>
-        <Field label="المبلغ المدفوع (AED)" required><input required type="number" step="0.01" value={payForm.amount} onChange={e=>setPayForm({...payForm,amount:e.target.value})}/></Field>
+        <Field label="المبلغ المدفوع (AED)" required><input required type="number" min="0.01" step="0.01" value={payForm.amount} onChange={e=>setPayForm({...payForm,amount:e.target.value})}/></Field>
         <Field label="تاريخ الدفع" required><input required type="date" value={payForm.payment_date} onChange={e=>setPayForm({...payForm,payment_date:e.target.value})}/></Field>
         <Field label="ملاحظات" wide><input value={payForm.notes} onChange={e=>setPayForm({...payForm,notes:e.target.value})}/></Field>
         <button><Plus size={14}/>تسجيل دفع</button>
@@ -882,14 +882,14 @@ if(selectedLease&&leaseDetail){
     <Field label="المستأجر" required><select required value={form.tenant_id} onChange={e=>setForm({...form,tenant_id:e.target.value})}><option value="">اختر المستأجر</option>{tenants.map(t=><option key={t.id} value={t.id}>{t.name}</option>)}</select></Field>
     <Field label="تاريخ البداية" required><input required type="date" value={form.start_date} onChange={e=>setForm({...form,start_date:e.target.value})}/></Field>
     <Field label="تاريخ النهاية" required><input required type="date" value={form.end_date} onChange={e=>setForm({...form,end_date:e.target.value})}/></Field>
-    <Field label="إجمالي الإيجار (AED)" required><input required type="number" step="0.01" value={form.total_amount} onChange={e=>setForm({...form,total_amount:e.target.value})}/></Field>
+    <Field label="إجمالي الإيجار (AED)" required><input required type="number" min="0.01" step="0.01" value={form.total_amount} onChange={e=>setForm({...form,total_amount:e.target.value})}/></Field>
     <Field label="الحالة"><select value={form.is_active} onChange={e=>setForm({...form,is_active:Number(e.target.value)})}><option value={1}>فعّال</option><option value={0}>منتهي</option></select></Field>
     <Field label="ملاحظات" wide><textarea value={form.notes} onChange={e=>setForm({...form,notes:e.target.value})}/></Field>
     <button><Plus size={16}/>حفظ التعديل</button><button type="button" className="secondary" onClick={()=>setOpen(false)}>إلغاء</button>
   </form></Modal>
   <Modal open={instOpen} onClose={()=>setInstOpen(false)} title={editingInst?'تعديل دفعة':'إضافة دفعة'}><form className="form compact" onSubmit={saveInst}>
     <Field label="تاريخ الاستحقاق" required><input required type="date" value={instForm.due_date} onChange={e=>setInstForm({...instForm,due_date:e.target.value})}/></Field>
-    <Field label="المبلغ (AED)" required><input required type="number" step="0.01" value={instForm.amount} onChange={e=>setInstForm({...instForm,amount:e.target.value})}/></Field>
+    <Field label="المبلغ (AED)" required><input required type="number" min="0.01" step="0.01" value={instForm.amount} onChange={e=>setInstForm({...instForm,amount:e.target.value})}/></Field>
     <Field label="ملاحظات" wide><textarea value={instForm.notes} onChange={e=>setInstForm({...instForm,notes:e.target.value})}/></Field>
     <button>{editingInst?'حفظ التعديل':'إضافة الدفعة'}</button><button type="button" className="secondary" onClick={()=>setInstOpen(false)}>إلغاء</button>
   </form></Modal>
@@ -897,7 +897,7 @@ if(selectedLease&&leaseDetail){
     {paymentsInst&&<div className="paymentsModal">
       <div className="paymentsList">{payments.length===0&&<p className="empty" style={{padding:12,textAlign:'center'}}>لا توجد مدفوعات بعد</p>}{payments.map(p=><div key={p.id} className="paymentRow"><div><span className="payAmount">{Number(p.amount).toLocaleString()} AED</span><span className="payDate">{new Date(p.payment_date).toLocaleDateString('ar-AE')}</span>{p.notes&&<span className="payNotes">{p.notes}</span>}</div>{isAdmin&&<button className="danger iconBtn" onClick={()=>removePayment(p.id)}><Trash2 size={14}/></button>}</div>)}</div>
       <form className="form compact" style={{borderTop:'1px solid var(--line)',marginTop:12,paddingTop:12}} onSubmit={addPayment}>
-        <Field label="المبلغ المدفوع (AED)" required><input required type="number" step="0.01" value={payForm.amount} onChange={e=>setPayForm({...payForm,amount:e.target.value})}/></Field>
+        <Field label="المبلغ المدفوع (AED)" required><input required type="number" min="0.01" step="0.01" value={payForm.amount} onChange={e=>setPayForm({...payForm,amount:e.target.value})}/></Field>
         <Field label="تاريخ الدفع" required><input required type="date" value={payForm.payment_date} onChange={e=>setPayForm({...payForm,payment_date:e.target.value})}/></Field>
         <Field label="ملاحظات" wide><input value={payForm.notes} onChange={e=>setPayForm({...payForm,notes:e.target.value})}/></Field>
         <button><Plus size={14}/>تسجيل دفع</button>
@@ -986,14 +986,14 @@ return <>
   <Field label="الشقة" required><select required value={form.apartment_id} onChange={e=>setForm({...form,apartment_id:e.target.value})} disabled={!form._villa_id}><option value="">اختر الشقة</option>{apts.filter(a=>a.villa_id==form._villa_id).map(a=><option key={a.id} value={a.id}>{a.apartment_no}</option>)}</select></Field>
   <Field label="تاريخ البداية" required><input required type="date" value={form.start_date} onChange={e=>setForm({...form,start_date:e.target.value})}/></Field>
   <Field label="تاريخ النهاية" required><input required type="date" value={form.end_date} onChange={e=>setForm({...form,end_date:e.target.value})}/></Field>
-  <Field label="إجمالي الإيجار (AED)" required><input required type="number" step="0.01" value={form.total_amount} onChange={e=>setForm({...form,total_amount:e.target.value})}/></Field>
+  <Field label="إجمالي الإيجار (AED)" required><input required type="number" min="0.01" step="0.01" value={form.total_amount} onChange={e=>setForm({...form,total_amount:e.target.value})}/></Field>
   {editing&&<Field label="الحالة"><select value={form.is_active} onChange={e=>setForm({...form,is_active:Number(e.target.value)})}><option value={1}>فعّال</option><option value={0}>منتهي</option></select></Field>}
   <Field label="ملاحظات" wide><textarea value={form.notes} onChange={e=>setForm({...form,notes:e.target.value})}/></Field>
   <button><Plus size={16}/>{editing?'حفظ التعديل':'إضافة العقد'}</button><button type="button" className="secondary" onClick={()=>setOpen(false)}>إلغاء</button>
 </form></Modal>
 <Modal open={instOpen} onClose={()=>setInstOpen(false)} title={editingInst?'تعديل دفعة':'إضافة دفعة'}><form className="form compact" onSubmit={saveInst}>
   <Field label="تاريخ الاستحقاق" required><input required type="date" value={instForm.due_date} onChange={e=>setInstForm({...instForm,due_date:e.target.value})}/></Field>
-  <Field label="المبلغ (AED)" required><input required type="number" step="0.01" value={instForm.amount} onChange={e=>setInstForm({...instForm,amount:e.target.value})}/></Field>
+  <Field label="المبلغ (AED)" required><input required type="number" min="0.01" step="0.01" value={instForm.amount} onChange={e=>setInstForm({...instForm,amount:e.target.value})}/></Field>
   <Field label="ملاحظات" wide><textarea value={instForm.notes} onChange={e=>setInstForm({...instForm,notes:e.target.value})}/></Field>
   <button>{editingInst?'حفظ التعديل':'إضافة الدفعة'}</button><button type="button" className="secondary" onClick={()=>setInstOpen(false)}>إلغاء</button>
 </form></Modal>
@@ -1001,7 +1001,7 @@ return <>
   {paymentsInst&&<div className="paymentsModal">
     <div className="paymentsList">{payments.length===0&&<p className="empty" style={{padding:12,textAlign:'center'}}>لا توجد مدفوعات بعد</p>}{payments.map(p=><div key={p.id} className="paymentRow"><div><span className="payAmount">{Number(p.amount).toLocaleString()} AED</span><span className="payDate">{new Date(p.payment_date).toLocaleDateString('ar-AE')}</span>{p.notes&&<span className="payNotes">{p.notes}</span>}</div>{isAdmin&&<button className="danger iconBtn" onClick={()=>removePayment(p.id)}><Trash2 size={14}/></button>}</div>)}</div>
     <form className="form compact" style={{borderTop:'1px solid var(--line)',marginTop:12,paddingTop:12}} onSubmit={addPayment}>
-      <Field label="المبلغ المدفوع (AED)" required><input required type="number" step="0.01" value={payForm.amount} onChange={e=>setPayForm({...payForm,amount:e.target.value})}/></Field>
+      <Field label="المبلغ المدفوع (AED)" required><input required type="number" min="0.01" step="0.01" value={payForm.amount} onChange={e=>setPayForm({...payForm,amount:e.target.value})}/></Field>
       <Field label="تاريخ الدفع" required><input required type="date" value={payForm.payment_date} onChange={e=>setPayForm({...payForm,payment_date:e.target.value})}/></Field>
       <Field label="ملاحظات" wide><input value={payForm.notes} onChange={e=>setPayForm({...payForm,notes:e.target.value})}/></Field>
       <button><Plus size={14}/>تسجيل دفع</button>
@@ -1053,7 +1053,6 @@ filtered.forEach(r=>{
   const raw=r.due_date.slice?r.due_date.slice(0,10):String(r.due_date).slice(0,10);
   const [yr,mo]=raw.split('-');
   const key=`${yr}-${mo}`;
-  const AR_MONTHS=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
   const label=`${AR_MONTHS[parseInt(mo,10)-1]} ${yr}`;
   if(!groups[key])groups[key]={key,label,rows:[],total:0,collected:0};
   groups[key].rows.push(r);
@@ -1192,7 +1191,7 @@ return <>
   {paymentsInst&&<div className="paymentsModal">
     <div className="paymentsList">{payments.length===0&&<p className="empty" style={{padding:12,textAlign:'center'}}>لا توجد مدفوعات بعد</p>}{payments.map(p=><div key={p.id} className="paymentRow"><div><span className="payAmount">{Number(p.amount).toLocaleString()} AED</span><span className="payDate">{new Date(p.payment_date).toLocaleDateString('ar-AE')}</span>{p.notes&&<span className="payNotes">{p.notes}</span>}</div>{isAdmin&&<button className="danger iconBtn" onClick={()=>removePayment(p.id)}><Trash2 size={14}/></button>}</div>)}</div>
     <form className="form compact" style={{borderTop:'1px solid var(--line)',marginTop:12,paddingTop:12}} onSubmit={addPayment}>
-      <Field label="المبلغ المدفوع (AED)" required><input required type="number" step="0.01" value={payForm.amount} onChange={e=>setPayForm({...payForm,amount:e.target.value})}/></Field>
+      <Field label="المبلغ المدفوع (AED)" required><input required type="number" min="0.01" step="0.01" value={payForm.amount} onChange={e=>setPayForm({...payForm,amount:e.target.value})}/></Field>
       <Field label="تاريخ الدفع" required><input required type="date" value={payForm.payment_date} onChange={e=>setPayForm({...payForm,payment_date:e.target.value})}/></Field>
       <Field label="ملاحظات" wide><input value={payForm.notes} onChange={e=>setPayForm({...payForm,notes:e.target.value})}/></Field>
       <button><Plus size={14}/>تسجيل دفع</button>
