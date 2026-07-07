@@ -483,10 +483,47 @@ return <>
 </>;}
 
 
+function TenantSearch({tenants,value,onChange}){
+  const[q,setQ]=useState('');
+  const[open,setOpen]=useState(false);
+  const selected=tenants.find(t=>t.id==value);
+  const filtered=q?tenants.filter(t=>t.name.includes(q)||(t.phone||'').includes(q)):tenants;
+  return <div className="tenantSearch" style={{position:'relative'}}>
+    <div className="tenantSearchInput" onClick={()=>setOpen(o=>!o)}>
+      {selected?<span>{selected.name}{selected.phone&&<small> — {selected.phone}</small>}</span>:<span className="tenantSearchPlaceholder">ابحث عن مستأجر...</span>}
+      <ChevronDown size={14}/>
+    </div>
+    {open&&<div className="tenantSearchDropdown">
+      <input autoFocus className="tenantSearchBox" placeholder="اكتب الاسم أو الهاتف..." value={q} onChange={e=>setQ(e.target.value)} onClick={e=>e.stopPropagation()}/>
+      <div className="tenantSearchList">
+        {filtered.length===0&&<div className="tenantSearchEmpty">لا توجد نتائج</div>}
+        {filtered.map(t=><div key={t.id} className={'tenantSearchItem'+(t.id==value?' selected':'')} onMouseDown={()=>{onChange(t.id);setOpen(false);setQ('');}}>
+          <span className="tenantSearchName">{t.name}</span>
+          {t.phone&&<span className="tenantSearchPhone">{t.phone}</span>}
+        </div>)}
+      </div>
+    </div>}
+  </div>
+}
+
+const DEPOSIT_TYPES=[['cash','كاش'],['check','شيك']];
+const emptyLeaseForm={tenant_id:'',start_date:'',end_date:'',total_amount:'',deposit_amount:'',deposit_type:'',deposit_notes:'',notes:''};
+
+function LeaseFormFields({form,setForm,tenants}){return <>
+  <Field label="المستأجر" required><TenantSearch tenants={tenants} value={form.tenant_id} onChange={v=>setForm({...form,tenant_id:v})}/></Field>
+  <Field label="تاريخ البداية" required><input required type="date" value={form.start_date} onChange={e=>setForm({...form,start_date:e.target.value})}/></Field>
+  <Field label="تاريخ النهاية" required><input required type="date" value={form.end_date} onChange={e=>setForm({...form,end_date:e.target.value})}/></Field>
+  <Field label="إجمالي الإيجار (AED)" required><input required type="number" min="0.01" step="0.01" value={form.total_amount} onChange={e=>setForm({...form,total_amount:e.target.value})}/></Field>
+  <Field label="مبلغ التأمين (AED)"><input type="number" min="0" step="0.01" value={form.deposit_amount} onChange={e=>setForm({...form,deposit_amount:e.target.value})}/></Field>
+  <Field label="نوع سداد التأمين"><select value={form.deposit_type} onChange={e=>setForm({...form,deposit_type:e.target.value})}><option value="">—</option>{DEPOSIT_TYPES.map(([v,l])=><option key={v} value={v}>{l}</option>)}</select></Field>
+  <Field label="ملاحظات التأمين"><input value={form.deposit_notes} onChange={e=>setForm({...form,deposit_notes:e.target.value})}/></Field>
+  <Field label="ملاحظات" wide><textarea value={form.notes} onChange={e=>setForm({...form,notes:e.target.value})}/></Field>
+</>}
+
 function AptLeasesView({apt,api,isAdmin,onBack}){
 const[leasesDetail,setLeasesDetail]=useState(null);
 const[tenants,setTenants]=useState([]);
-const[leaseForm,setLeaseForm]=useState({tenant_id:'',start_date:'',end_date:'',total_amount:'',notes:''});
+const[leaseForm,setLeaseForm]=useState(emptyLeaseForm);
 const[leaseOpen,setLeaseOpen]=useState(false);
 const[instForm,setInstForm]=useState({due_date:'',amount:'',notes:''});const[instOpen,setInstOpen]=useState(false);const[editingInst,setEditingInst]=useState(null);const[targetLeaseId,setTargetLeaseId]=useState(null);
 const[paymentsInst,setPaymentsInst]=useState(null);const[payments,setPayments]=useState([]);
@@ -499,7 +536,7 @@ async function reload(){
 }
 useEffect(()=>{reload();api('/tenants').then(setTenants)},[apt.id]);
 
-async function saveLease(e){e.preventDefault();await runAction(async()=>{await api('/leases',{method:'POST',body:JSON.stringify({...leaseForm,apartment_id:apt.id})});setLeaseForm({tenant_id:'',start_date:'',end_date:'',total_amount:'',notes:''});setLeaseOpen(false);reload()},'تمت إضافة العقد')}
+async function saveLease(e){e.preventDefault();if(!leaseForm.tenant_id)return showToast('اختر المستأجر','error');await runAction(async()=>{await api('/leases',{method:'POST',body:JSON.stringify({...leaseForm,apartment_id:apt.id})});setLeaseForm(emptyLeaseForm);setLeaseOpen(false);reload()},'تمت إضافة العقد')}
 async function saveInst(e){e.preventDefault();await runAction(async()=>{if(editingInst){await api('/installments/'+editingInst,{method:'PUT',body:JSON.stringify(instForm)})}else{await api('/leases/'+targetLeaseId+'/installments',{method:'POST',body:JSON.stringify(instForm)})}setInstForm({due_date:'',amount:'',notes:''});setEditingInst(null);setInstOpen(false);reload()},editingInst?'تم تعديل الدفعة':'تمت إضافة الدفعة')}
 async function removeInst(id){if(!confirm('تأكيد حذف الدفعة؟'))return;await runAction(async()=>{await api('/installments/'+id,{method:'DELETE'});reload()},'تم الحذف')}
 async function openPayments(inst){setPaymentsInst(inst);const p=await api('/installments/'+inst.id+'/payments');setPayments(p||[]);setPayOpen(true)}
@@ -545,11 +582,7 @@ return <>
   </div>;
 })}
 <Modal open={leaseOpen} onClose={()=>setLeaseOpen(false)} title="إضافة عقد إيجار جديد"><form className="form" onSubmit={saveLease}>
-  <Field label="المستأجر" required><select required value={leaseForm.tenant_id} onChange={e=>setLeaseForm({...leaseForm,tenant_id:e.target.value})}><option value="">اختر المستأجر</option>{tenants.map(t=><option key={t.id} value={t.id}>{t.name}</option>)}</select></Field>
-  <Field label="تاريخ البداية" required><input required type="date" value={leaseForm.start_date} onChange={e=>setLeaseForm({...leaseForm,start_date:e.target.value})}/></Field>
-  <Field label="تاريخ النهاية" required><input required type="date" value={leaseForm.end_date} onChange={e=>setLeaseForm({...leaseForm,end_date:e.target.value})}/></Field>
-  <Field label="إجمالي الإيجار (AED)" required><input required type="number" min="0.01" step="0.01" value={leaseForm.total_amount} onChange={e=>setLeaseForm({...leaseForm,total_amount:e.target.value})}/></Field>
-  <Field label="ملاحظات" wide><textarea value={leaseForm.notes} onChange={e=>setLeaseForm({...leaseForm,notes:e.target.value})}/></Field>
+  <LeaseFormFields form={leaseForm} setForm={setLeaseForm} tenants={tenants}/>
   <button><Plus size={16}/>إضافة العقد</button><button type="button" className="secondary" onClick={()=>setLeaseOpen(false)}>إلغاء</button>
 </form></Modal>
 <Modal open={instOpen} onClose={()=>setInstOpen(false)} title={editingInst?'تعديل دفعة':'إضافة دفعة'}><form className="form compact" onSubmit={saveInst}>
@@ -721,7 +754,7 @@ const[villas,setVillas]=useState([]);const[apts,setApts]=useState([]);
 const[selected,setSelected]=useState(null);
 const empty={name:'',phone:'',national_id:'',email:'',notes:''};
 const[form,setForm]=useState(empty);const[editing,setEditing]=useState(null);const[tenantOpen,setTenantOpen]=useState(false);
-const emptyLease={apartment_id:'',_villa_id:'',start_date:'',end_date:'',total_amount:'',notes:''};
+const emptyLease={apartment_id:'',_villa_id:'',start_date:'',end_date:'',total_amount:'',deposit_amount:'',deposit_type:'',deposit_notes:'',notes:''};
 const[leaseForm,setLeaseForm]=useState(emptyLease);const[leaseOpen,setLeaseOpen]=useState(false);
 const[instForm,setInstForm]=useState({due_date:'',amount:'',notes:''});const[instOpen,setInstOpen]=useState(false);const[editingInst,setEditingInst]=useState(null);const[targetLeaseId,setTargetLeaseId]=useState(null);
 const[paymentsInst,setPaymentsInst]=useState(null);const[payments,setPayments]=useState([]);
@@ -827,10 +860,7 @@ if(selected){
   <Modal open={leaseOpen} onClose={()=>setLeaseOpen(false)} title="إضافة عقد إيجار جديد"><form className="form" onSubmit={saveLease}>
     <Field label="الفيلا" required><select required value={leaseForm._villa_id} onChange={e=>setLeaseForm({...leaseForm,_villa_id:e.target.value,apartment_id:''})}><option value="">اختر الفيلا</option>{villas.map(v=><option key={v.id} value={v.id}>{v.name}</option>)}</select></Field>
     <Field label="الشقة" required><select required value={leaseForm.apartment_id} onChange={e=>setLeaseForm({...leaseForm,apartment_id:e.target.value})} disabled={!leaseForm._villa_id}><option value="">اختر الشقة</option>{apts.filter(a=>a.villa_id==leaseForm._villa_id).map(a=><option key={a.id} value={a.id}>{a.apartment_no}</option>)}</select></Field>
-    <Field label="تاريخ البداية" required><input required type="date" value={leaseForm.start_date} onChange={e=>setLeaseForm({...leaseForm,start_date:e.target.value})}/></Field>
-    <Field label="تاريخ النهاية" required><input required type="date" value={leaseForm.end_date} onChange={e=>setLeaseForm({...leaseForm,end_date:e.target.value})}/></Field>
-    <Field label="إجمالي الإيجار (AED)" required><input required type="number" min="0.01" step="0.01" value={leaseForm.total_amount} onChange={e=>setLeaseForm({...leaseForm,total_amount:e.target.value})}/></Field>
-    <Field label="ملاحظات" wide><textarea value={leaseForm.notes} onChange={e=>setLeaseForm({...leaseForm,notes:e.target.value})}/></Field>
+    <LeaseFormFields form={leaseForm} setForm={setLeaseForm} tenants={tenants}/>
     <button><Plus size={16}/>إضافة العقد</button><button type="button" className="secondary" onClick={()=>setLeaseOpen(false)}>إلغاء</button>
   </form></Modal>
   <Modal open={instOpen} onClose={()=>setInstOpen(false)} title={editingInst?'تعديل دفعة':'إضافة دفعة'}><form className="form compact" onSubmit={saveInst}>
@@ -910,7 +940,7 @@ const api=useApi();const isAdmin=user?.role==='ADMIN';
 const[rows,setRows]=useState([]);const[tenants,setTenants]=useState([]);const[apts,setApts]=useState([]);const[villas,setVillas]=useState([]);
 const[selectedLease,setSelectedLease]=useState(null);const[leaseDetail,setLeaseDetail]=useState(null);
 const[qs,setQs]=useState('');const[statusFilter,setStatusFilter]=useState('all');
-const empty={apartment_id:'',tenant_id:'',start_date:'',end_date:'',total_amount:'',notes:'',is_active:1,_villa_id:''};
+const empty={apartment_id:'',tenant_id:'',start_date:'',end_date:'',total_amount:'',deposit_amount:'',deposit_type:'',deposit_notes:'',notes:'',is_active:1,_villa_id:''};
 const[form,setForm]=useState(empty);const[editing,setEditing]=useState(null);const[open,setOpen]=useState(false);
 const[instForm,setInstForm]=useState({due_date:'',amount:'',notes:''});const[instOpen,setInstOpen]=useState(false);const[editingInst,setEditingInst]=useState(null);
 const[paymentsInst,setPaymentsInst]=useState(null);const[payments,setPayments]=useState([]);
@@ -994,12 +1024,8 @@ if(selectedLease&&leaseDetail){
   </div>
 
   <Modal open={open} onClose={()=>setOpen(false)} title="تعديل عقد"><form className="form" onSubmit={saveLease}>
-    <Field label="المستأجر" required><select required value={form.tenant_id} onChange={e=>setForm({...form,tenant_id:e.target.value})}><option value="">اختر المستأجر</option>{tenants.map(t=><option key={t.id} value={t.id}>{t.name}</option>)}</select></Field>
-    <Field label="تاريخ البداية" required><input required type="date" value={form.start_date} onChange={e=>setForm({...form,start_date:e.target.value})}/></Field>
-    <Field label="تاريخ النهاية" required><input required type="date" value={form.end_date} onChange={e=>setForm({...form,end_date:e.target.value})}/></Field>
-    <Field label="إجمالي الإيجار (AED)" required><input required type="number" min="0.01" step="0.01" value={form.total_amount} onChange={e=>setForm({...form,total_amount:e.target.value})}/></Field>
+    <LeaseFormFields form={form} setForm={setForm} tenants={tenants}/>
     <Field label="الحالة"><select value={form.is_active} onChange={e=>setForm({...form,is_active:Number(e.target.value)})}><option value={1}>فعّال</option><option value={0}>منتهي</option></select></Field>
-    <Field label="ملاحظات" wide><textarea value={form.notes} onChange={e=>setForm({...form,notes:e.target.value})}/></Field>
     <button><Plus size={16}/>حفظ التعديل</button><button type="button" className="secondary" onClick={()=>setOpen(false)}>إلغاء</button>
   </form></Modal>
   <Modal open={instOpen} onClose={()=>setInstOpen(false)} title={editingInst?'تعديل دفعة':'إضافة دفعة'}><form className="form compact" onSubmit={saveInst}>
