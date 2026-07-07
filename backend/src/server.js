@@ -5,8 +5,12 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import multer from 'multer';
+import * as XLSX from 'xlsx';
 import { pool } from './config/db.js';
 import { auth, adminOnly } from './middleware/auth.js';
+
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } });
 
 const app = express();
 app.use(helmet());
@@ -469,6 +473,198 @@ app.use((err, req, res, next) => {
   if (status === 500) console.error(err);
   res.status(status).json({ message: status === 500 ? 'Internal server error' : err.message });
 });
+
+// ── Import ─────────────────────────────────────────────────────────────────
+function parseSheet(wb, name) {
+  const ws = wb.Sheets[name];
+  if (!ws) return [];
+  return XLSX.utils.sheet_to_json(ws, { defval: '' });
+}
+
+app.post('/api/import/preview', auth, adminOnly, upload.single('file'), wrap(async (req, res) => {
+  if (!req.file) return res.status(400).json({ message: 'لم يتم رفع ملف' });
+  const wb = XLSX.read(req.file.buffer, { type: 'buffer', cellDates: true });
+
+  const villas      = parseSheet(wb, 'الفلل');
+  const apartments  = parseSheet(wb, 'الشقق');
+  const tenants     = parseSheet(wb, 'المستأجرين');
+  const leases      = parseSheet(wb, 'العقود');
+  const installments= parseSheet(wb, 'الدفعات');
+
+  const errors = [];
+  villas.forEach((r, i) => { if (!r['اسم الفيلا *']) errors.push(`الفلل - صف ${i+2}: اسم الفيلا مطلوب`); });
+  apartments.forEach((r, i) => {
+    if (!r['اسم الفيلا *']) errors.push(`الشقق - صف ${i+2}: اسم الفيلا مطلوب`);
+    if (!r['رقم الشقة *'])  errors.push(`الشقق - صف ${i+2}: رقم الشقة مطلوب`);
+  });
+  tenants.forEach((r, i) => { if (!r['الاسم *']) errors.push(`المستأجرين - صف ${i+2}: الاسم مطلوب`); });
+  leases.forEach((r, i) => {
+    if (!r['اسم الفيلا *'])    errors.push(`العقود - صف ${i+2}: اسم الفيلا مطلوب`);
+    if (!r['رقم الشقة *'])     errors.push(`العقود - صف ${i+2}: رقم الشقة مطلوب`);
+    if (!r['اسم المستأجر *'])  errors.push(`العقود - صف ${i+2}: اسم المستأجر مطلوب`);
+    if (!r['تاريخ البداية *']) errors.push(`العقود - صف ${i+2}: تاريخ البداية مطلوب`);
+    if (!r['تاريخ النهاية *']) errors.push(`العقود - صف ${i+2}: تاريخ النهاية مطلوب`);
+    if (!r['إجمالي الإيجار *'])errors.push(`العقود - صف ${i+2}: إجمالي الإيجار مطلوب`);
+  });
+  installments.forEach((r, i) => {
+    if (!r['اسم الفيلا *'])        errors.push(`الدفعات - صف ${i+2}: اسم الفيلا مطلوب`);
+    if (!r['رقم الشقة *'])         errors.push(`الدفعات - صف ${i+2}: رقم الشقة مطلوب`);
+    if (!r['اسم المستأجر *'])      errors.push(`الدفعات - صف ${i+2}: اسم المستأجر مطلوب`);
+    if (!r['تاريخ الاستحقاق *'])  errors.push(`الدفعات - صف ${i+2}: تاريخ الاستحقاق مطلوب`);
+    if (!r['المبلغ *'])            errors.push(`الدفعات - صف ${i+2}: المبلغ مطلوب`);
+  });
+
+  ok(res, { villas, apartments, tenants, leases, installments, errors,
+    counts: { villas: villas.length, apartments: apartments.length, tenants: tenants.length, leases: leases.length, installments: installments.length } });
+}));
+
+function toDate(v) {
+  if (!v) return null;
+  if (v instanceof Date) return v.toISOString().slice(0, 10);
+  const s = String(v).trim();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+  const d = new Date(s);
+  return isNaN(d) ? null : d.toISOString().slice(0, 10);
+}
+
+app.post('/api/import/confirm', auth, adminOnly, upload.single('file'), wrap(async (req, res) => {
+  if (!req.file) return res.status(400).json({ message: 'لم يتم رفع ملف' });
+  const wb = XLSX.read(req.file.buffer, { type: 'buffer', cellDates: true });
+
+  const villaRows  = parseSheet(wb, 'الفلل').filter(r => r['اسم الفيلا *']);
+  const aptRows    = parseSheet(wb, 'الشقق').filter(r => r['اسم الفيلا *'] && r['رقم الشقة *']);
+  const tenRows    = parseSheet(wb, 'المستأجرين').filter(r => r['الاسم *']);
+  const leaseRows  = parseSheet(wb, 'العقود').filter(r => r['اسم الفيلا *'] && r['رقم الشقة *'] && r['اسم المستأجر *']);
+  const instRows   = parseSheet(wb, 'الدفعات').filter(r => r['اسم الفيلا *'] && r['رقم الشقة *'] && r['اسم المستأجر *'] && r['المبلغ *']);
+
+  const conn = await pool.getConnection();
+  const report = { villas:0, apartments:0, tenants:0, leases:0, installments:0, skipped:[] };
+
+  try {
+    await conn.beginTransaction();
+
+    // 1. Villas
+    const villaMap = {};
+    for (const r of villaRows) {
+      const name = String(r['اسم الفيلا *']).trim();
+      const [[ex]] = await conn.query('SELECT id FROM villas WHERE name=?', [name]);
+      if (ex) { villaMap[name] = ex.id; report.skipped.push(`فيلا "${name}" موجودة بالفعل`); continue; }
+      const [ins] = await conn.query('INSERT INTO villas (name,area,notes) VALUES (?,?,?)',
+        [name, r['المنطقة']||null, r['ملاحظات']||null]);
+      villaMap[name] = ins.insertId;
+      report.villas++;
+    }
+
+    // also load existing villas into map for references
+    const [existingVillas] = await conn.query('SELECT id, name FROM villas');
+    existingVillas.forEach(v => { if (!villaMap[v.name]) villaMap[v.name] = v.id; });
+
+    // 2. Apartments
+    const aptMap = {};
+    for (const r of aptRows) {
+      const vName = String(r['اسم الفيلا *']).trim();
+      const aptNo = String(r['رقم الشقة *']).trim();
+      const vid = villaMap[vName];
+      if (!vid) { report.skipped.push(`شقة ${aptNo}: فيلا "${vName}" غير موجودة`); continue; }
+      const [[ex]] = await conn.query('SELECT id FROM apartments WHERE villa_id=? AND apartment_no=?', [vid, aptNo]);
+      if (ex) { aptMap[`${vName}|${aptNo}`] = ex.id; report.skipped.push(`شقة ${aptNo} في "${vName}" موجودة بالفعل`); continue; }
+      const balcony = String(r['بلكونة (نعم/لا)']||'').trim() === 'نعم' ? 1 : 0;
+      const [ins] = await conn.query(
+        'INSERT INTO apartments (villa_id,apartment_no,apt_type,bathrooms,has_balcony,floor,notes) VALUES (?,?,?,?,?,?,?)',
+        [vid, aptNo, r['نوع الشقة']||null, Number(r['عدد الحمامات'])||1, balcony, r['الدور']||null, r['ملاحظات']||null]);
+      aptMap[`${vName}|${aptNo}`] = ins.insertId;
+      report.apartments++;
+    }
+
+    // load existing apartments
+    const [existingApts] = await conn.query('SELECT a.id, a.apartment_no, v.name villa_name FROM apartments a JOIN villas v ON v.id=a.villa_id');
+    existingApts.forEach(a => { const k=`${a.villa_name}|${a.apartment_no}`; if(!aptMap[k]) aptMap[k]=a.id; });
+
+    // 3. Tenants
+    const tenMap = {};
+    for (const r of tenRows) {
+      const name = String(r['الاسم *']).trim();
+      const [[ex]] = await conn.query('SELECT id FROM tenants WHERE name=?', [name]);
+      if (ex) { tenMap[name] = ex.id; report.skipped.push(`مستأجر "${name}" موجود بالفعل`); continue; }
+      const [ins] = await conn.query('INSERT INTO tenants (name,phone,national_id,email,notes) VALUES (?,?,?,?,?)',
+        [name, r['الهاتف']||null, r['رقم الهوية']||null, r['الإيميل']||null, r['ملاحظات']||null]);
+      tenMap[name] = ins.insertId;
+      report.tenants++;
+    }
+
+    // load existing tenants
+    const [existingTens] = await conn.query('SELECT id, name FROM tenants');
+    existingTens.forEach(t => { if(!tenMap[t.name]) tenMap[t.name]=t.id; });
+
+    // 4. Leases
+    const leaseMap = {};
+    for (const r of leaseRows) {
+      const vName = String(r['اسم الفيلا *']).trim();
+      const aptNo = String(r['رقم الشقة *']).trim();
+      const tName = String(r['اسم المستأجر *']).trim();
+      const aptId = aptMap[`${vName}|${aptNo}`];
+      const tenId = tenMap[tName];
+      if (!aptId) { report.skipped.push(`عقد: شقة ${aptNo} في "${vName}" غير موجودة`); continue; }
+      if (!tenId) { report.skipped.push(`عقد: مستأجر "${tName}" غير موجود`); continue; }
+      const startDate = toDate(r['تاريخ البداية *']);
+      const endDate   = toDate(r['تاريخ النهاية *']);
+      const [[ex]] = await conn.query('SELECT id FROM leases WHERE apartment_id=? AND tenant_id=? AND start_date=?', [aptId, tenId, startDate]);
+      if (ex) { leaseMap[`${vName}|${aptNo}|${tName}`] = ex.id; report.skipped.push(`عقد "${tName}" في شقة ${aptNo} موجود بالفعل`); continue; }
+      const isActive = endDate >= new Date().toISOString().slice(0,10) ? 1 : 0;
+      const [ins] = await conn.query(
+        'INSERT INTO leases (apartment_id,tenant_id,start_date,end_date,total_amount,notes,is_active) VALUES (?,?,?,?,?,?,?)',
+        [aptId, tenId, startDate, endDate, Number(r['إجمالي الإيجار *'])||0, r['ملاحظات']||null, isActive]);
+      leaseMap[`${vName}|${aptNo}|${tName}`] = ins.insertId;
+      report.leases++;
+    }
+
+    // load existing leases for installment references
+    const [existingLeases] = await conn.query(
+      'SELECT l.id, a.apartment_no, v.name villa_name, t.name tenant_name FROM leases l JOIN apartments a ON a.id=l.apartment_id JOIN villas v ON v.id=a.villa_id JOIN tenants t ON t.id=l.tenant_id');
+    existingLeases.forEach(l => { const k=`${l.villa_name}|${l.apartment_no}|${l.tenant_name}`; if(!leaseMap[k]) leaseMap[k]=l.id; });
+
+    // 5. Installments
+    for (const r of instRows) {
+      const vName = String(r['اسم الفيلا *']).trim();
+      const aptNo = String(r['رقم الشقة *']).trim();
+      const tName = String(r['اسم المستأجر *']).trim();
+      const leaseId = leaseMap[`${vName}|${aptNo}|${tName}`];
+      if (!leaseId) { report.skipped.push(`دفعة: لم يُعثر على عقد لـ"${tName}" في شقة ${aptNo}`); continue; }
+      const dueDate = toDate(r['تاريخ الاستحقاق *']);
+      const amount  = Number(r['المبلغ *'])||0;
+      const [[ex]] = await conn.query('SELECT id FROM lease_installments WHERE lease_id=? AND due_date=? AND amount=?', [leaseId, dueDate, amount]);
+      if (ex) {
+        const payDate = toDate(r['تاريخ الدفع (فارغ = لم يُدفع)']);
+        if (payDate) {
+          const [[paid]] = await conn.query('SELECT id FROM installment_payments WHERE installment_id=? AND payment_date=?', [ex.id, payDate]);
+          if (!paid) {
+            await conn.query('INSERT INTO installment_payments (installment_id,amount,payment_date,notes) VALUES (?,?,?,?)',
+              [ex.id, amount, payDate, r['ملاحظات']||null]);
+            report.installments++;
+          }
+        }
+        report.skipped.push(`قسط بتاريخ ${dueDate} للعقد موجود بالفعل`);
+        continue;
+      }
+      const [ins] = await conn.query('INSERT INTO lease_installments (lease_id,due_date,amount,notes) VALUES (?,?,?,?)',
+        [leaseId, dueDate, amount, r['ملاحظات']||null]);
+      const payDate = toDate(r['تاريخ الدفع (فارغ = لم يُدفع)']);
+      if (payDate) {
+        await conn.query('INSERT INTO installment_payments (installment_id,amount,payment_date,notes) VALUES (?,?,?,?)',
+          [ins.insertId, amount, payDate, r['ملاحظات']||null]);
+      }
+      report.installments++;
+    }
+
+    await conn.commit();
+    ok(res, report);
+  } catch(e) {
+    await conn.rollback();
+    throw e;
+  } finally {
+    conn.release();
+  }
+}));
 
 process.on('unhandledRejection', (err) => console.error('Unhandled rejection:', err));
 
