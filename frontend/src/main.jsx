@@ -1,4 +1,4 @@
-import React,{useEffect,useMemo,useState,useCallback,useRef}from'react';import{createRoot}from'react-dom/client';import{Home,Users,Wrench,Building2,LayoutDashboard,FileText,Plus,Trash2,Edit,LogOut,Download,X,Mail,Lock,Eye,EyeOff,Loader2,ShieldCheck,Filter,RotateCcw,ClipboardList,Wallet,TrendingUp,Coins,Check,Settings as SettingsIcon,UserCheck,Banknote,ChevronRight,Calendar,DollarSign,ListChecks,AlertCircle,CheckCircle2,Clock,ChevronDown,RefreshCw,Activity,KeyRound,BarChart2,BedDouble,DoorOpen,ArrowUpRight,ArrowDownRight,Zap,Upload,FileSpreadsheet,CheckSquare}from'lucide-react';import{BarChart,Bar,XAxis,YAxis,Tooltip,ResponsiveContainer,CartesianGrid,LabelList,AreaChart,Area}from'recharts';import'./style.css';
+import React,{useEffect,useMemo,useState,useCallback,useRef}from'react';import{createRoot}from'react-dom/client';import{Home,Users,Wrench,Building2,LayoutDashboard,FileText,Plus,Trash2,Edit,LogOut,Download,X,Mail,Lock,Eye,EyeOff,Loader2,ShieldCheck,Filter,RotateCcw,ClipboardList,Wallet,TrendingUp,Coins,Check,Settings as SettingsIcon,UserCheck,Banknote,ChevronRight,Calendar,DollarSign,ListChecks,AlertCircle,CheckCircle2,Clock,ChevronDown,RefreshCw,Activity,KeyRound,BarChart2,BedDouble,DoorOpen,ArrowUpRight,ArrowDownRight,Zap,Upload,FileSpreadsheet,CheckSquare,Printer}from'lucide-react';import{BarChart,Bar,XAxis,YAxis,Tooltip,ResponsiveContainer,CartesianGrid,LabelList,AreaChart,Area}from'recharts';import'./style.css';
 const API=import.meta.env.VITE_API_URL||(location.hostname==='localhost'?'http://localhost:4000/api':'/api');
 const AR_MONTHS=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
 
@@ -1212,6 +1212,64 @@ function isExpanded(key){
   return false;
 }
 
+function printMonthPDF(g){
+  const STATUS_AR={collected:'تم التحصيل',overdue:'متأخرة',partial:'جزئي',due_soon:'قريبة',upcoming:'قادمة'};
+  const remaining=g.total-g.collected;
+  const pct=g.total>0?Math.round(g.collected/g.total*100):0;
+  const rows=g.rows.map(r=>{
+    const rem=Number(r.amount)-Number(r.collected_amount);
+    const statusColor={collected:'#15803d',overdue:'#dc2626',partial:'#b45309',due_soon:'#b45309',upcoming:'#0f766e'}[r.status]||'#666';
+    const date=(r.due_date.slice?r.due_date:String(r.due_date)).slice(0,10);
+    return `<tr>
+      <td>${date}</td>
+      <td>${r.tenant_name||''}</td>
+      <td>${r.villa_name||''} / شقة ${r.apartment_no||''}</td>
+      <td style="text-align:left">${Number(r.amount).toLocaleString()} AED</td>
+      <td style="text-align:left;color:#15803d">${Number(r.collected_amount).toLocaleString()} AED</td>
+      <td style="text-align:left;color:${rem>0?'#dc2626':'#15803d'}">${rem.toLocaleString()} AED</td>
+      <td style="color:${statusColor};font-weight:600">${STATUS_AR[r.status]||r.status}</td>
+    </tr>`;
+  }).join('');
+  const html=`<!DOCTYPE html><html dir="rtl" lang="ar"><head><meta charset="UTF-8"/>
+  <title>تقرير الدفعات — ${g.label}</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Segoe UI',Tahoma,Arial,sans-serif;direction:rtl;padding:30px;color:#1a1a2e;font-size:13px}
+    .header{border-bottom:3px solid #1e40af;padding-bottom:16px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:flex-end}
+    .title{font-size:22px;font-weight:700;color:#1e40af}
+    .subtitle{font-size:14px;color:#64748b;margin-top:4px}
+    .meta{text-align:left;font-size:12px;color:#64748b}
+    .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+    .kpi{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px 16px}
+    .kpi-label{font-size:11px;color:#64748b;margin-bottom:4px}
+    .kpi-value{font-size:18px;font-weight:700}
+    .kpi-cur{font-size:11px;color:#94a3b8}
+    table{width:100%;border-collapse:collapse;font-size:12px}
+    th{background:#1e40af;color:#fff;padding:8px 10px;text-align:right;font-weight:600}
+    td{padding:7px 10px;border-bottom:1px solid #e2e8f0}
+    tr:nth-child(even) td{background:#f8fafc}
+    .footer{margin-top:20px;padding-top:12px;border-top:1px solid #e2e8f0;font-size:11px;color:#94a3b8;display:flex;justify-content:space-between}
+    @media print{body{padding:15px}.no-print{display:none}}
+  </style></head><body>
+  <div class="header">
+    <div><div class="title">تقرير الدفعات — ${g.label}</div><div class="subtitle">إجمالي ${g.rows.length} دفعة</div></div>
+    <div class="meta">تاريخ الطباعة: ${new Date().toLocaleDateString('ar-AE')}</div>
+  </div>
+  <div class="kpis">
+    <div class="kpi"><div class="kpi-label">إجمالي المستحق</div><div class="kpi-value">${g.total.toLocaleString()}</div><div class="kpi-cur">AED</div></div>
+    <div class="kpi"><div class="kpi-label">تم التحصيل</div><div class="kpi-value" style="color:#15803d">${g.collected.toLocaleString()}</div><div class="kpi-cur">AED</div></div>
+    <div class="kpi"><div class="kpi-label">المتبقي</div><div class="kpi-value" style="color:${remaining>0?'#dc2626':'#15803d'}">${remaining.toLocaleString()}</div><div class="kpi-cur">AED</div></div>
+    <div class="kpi"><div class="kpi-label">نسبة التحصيل</div><div class="kpi-value" style="color:#1e40af">${pct}%</div></div>
+  </div>
+  <table><thead><tr><th>تاريخ الاستحقاق</th><th>المستأجر</th><th>الفيلا / الشقة</th><th>المبلغ</th><th>المحصّل</th><th>المتبقي</th><th>الحالة</th></tr></thead>
+  <tbody>${rows}</tbody></table>
+  <div class="footer"><span>Maintenance Pro — نظام إدارة الفلل والشقق</span><span>صفحة 1</span></div>
+  <script>window.onload=()=>{window.print();}<\/script>
+  </body></html>`;
+  const w=window.open('','_blank','width=900,height=700');
+  w.document.write(html);w.document.close();
+}
+
 async function openPayments(inst){
   setPaymentsInst(inst);
   const p=await api('/installments/'+inst.id+'/payments');
@@ -1290,6 +1348,7 @@ return <>
         <span className="ptMonthPct">{pct}%</span>
         <span className="ptMonthCount">{g.rows.length} دفعة</span>
         <span className="ptMonthAmt">{g.total.toLocaleString()} AED</span>
+        <button className="iconBtn secondary ptPrintBtn" title="تصدير PDF" onClick={e=>{e.stopPropagation();printMonthPDF(g);}}><Printer size={14}/></button>
         {expanded?<ChevronDown size={16}/>:<ChevronDown size={16} style={{transform:'rotate(-90deg)'}}/>}
       </div>
     </button>
