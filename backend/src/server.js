@@ -63,7 +63,7 @@ app.get('/api/dashboard', auth, wrap(async (req, res) => {
   const [[leaseKpi]] = await pool.query(`
     SELECT
       COUNT(DISTINCT l.id) total_leases,
-      SUM(CASE WHEN l.is_active=1 AND l.end_date>=CURDATE() THEN 1 ELSE 0 END) active_leases,
+      SUM(CASE WHEN l.is_active=1 THEN 1 ELSE 0 END) active_leases,
       COUNT(DISTINCT t.id) total_tenants
     FROM leases l JOIN tenants t ON t.id=l.tenant_id`);
 
@@ -91,8 +91,8 @@ app.get('/api/dashboard', auth, wrap(async (req, res) => {
   const [[aptKpi]] = await pool.query(`
     SELECT
       COUNT(*) total,
-      SUM(EXISTS(SELECT 1 FROM leases l WHERE l.apartment_id=a.id AND l.is_active=1 AND l.end_date>=CURDATE())) rented,
-      SUM(NOT EXISTS(SELECT 1 FROM leases l WHERE l.apartment_id=a.id AND l.is_active=1 AND l.end_date>=CURDATE())) available
+      SUM(EXISTS(SELECT 1 FROM leases l WHERE l.apartment_id=a.id AND l.is_active=1)) rented,
+      SUM(NOT EXISTS(SELECT 1 FROM leases l WHERE l.apartment_id=a.id AND l.is_active=1)) available
     FROM apartments a WHERE a.is_active=1`);
 
   // Overdue installments list (top 5)
@@ -171,7 +171,7 @@ app.get('/api/apartments', auth, wrap(async (req, res) => {
     SELECT a.*, v.name villa_name,
       CASE WHEN EXISTS(
         SELECT 1 FROM leases l
-        WHERE l.apartment_id=a.id AND l.is_active=1 AND l.end_date>=CURDATE()
+        WHERE l.apartment_id=a.id AND l.is_active=1
       ) THEN 'rented' ELSE 'available' END AS rental_status
     FROM apartments a
     JOIN villas v ON v.id=a.villa_id
