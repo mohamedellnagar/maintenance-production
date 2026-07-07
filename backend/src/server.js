@@ -276,6 +276,38 @@ app.delete('/api/leases/:id', auth, adminOnly, wrap(async (req, res) => {
 }));
 
 // ─── Installments ─────────────────────────────────────────────────────────
+app.get('/api/installments/all', auth, wrap(async (req, res) => {
+  const { status, from, to, villa_id } = req.query;
+  let where = '1=1';
+  const params = [];
+  if (from)     { where += ' AND li.due_date >= ?'; params.push(from); }
+  if (to)       { where += ' AND li.due_date <= ?'; params.push(to); }
+  if (villa_id) { where += ' AND a.villa_id = ?'; params.push(villa_id); }
+  const [rows] = await pool.query(`
+    SELECT li.id, li.lease_id, li.due_date, li.amount, li.notes,
+      COALESCE(SUM(ip.amount),0) collected_amount,
+      CASE
+        WHEN COALESCE(SUM(ip.amount),0) >= li.amount THEN 'collected'
+        WHEN li.due_date < CURDATE() THEN 'overdue'
+        WHEN COALESCE(SUM(ip.amount),0) > 0 THEN 'partial'
+        WHEN li.due_date <= DATE_ADD(CURDATE(), INTERVAL 30 DAY) THEN 'due_soon'
+        ELSE 'upcoming'
+      END status,
+      t.name tenant_name, v.name villa_name, a.apartment_no,
+      l.total_amount lease_total, l.is_active lease_is_active, l.end_date lease_end_date
+    FROM lease_installments li
+    JOIN leases l ON l.id = li.lease_id
+    JOIN apartments a ON a.id = l.apartment_id
+    JOIN villas v ON v.id = a.villa_id
+    JOIN tenants t ON t.id = l.tenant_id
+    LEFT JOIN installment_payments ip ON ip.installment_id = li.id
+    WHERE ${where}
+    GROUP BY li.id
+    ORDER BY li.due_date ASC`, params);
+  const filtered = status ? rows.filter(r => r.status === status) : rows;
+  ok(res, filtered);
+}));
+
 app.post('/api/leases/:leaseId/installments', auth, wrap(async (req, res) => {
   requireFields(req.body, ['due_date', 'amount']);
   const { due_date, amount, notes } = req.body;

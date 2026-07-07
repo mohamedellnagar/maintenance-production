@@ -82,7 +82,7 @@ CREATE TABLE role_permissions (
 );
 
 INSERT INTO role_permissions (role, allowed_pages) VALUES
-('SUPERVISOR', '["dashboard","records","villas","apartments","technicians","tenants_mgmt","leases"]');
+('SUPERVISOR', '["dashboard","records","villas","apartments","technicians","tenants_mgmt","leases","payments_tracker"]');
 
 CREATE TABLE tenants (
   id BIGINT PRIMARY KEY AUTO_INCREMENT,

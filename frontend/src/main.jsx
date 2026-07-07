@@ -1,4 +1,4 @@
-import React,{useEffect,useMemo,useState}from'react';import{createRoot}from'react-dom/client';import{Home,Users,Wrench,Building2,LayoutDashboard,FileText,Plus,Trash2,Edit,LogOut,Download,X,Mail,Lock,Eye,EyeOff,Loader2,ShieldCheck,Filter,RotateCcw,ClipboardList,Wallet,TrendingUp,Coins,Check,Settings as SettingsIcon,UserCheck,Banknote,ChevronRight,Calendar,DollarSign}from'lucide-react';import{BarChart,Bar,XAxis,YAxis,Tooltip,ResponsiveContainer,CartesianGrid,LabelList}from'recharts';import'./style.css';
+import React,{useEffect,useMemo,useState}from'react';import{createRoot}from'react-dom/client';import{Home,Users,Wrench,Building2,LayoutDashboard,FileText,Plus,Trash2,Edit,LogOut,Download,X,Mail,Lock,Eye,EyeOff,Loader2,ShieldCheck,Filter,RotateCcw,ClipboardList,Wallet,TrendingUp,Coins,Check,Settings as SettingsIcon,UserCheck,Banknote,ChevronRight,Calendar,DollarSign,ListChecks,AlertCircle,CheckCircle2,Clock,ChevronDown}from'lucide-react';import{BarChart,Bar,XAxis,YAxis,Tooltip,ResponsiveContainer,CartesianGrid,LabelList}from'recharts';import'./style.css';
 const API=import.meta.env.VITE_API_URL||(location.hostname==='localhost'?'http://localhost:4000/api':'/api');
 
 let toastListeners=[];
@@ -42,7 +42,7 @@ return <div className="login">
   </div>
 </div>}
 
-const ALL_PAGES=[['dashboard','لوحة التحكم',LayoutDashboard],['records','كشف الصيانة',FileText],['villas','الفلل',Building2],['apartments','الشقق',Home],['technicians','الفنيين',Wrench],['tenants_mgmt','المستأجرين',UserCheck],['leases','الإيجارات',Banknote]];
+const ALL_PAGES=[['dashboard','لوحة التحكم',LayoutDashboard],['records','كشف الصيانة',FileText],['villas','الفلل',Building2],['apartments','الشقق',Home],['technicians','الفنيين',Wrench],['tenants_mgmt','المستأجرين',UserCheck],['leases','الإيجارات',Banknote],['payments_tracker','الدفعات',ListChecks]];
 function PermissionsSettings(){const api=useApi();const[perms,setPerms]=useState(null);const[saving,setSaving]=useState(false);useEffect(()=>{api('/permissions').then(setPerms)},[]);
 function toggle(pageId){if(pageId==='dashboard')return;setPerms({...perms,SUPERVISOR:perms.SUPERVISOR.includes(pageId)?perms.SUPERVISOR.filter(p=>p!==pageId):[...perms.SUPERVISOR,pageId]})}
 async function save(){setSaving(true);await runAction(async()=>{await api('/permissions/SUPERVISOR',{method:'PUT',body:JSON.stringify({allowed_pages:perms.SUPERVISOR})})},'تم حفظ الصلاحيات');setSaving(false)}
@@ -58,7 +58,7 @@ const logout=()=>{localStorage.clear();setUser(null)};
 const allowedIds=isAdmin?ALL_PAGES.map(p=>p[0]):(perms?.SUPERVISOR||['dashboard']);
 const items=ALL_PAGES.filter(p=>allowedIds.includes(p[0])).concat(isAdmin?[['users','المستخدمين',Users],['settings','الصلاحيات',SettingsIcon]]:[]);
 const activePage=items.some(i=>i[0]===page)?page:'dashboard';
-return <div className="app" dir="rtl"><aside><div className="logo">Maintenance<span>Pro</span></div>{items.map(([id,t,I])=><button key={id} className={activePage===id?'active':''} onClick={()=>setPage(id)}><I size={18}/>{t}</button>)}<button onClick={logout}><LogOut size={18}/>خروج</button></aside><main><header><div><h2>{items.find(i=>i[0]===activePage)?.[1]}</h2><p>نظام إدارة كشف الصيانة اليومي للفلل والشقق</p></div><div className="headerRight"><div className="user"><div className="userAvatar">{user.name?.[0]}</div><div className="userMeta"><span className="userName">{user.name}</span><span className={'roleBadge role-'+user.role}>{ROLE_LABELS[user.role]||user.role}</span></div></div><button className="mobileLogout" onClick={logout}><LogOut size={18}/></button></div></header>{activePage==='dashboard'&&<Dashboard/>}{activePage==='records'&&<Records/>}{activePage==='villas'&&<Villas user={user}/>}{activePage==='apartments'&&<Apartments user={user}/>}{activePage==='technicians'&&<Technicians user={user}/>}{activePage==='users'&&<UsersPage user={user}/>}{activePage==='tenants_mgmt'&&<TenantsMgmt user={user}/>}{activePage==='leases'&&<Leases user={user}/>}{activePage==='settings'&&<PermissionsSettings/>}</main><nav className="mobileTabs">{items.map(([id,t,I])=><button key={id} className={activePage===id?'active':''} onClick={()=>setPage(id)}><I size={20}/><span>{t}</span></button>)}</nav><Toaster/></div>}
+return <div className="app" dir="rtl"><aside><div className="logo">Maintenance<span>Pro</span></div>{items.map(([id,t,I])=><button key={id} className={activePage===id?'active':''} onClick={()=>setPage(id)}><I size={18}/>{t}</button>)}<button onClick={logout}><LogOut size={18}/>خروج</button></aside><main><header><div><h2>{items.find(i=>i[0]===activePage)?.[1]}</h2><p>نظام إدارة كشف الصيانة اليومي للفلل والشقق</p></div><div className="headerRight"><div className="user"><div className="userAvatar">{user.name?.[0]}</div><div className="userMeta"><span className="userName">{user.name}</span><span className={'roleBadge role-'+user.role}>{ROLE_LABELS[user.role]||user.role}</span></div></div><button className="mobileLogout" onClick={logout}><LogOut size={18}/></button></div></header>{activePage==='dashboard'&&<Dashboard/>}{activePage==='records'&&<Records/>}{activePage==='villas'&&<Villas user={user}/>}{activePage==='apartments'&&<Apartments user={user}/>}{activePage==='technicians'&&<Technicians user={user}/>}{activePage==='users'&&<UsersPage user={user}/>}{activePage==='tenants_mgmt'&&<TenantsMgmt user={user}/>}{activePage==='leases'&&<Leases user={user}/>}{activePage==='payments_tracker'&&<PaymentsTracker user={user}/>}{activePage==='settings'&&<PermissionsSettings/>}</main><nav className="mobileTabs">{items.map(([id,t,I])=><button key={id} className={activePage===id?'active':''} onClick={()=>setPage(id)}><I size={20}/><span>{t}</span></button>)}</nav><Toaster/></div>}
 
 function monthStart(){const t=new Date();return new Date(t.getFullYear(),t.getMonth(),1).toISOString().slice(0,10)}
 function todayStr(){return new Date().toISOString().slice(0,10)}
@@ -794,6 +794,195 @@ return <>
   </div>}
 </Modal>
 </>
+}
+
+
+function PaymentsTracker({user}){
+const api=useApi();const isAdmin=user?.role==='ADMIN';
+const[rows,setRows]=useState([]);const[loading,setLoading]=useState(true);
+const[statusFilter,setStatusFilter]=useState('all');
+const[villaFilter,setVillaFilter]=useState('');
+const[villas,setVillas]=useState([]);
+const[fromDate,setFromDate]=useState('');const[toDate,setToDate]=useState('');
+const[expandedMonths,setExpandedMonths]=useState({});
+// payments modal (reuse)
+const[paymentsInst,setPaymentsInst]=useState(null);const[payments,setPayments]=useState([]);
+const[payForm,setPayForm]=useState({amount:'',payment_date:new Date().toISOString().slice(0,10),notes:''});const[payOpen,setPayOpen]=useState(false);
+
+async function load(){
+  setLoading(true);
+  const params=new URLSearchParams();
+  if(fromDate)params.set('from',fromDate);
+  if(toDate)params.set('to',toDate);
+  if(villaFilter)params.set('villa_id',villaFilter);
+  const data=await api('/installments/all?'+params.toString());
+  setRows(data||[]);setLoading(false);
+}
+useEffect(()=>{api('/villas').then(setVillas);load()},[]);
+useEffect(()=>{load()},[fromDate,toDate,villaFilter]);
+
+const today=new Date().toISOString().slice(0,10);
+const filtered=statusFilter==='all'?rows:rows.filter(r=>r.status===statusFilter);
+
+// KPIs
+const kpiOverdue=rows.filter(r=>r.status==='overdue');
+const kpiDueSoon=rows.filter(r=>r.status==='due_soon');
+const kpiCollected=rows.filter(r=>r.status==='collected');
+const kpiUpcoming=rows.filter(r=>r.status==='upcoming');
+const totalOverdueAmt=kpiOverdue.reduce((s,r)=>s+Number(r.amount)-Number(r.collected_amount),0);
+const totalDueSoonAmt=kpiDueSoon.reduce((s,r)=>s+Number(r.amount)-Number(r.collected_amount),0);
+
+// Group by month
+const groups={};
+filtered.forEach(r=>{
+  const d=new Date(r.due_date);
+  const key=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+  const label=d.toLocaleDateString('ar-AE',{year:'numeric',month:'long'});
+  if(!groups[key])groups[key]={key,label,rows:[],total:0,collected:0};
+  groups[key].rows.push(r);
+  groups[key].total+=Number(r.amount);
+  groups[key].collected+=Number(r.collected_amount);
+});
+const sortedGroups=Object.values(groups).sort((a,b)=>a.key.localeCompare(b.key));
+
+function toggleMonth(key){setExpandedMonths(s=>({...s,[key]:!s[key]}));}
+function expandAll(){const m={};sortedGroups.forEach(g=>{m[g.key]=true});setExpandedMonths(m);}
+function collapseAll(){const m={};sortedGroups.forEach(g=>{m[g.key]=false});setExpandedMonths(m);}
+// only current month + months with overdue open by default
+function isExpanded(key){
+  if(key in expandedMonths)return expandedMonths[key];
+  if(key===today.slice(0,7))return true;
+  // expand months with overdue installments
+  const g=sortedGroups.find(x=>x.key===key);
+  if(g&&g.rows.some(r=>r.status==='overdue'))return true;
+  return false;
+}
+
+async function openPayments(inst){
+  setPaymentsInst(inst);
+  const p=await api('/installments/'+inst.id+'/payments');
+  setPayments(p||[]);setPayOpen(true);
+}
+async function addPayment(e){e.preventDefault();await runAction(async()=>{
+  await api('/installments/'+paymentsInst.id+'/payments',{method:'POST',body:JSON.stringify(payForm)});
+  const p=await api('/installments/'+paymentsInst.id+'/payments');
+  setPayments(p||[]);
+  setPayForm({amount:'',payment_date:new Date().toISOString().slice(0,10),notes:''});
+  load();
+},'تم تسجيل الدفعة')}
+async function removePayment(id){if(!confirm('تأكيد حذف الدفع؟'))return;await runAction(async()=>{
+  await api('/payments/'+id,{method:'DELETE'});
+  const p=await api('/installments/'+paymentsInst.id+'/payments');
+  setPayments(p||[]);load();
+},'تم الحذف')}
+
+const STATUS_ICON={collected:<CheckCircle2 size={14}/>,overdue:<AlertCircle size={14}/>,partial:<Clock size={14}/>,due_soon:<Clock size={14}/>,upcoming:<Calendar size={14}/>};
+
+return <>
+{/* KPI bar */}
+<div className="ptKpiBar">
+  {[
+    {label:'متأخرة',icon:'⚠',count:kpiOverdue.length,amt:totalOverdueAmt,color:'#dc2626',bg:'#fef2f2',border:'#fecaca',status:'overdue'},
+    {label:'قيد التحصيل',icon:'⏳',count:kpiDueSoon.length,amt:totalDueSoonAmt,color:'#b45309',bg:'#fef3c7',border:'#fde68a',status:'due_soon'},
+    {label:'تم التحصيل',icon:'✅',count:kpiCollected.length,amt:kpiCollected.reduce((s,r)=>s+Number(r.amount),0),color:'#15803d',bg:'#f0fdf4',border:'#a7f3d0',status:'collected'},
+    {label:'قادمة',icon:'📅',count:kpiUpcoming.length,amt:kpiUpcoming.reduce((s,r)=>s+Number(r.amount),0),color:'#0f766e',bg:'#f8fafc',border:'#e2e8f0',status:'upcoming'},
+  ].map(k=><button key={k.status} className={'ptKpiCard'+(statusFilter===k.status?' ptKpiCardActive':'')} style={statusFilter===k.status?{background:k.bg,borderColor:k.color}:{}} onClick={()=>setStatusFilter(s=>s===k.status?'all':k.status)}>
+    <div className="ptKpiTop"><span className="ptKpiIcon">{k.icon}</span>{k.count>0&&statusFilter!==k.status&&k.status==='overdue'&&<span className="ptKpiPulse"/>}</div>
+    <span className="ptKpiCount" style={{color:k.color}}>{k.count}</span>
+    <span className="ptKpiLabel">{k.label}</span>
+    <span className="ptKpiAmt">{k.amt.toLocaleString()}</span>
+    <span className="ptKpiAmtCur">AED</span>
+  </button>)}
+</div>
+
+{/* Toolbar */}
+<div className="ptToolbar">
+  <div className="ptFilters">
+    <select value={villaFilter} onChange={e=>setVillaFilter(e.target.value)} className="ptSelect">
+      <option value="">كل الفلل</option>
+      {villas.map(v=><option key={v.id} value={v.id}>{v.name}</option>)}
+    </select>
+    <input type="date" value={fromDate} onChange={e=>setFromDate(e.target.value)} className="ptDateInput" title="من تاريخ"/>
+    <span className="ptDateSep">—</span>
+    <input type="date" value={toDate} onChange={e=>setToDate(e.target.value)} className="ptDateInput" title="إلى تاريخ"/>
+    {(fromDate||toDate||villaFilter)&&<button className="secondary ptResetBtn" onClick={()=>{setFromDate('');setToDate('');setVillaFilter('')}}><RotateCcw size={14}/>إعادة</button>}
+  </div>
+  <div className="ptToolbarLeft">
+    <span className="ptTotal">{filtered.length} دفعة</span>
+    <button className="secondary ptExpandBtn" onClick={expandAll}>فتح الكل</button>
+    <button className="secondary ptExpandBtn" onClick={collapseAll}>طي الكل</button>
+  </div>
+</div>
+
+{loading&&<div className="ptLoading"><Loader2 size={24} className="spin"/></div>}
+
+{!loading&&sortedGroups.length===0&&<div className="tenantEmpty"><ListChecks size={36} style={{opacity:.2}}/><p>لا توجد دفعات مطابقة</p></div>}
+
+{/* Month groups */}
+{!loading&&sortedGroups.map(g=>{
+  const expanded=isExpanded(g.key);
+  const isPast=g.key<today.slice(0,7);const isCurrent=g.key===today.slice(0,7);
+  const pct=g.total>0?Math.min(100,Math.round(g.collected/g.total*100)):0;
+  const hasOverdue=g.rows.some(r=>r.status==='overdue');
+  return <div key={g.key} className={'ptMonth'+(isCurrent?' ptMonthCurrent':'')}>
+    <button className="ptMonthHeader" onClick={()=>toggleMonth(g.key)}>
+      <div className="ptMonthHeaderRight">
+        <span className="ptMonthName">{g.label}</span>
+        {isCurrent&&<span className="ptMonthCurrentBadge">الشهر الحالي</span>}
+        {hasOverdue&&<span className="ptMonthOverdueBadge"><AlertCircle size={11}/>متأخرة</span>}
+      </div>
+      <div className="ptMonthHeaderLeft">
+        <div className="ptMonthMiniBar"><div className="ptMonthMiniBarFill" style={{width:pct+'%'}}/></div>
+        <span className="ptMonthPct">{pct}%</span>
+        <span className="ptMonthCount">{g.rows.length} دفعة</span>
+        <span className="ptMonthAmt">{g.total.toLocaleString()} AED</span>
+        {expanded?<ChevronDown size={16}/>:<ChevronDown size={16} style={{transform:'rotate(-90deg)'}}/>}
+      </div>
+    </button>
+    {expanded&&<div className="ptMonthBody">
+      <table className="ptTable">
+        <thead><tr><th>التاريخ</th><th>المستأجر</th><th>الفيلا / الشقة</th><th>المبلغ</th><th>المحصّل</th><th>الحالة</th><th></th></tr></thead>
+        <tbody>{g.rows.map(r=>{
+          const remaining=Number(r.amount)-Number(r.collected_amount);
+          const pctRow=Number(r.amount)>0?Math.min(100,Math.round(Number(r.collected_amount)/Number(r.amount)*100)):0;
+          const isToday=r.due_date===today;
+          return <tr key={r.id} className={'ptRow ptRow-'+r.status+(isToday?' ptRowToday':'')}>
+            <td className="ptRowDate">
+              <span className="ptRowDateMain">{new Date(r.due_date).toLocaleDateString('ar-AE',{day:'numeric',month:'short'})}</span>
+              {isToday&&<span className="ptRowTodayBadge">اليوم</span>}
+            </td>
+            <td className="ptRowTenant">{r.tenant_name}</td>
+            <td className="ptRowLoc"><span className="ptRowVilla">{r.villa_name}</span><span className="ptRowApt">شقة {r.apartment_no}</span></td>
+            <td className="ptRowAmt">{Number(r.amount).toLocaleString()}</td>
+            <td className="ptRowCollected">
+              <div className="ptRowProgress">
+                <div className="ptRowProgressBar"><div className="ptRowProgressFill" style={{width:pctRow+'%'}}/></div>
+                <span className="ptRowProgressPct">{pctRow}%</span>
+              </div>
+            </td>
+            <td><span className={'statusBadge statusBadgeSm '+INST_STATUS_CSS[r.status]}>{INST_STATUS_LABELS[r.status]}</span></td>
+            <td className="ptRowAction">
+              <button className="iconBtn secondary" title="المدفوعات" onClick={()=>openPayments(r)}><DollarSign size={14}/></button>
+            </td>
+          </tr>;
+        })}</tbody>
+      </table>
+    </div>}
+  </div>;
+})}
+
+<Modal open={payOpen} onClose={()=>setPayOpen(false)} title={`مدفوعات: ${Number(paymentsInst?.amount||0).toLocaleString()} AED — ${paymentsInst?.tenant_name||''}`}>
+  {paymentsInst&&<div className="paymentsModal">
+    <div className="paymentsList">{payments.length===0&&<p className="empty" style={{padding:12,textAlign:'center'}}>لا توجد مدفوعات بعد</p>}{payments.map(p=><div key={p.id} className="paymentRow"><div><span className="payAmount">{Number(p.amount).toLocaleString()} AED</span><span className="payDate">{new Date(p.payment_date).toLocaleDateString('ar-AE')}</span>{p.notes&&<span className="payNotes">{p.notes}</span>}</div>{isAdmin&&<button className="danger iconBtn" onClick={()=>removePayment(p.id)}><Trash2 size={14}/></button>}</div>)}</div>
+    <form className="form compact" style={{borderTop:'1px solid var(--line)',marginTop:12,paddingTop:12}} onSubmit={addPayment}>
+      <Field label="المبلغ المدفوع (AED)" required><input required type="number" step="0.01" value={payForm.amount} onChange={e=>setPayForm({...payForm,amount:e.target.value})}/></Field>
+      <Field label="تاريخ الدفع" required><input required type="date" value={payForm.payment_date} onChange={e=>setPayForm({...payForm,payment_date:e.target.value})}/></Field>
+      <Field label="ملاحظات" wide><input value={payForm.notes} onChange={e=>setPayForm({...payForm,notes:e.target.value})}/></Field>
+      <button><Plus size={14}/>تسجيل دفع</button>
+    </form>
+  </div>}
+</Modal>
+</>;
 }
 
 createRoot(document.getElementById('root')).render(<App/>);
