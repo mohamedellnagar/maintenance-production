@@ -6,7 +6,7 @@ services:
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: root_password
-      MYSQL_DATABASE: maintenance_db
+      MYSQL_DATABASE: maintenance-db
       MYSQL_USER: maintenance_user
       MYSQL_PASSWORD: maintenance_pass
     ports:
@@ -28,7 +28,7 @@ services:
       DB_PORT: 3306
       DB_USER: maintenance_user
       DB_PASSWORD: maintenance_pass
-      DB_NAME: maintenance_db
+      DB_NAME: maintenance-db
       JWT_SECRET: change_this_secret_in_production
     ports:
       - "4000:4000"
