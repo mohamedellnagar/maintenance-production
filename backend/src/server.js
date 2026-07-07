@@ -219,6 +219,11 @@ app.put('/api/users/:id', auth, adminOnly, wrap(async (req, res) => {
 }));
 app.delete('/api/users/:id', auth, adminOnly, wrap(async (req, res) => {
   if (Number(req.params.id) === req.user.id) throw Object.assign(new Error('لا يمكنك حذف حسابك الحالي'), { status: 400 });
+  const [[{ adminCount }]] = await pool.query(`SELECT COUNT(*) adminCount FROM users WHERE role='ADMIN' AND is_active=1`);
+  if (adminCount <= 1) {
+    const [[target]] = await pool.query('SELECT role FROM users WHERE id=?', [req.params.id]);
+    if (target?.role === 'ADMIN') throw Object.assign(new Error('لا يمكن حذف آخر مدير في النظام'), { status: 400 });
+  }
   await pool.query('DELETE FROM users WHERE id=?', [req.params.id]);
   ok(res, { deleted: true });
 }));
@@ -247,8 +252,10 @@ app.post('/api/records', auth, wrap(async (req, res) => {
   requireFields(req.body, ['record_date', 'villa_id', 'description']);
   const technicianIds = req.body.technician_ids?.length ? req.body.technician_ids : (req.body.technician_id ? [req.body.technician_id] : []);
   if (!technicianIds.length) throw Object.assign(new Error('يجب اختيار فني واحد على الأقل'), { status: 400 });
+  const cost = Number(req.body.spare_part_cost ?? 0);
+  if (cost < 0) throw Object.assign(new Error('تكلفة قطعة الغيار لا يمكن أن تكون سالبة'), { status: 400 });
   const { technician_ids, ...rest } = req.body;
-  const data = { ...rest, apartment_id: rest.apartment_id || null, technician_id: technicianIds[0], created_by: req.user.id };
+  const data = { ...rest, spare_part_cost: cost, apartment_id: rest.apartment_id || null, technician_id: technicianIds[0], created_by: req.user.id };
   const [r] = await pool.query('INSERT INTO maintenance_records SET ?', data);
   await pool.query('INSERT INTO record_technicians (record_id, technician_id) VALUES ?', [technicianIds.map((tid) => [r.insertId, tid])]);
   ok(res, { id: r.insertId });
@@ -424,10 +431,31 @@ app.get('/api/reports/summary', auth, wrap(async (req, res) => {
 
 app.use((req, res) => res.status(404).json({ message: 'Not found' }));
 
+const FK_MESSAGES = {
+  fk_apartments_villa:    'لا يمكن حذف الفيلا — تحتوي على شقق مرتبطة',
+  fk_lease_apt:           'لا يمكن حذف الشقة — مرتبطة بعقد إيجار نشط',
+  fk_lease_tenant:        'لا يمكن حذف المستأجر — لديه عقود إيجار',
+  fk_inst_lease:          'لا يمكن حذف العقد — لديه أقساط مرتبطة',
+  fk_records_villa:       'لا يمكن حذف الفيلا — لديها كشوف صيانة',
+  fk_records_apartment:   'لا يمكن حذف الشقة — لديها كشوف صيانة',
+  fk_records_technician:  'لا يمكن حذف الفني — لديه كشوف صيانة',
+};
+
 app.use((err, req, res, next) => {
-  const status = err.status || (err.code === 'ER_DUP_ENTRY' ? 409 : err.code === 'ER_NO_REFERENCED_ROW_2' ? 400 : 500);
+  if (err.code === 'ER_ROW_IS_REFERENCED_2') {
+    const match = err.sqlMessage?.match(/CONSTRAINT `(\w+)`/);
+    const msg = (match && FK_MESSAGES[match[1]]) || 'لا يمكن الحذف — السجل مرتبط ببيانات أخرى';
+    return res.status(409).json({ message: msg });
+  }
+  if (err.code === 'ER_DUP_ENTRY') {
+    const msg = err.sqlMessage?.includes('unique_apartment_per_villa')
+      ? 'رقم الشقة موجود مسبقاً في هذه الفيلا'
+      : 'البيانات مكررة';
+    return res.status(409).json({ message: msg });
+  }
+  const status = err.status || (err.code === 'ER_NO_REFERENCED_ROW_2' ? 400 : 500);
   if (status === 500) console.error(err);
-  res.status(status).json({ message: status === 500 ? 'Internal server error' : err.sqlMessage || err.message });
+  res.status(status).json({ message: status === 500 ? 'Internal server error' : err.message });
 });
 
 process.on('unhandledRejection', (err) => console.error('Unhandled rejection:', err));
