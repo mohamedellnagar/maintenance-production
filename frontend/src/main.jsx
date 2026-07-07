@@ -507,13 +507,14 @@ function TenantSearch({tenants,value,onChange}){
 }
 
 const DEPOSIT_TYPES=[['cash','كاش'],['check','شيك']];
-const emptyLeaseForm={tenant_id:'',start_date:'',end_date:'',total_amount:'',deposit_amount:'',deposit_type:'',deposit_notes:'',notes:''};
+const emptyLeaseForm={tenant_id:'',start_date:'',end_date:'',total_amount:'',fees_amount:'',deposit_amount:'',deposit_type:'',deposit_notes:'',notes:''};
 
 function LeaseFormFields({form,setForm,tenants}){return <>
   <Field label="المستأجر" required><TenantSearch tenants={tenants} value={form.tenant_id} onChange={v=>setForm({...form,tenant_id:v})}/></Field>
   <Field label="تاريخ البداية" required><input required type="date" value={form.start_date} onChange={e=>setForm({...form,start_date:e.target.value})}/></Field>
   <Field label="تاريخ النهاية" required><input required type="date" value={form.end_date} onChange={e=>setForm({...form,end_date:e.target.value})}/></Field>
   <Field label="إجمالي الإيجار (AED)" required><input required type="number" min="0.01" step="0.01" value={form.total_amount} onChange={e=>setForm({...form,total_amount:e.target.value})}/></Field>
+  <Field label="الرسوم (AED)"><input type="number" min="0" step="0.01" value={form.fees_amount} onChange={e=>setForm({...form,fees_amount:e.target.value})}/></Field>
   <Field label="مبلغ التأمين (AED)"><input type="number" min="0" step="0.01" value={form.deposit_amount} onChange={e=>setForm({...form,deposit_amount:e.target.value})}/></Field>
   <Field label="نوع سداد التأمين"><select value={form.deposit_type} onChange={e=>setForm({...form,deposit_type:e.target.value})}><option value="">—</option>{DEPOSIT_TYPES.map(([v,l])=><option key={v} value={v}>{l}</option>)}</select></Field>
   <Field label="ملاحظات التأمين"><input value={form.deposit_notes} onChange={e=>setForm({...form,deposit_notes:e.target.value})}/></Field>
@@ -754,7 +755,7 @@ const[villas,setVillas]=useState([]);const[apts,setApts]=useState([]);
 const[selected,setSelected]=useState(null);
 const empty={name:'',phone:'',national_id:'',email:'',notes:''};
 const[form,setForm]=useState(empty);const[editing,setEditing]=useState(null);const[tenantOpen,setTenantOpen]=useState(false);
-const emptyLease={apartment_id:'',_villa_id:'',start_date:'',end_date:'',total_amount:'',deposit_amount:'',deposit_type:'',deposit_notes:'',notes:''};
+const emptyLease={apartment_id:'',_villa_id:'',start_date:'',end_date:'',total_amount:'',fees_amount:'',deposit_amount:'',deposit_type:'',deposit_notes:'',notes:''};
 const[leaseForm,setLeaseForm]=useState(emptyLease);const[leaseOpen,setLeaseOpen]=useState(false);
 const[instForm,setInstForm]=useState({due_date:'',amount:'',notes:''});const[instOpen,setInstOpen]=useState(false);const[editingInst,setEditingInst]=useState(null);const[targetLeaseId,setTargetLeaseId]=useState(null);
 const[paymentsInst,setPaymentsInst]=useState(null);const[payments,setPayments]=useState([]);
@@ -940,7 +941,7 @@ const api=useApi();const isAdmin=user?.role==='ADMIN';
 const[rows,setRows]=useState([]);const[tenants,setTenants]=useState([]);const[apts,setApts]=useState([]);const[villas,setVillas]=useState([]);
 const[selectedLease,setSelectedLease]=useState(null);const[leaseDetail,setLeaseDetail]=useState(null);
 const[qs,setQs]=useState('');const[statusFilter,setStatusFilter]=useState('all');
-const empty={apartment_id:'',tenant_id:'',start_date:'',end_date:'',total_amount:'',deposit_amount:'',deposit_type:'',deposit_notes:'',notes:'',is_active:1,_villa_id:''};
+const empty={apartment_id:'',tenant_id:'',start_date:'',end_date:'',total_amount:'',fees_amount:'',deposit_amount:'',deposit_type:'',deposit_notes:'',notes:'',is_active:1,_villa_id:''};
 const[form,setForm]=useState(empty);const[editing,setEditing]=useState(null);const[open,setOpen]=useState(false);
 const[instForm,setInstForm]=useState({due_date:'',amount:'',notes:''});const[instOpen,setInstOpen]=useState(false);const[editingInst,setEditingInst]=useState(null);
 const[paymentsInst,setPaymentsInst]=useState(null);const[payments,setPayments]=useState([]);

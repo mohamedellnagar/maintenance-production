@@ -346,19 +346,20 @@ app.get('/api/leases/:id', auth, pageGuard('leases'), wrap(async (req, res) => {
 }));
 app.post('/api/leases', auth, wrap(async (req, res) => {
   requireFields(req.body, ['apartment_id', 'tenant_id', 'start_date', 'end_date', 'total_amount']);
-  const { apartment_id, tenant_id, start_date, end_date, total_amount, deposit_amount, deposit_type, deposit_notes, notes, is_active } = req.body;
-  const [r] = await pool.query('INSERT INTO leases SET ?', { apartment_id, tenant_id, start_date, end_date, total_amount, deposit_amount: deposit_amount || 0, deposit_type: deposit_type || null, deposit_notes: deposit_notes || null, notes, is_active: is_active ?? 1 });
+  const { apartment_id, tenant_id, start_date, end_date, total_amount, fees_amount, deposit_amount, deposit_type, deposit_notes, notes, is_active } = req.body;
+  const [r] = await pool.query('INSERT INTO leases SET ?', { apartment_id, tenant_id, start_date, end_date, total_amount, fees_amount: fees_amount || 0, deposit_amount: deposit_amount || 0, deposit_type: deposit_type || null, deposit_notes: deposit_notes || null, notes, is_active: is_active ?? 1 });
   ok(res, { id: r.insertId });
 }));
 app.put('/api/leases/:id', auth, wrap(async (req, res) => {
   if (Object.keys(req.body).length === 0) throw Object.assign(new Error('No fields to update'), { status: 400 });
-  const { apartment_id, tenant_id, start_date, end_date, total_amount, deposit_amount, deposit_type, deposit_notes, notes, is_active } = req.body;
+  const { apartment_id, tenant_id, start_date, end_date, total_amount, fees_amount, deposit_amount, deposit_type, deposit_notes, notes, is_active } = req.body;
   const data = {};
   if (apartment_id !== undefined) data.apartment_id = apartment_id;
   if (tenant_id !== undefined) data.tenant_id = tenant_id;
   if (start_date !== undefined) data.start_date = start_date;
   if (end_date !== undefined) data.end_date = end_date;
   if (total_amount !== undefined) data.total_amount = total_amount;
+  if (fees_amount !== undefined) data.fees_amount = fees_amount;
   if (deposit_amount !== undefined) data.deposit_amount = deposit_amount;
   if (deposit_type !== undefined) data.deposit_type = deposit_type;
   if (deposit_notes !== undefined) data.deposit_notes = deposit_notes;
