@@ -375,3 +375,41 @@ button.danger{background:#fee2e2;color:var(--danger)}.actionsCell{display:flex;g
   .leasesSummaryBar{grid-template-columns:repeat(2,1fr)}
   .leasesSumCard:first-child{grid-column:span 2}
 }
+
+/* ── Villas page ───────────────────────────────────────────────── */
+.villasPageHeader{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:14px}
+.villasPageTitle{display:flex;align-items:center;gap:10px;color:var(--text)}
+.villasPageTitle h2{margin:0;font-size:20px;font-weight:700}
+.villasPageActions{display:flex;align-items:center;gap:10px}
+.villasSummaryBar{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.villasSumCard{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;text-align:center}
+.villasSumVal{display:block;font-size:22px;font-weight:800;line-height:1}
+.villasSumLbl{display:block;font-size:11px;color:var(--muted);margin-top:4px}
+.villasGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+.villaCard{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden;transition:box-shadow .18s,transform .18s;box-shadow:0 1px 4px #0001}
+.villaCard:hover{box-shadow:0 8px 28px #0002;transform:translateY(-3px)}
+.villaCardInactive{opacity:.72}
+.villaCardBanner{height:100px;display:flex;align-items:center;justify-content:space-between;padding:14px 16px;position:relative}
+.villaCardInitials{font-size:38px;font-weight:900;color:rgba(255,255,255,.9);line-height:1;letter-spacing:-1px}
+.villaCardStatusBadge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;white-space:nowrap}
+.villaCardStatusActive{background:rgba(255,255,255,.25);color:#fff;border:1px solid rgba(255,255,255,.4)}
+.villaCardStatusInactive{background:rgba(0,0,0,.2);color:rgba(255,255,255,.8);border:1px solid rgba(255,255,255,.2)}
+.villaCardBody{padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.villaCardNameRow{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.villaCardName{margin:0;font-size:15px;font-weight:700;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.villaCardActions{display:flex;gap:5px;flex-shrink:0}
+.villaCardAreaChip span{background:#f0fdf4;color:var(--brand);font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;border:1px solid #a7f3d0}
+.villaCardNotes{margin:0;font-size:11px;color:var(--muted);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.villaCardFooter{display:flex;align-items:center;gap:10px;border-top:1px solid var(--line);padding-top:10px;margin-top:2px}
+.villaCardAptCount{display:flex;align-items:center;gap:4px;color:var(--muted);flex-shrink:0}
+.villaCardAptNum{font-size:16px;font-weight:800;color:var(--text)}
+.villaCardAptLbl{font-size:11px}
+.villaCardBarWrap{flex:1}
+.villaCardBar{height:6px;background:#f1f5f9;border-radius:6px;overflow:hidden}
+.villaCardBarFill{height:100%;border-radius:6px;transition:width .5s}
+@media(max-width:600px){
+  .villasSummaryBar{grid-template-columns:repeat(2,1fr)}
+  .villasGrid{grid-template-columns:repeat(2,1fr)}
+  .villasPageHeader{flex-direction:column;align-items:stretch}
+  .villasPageActions{justify-content:space-between}
+}

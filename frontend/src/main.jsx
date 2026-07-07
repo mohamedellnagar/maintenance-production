@@ -117,7 +117,68 @@ function Records(){const api=useApi();const[rows,setRows]=useState([]),[villas,s
 <Field label="ملاحظات" wide><textarea value={form.notes||''} onChange={e=>setForm({...form,notes:e.target.value})}/></Field>
 <button><Plus size={16}/>{editing?'حفظ التعديل':'إضافة السجل'}</button><button type="button" className="secondary" onClick={closeModal}>إلغاء</button></form></Modal></>}
 
-function Villas({user}){const api=useApi();const isAdmin=user?.role==='ADMIN';const[villas,setVillas]=useState([]);const[apts,setApts]=useState([]);const emptyVilla={name:'',area:'',notes:'',is_active:1};const[villa,setVilla]=useState(emptyVilla);const[editingVilla,setEditingVilla]=useState(null);const[modalOpen,setModalOpen]=useState(false);const load=()=>{api('/villas').then(setVillas);api('/apartments').then(setApts)};useEffect(()=>{load()},[]);function openAdd(){setEditingVilla(null);setVilla(emptyVilla);setModalOpen(true)}function closeModal(){setModalOpen(false)}async function saveVilla(e){e.preventDefault();await runAction(async()=>{await api(editingVilla?'/villas/'+editingVilla:'/villas',{method:editingVilla?'PUT':'POST',body:JSON.stringify(villa)});setVilla(emptyVilla);setEditingVilla(null);setModalOpen(false);load()},editingVilla?'تم تعديل الفيلا':'تمت إضافة الفيلا')}async function removeVilla(r){if(!confirm(`تأكيد حذف فيلا "${r.name}"؟ سيتم حذف كل الشقق المرتبطة بها.`))return;await runAction(async()=>{await api('/villas/'+r.id,{method:'DELETE'});load()},'تم حذف الفيلا')}const rows=villas.map(v=>({...v,apartments_count:apts.filter(a=>a.villa_id===v.id).length}));return <><Panel title="الفلل"><div className="panelActions"><button onClick={openAdd}><Plus size={16}/>إضافة فيلا</button></div><Table rows={rows} cols={['name','area','apartments_count','is_active']} searchable actions={isAdmin?r=><><button onClick={()=>{setEditingVilla(r.id);setVilla({name:r.name,area:r.area||'',notes:r.notes||'',is_active:r.is_active});setModalOpen(true)}}><Edit size={15}/></button><button className="danger" onClick={()=>removeVilla(r)}><Trash2 size={15}/></button></>:null}/></Panel><Modal open={modalOpen} onClose={closeModal} title={editingVilla?'تعديل فيلا':'إضافة فيلا'}><form className="form compact" onSubmit={saveVilla}><Field label="اسم الفيلا" required><input required placeholder="مثال: فيلا الياسمين" value={villa.name} onChange={e=>setVilla({...villa,name:e.target.value})}/></Field><Field label="المنطقة"><input placeholder="مثال: دبي" value={villa.area} onChange={e=>setVilla({...villa,area:e.target.value})}/></Field><Field label="ملاحظات"><input value={villa.notes||''} onChange={e=>setVilla({...villa,notes:e.target.value})}/></Field>{editingVilla&&<Field label="الحالة"><select value={villa.is_active} onChange={e=>setVilla({...villa,is_active:Number(e.target.value)})}><option value={1}>فعّال</option><option value={0}>متوقف</option></select></Field>}<button>{editingVilla?'حفظ التعديل':'إضافة'}</button><button type="button" className="secondary" onClick={closeModal}>إلغاء</button></form></Modal></>}
+const VILLA_GRADIENTS=['linear-gradient(135deg,#0f766e,#0e7490)','linear-gradient(135deg,#1d4ed8,#4f46e5)','linear-gradient(135deg,#7c3aed,#a855f7)','linear-gradient(135deg,#be185d,#ec4899)','linear-gradient(135deg,#b45309,#f59e0b)','linear-gradient(135deg,#15803d,#22c55e)','linear-gradient(135deg,#0e7490,#06b6d4)','linear-gradient(135deg,#dc2626,#f97316)'];
+function villaGradient(name){let h=0;for(let i=0;i<name.length;i++)h=(h*31+name.charCodeAt(i))%VILLA_GRADIENTS.length;return VILLA_GRADIENTS[h];}
+function Villas({user}){
+const api=useApi();const isAdmin=user?.role==='ADMIN';
+const[villas,setVillas]=useState([]);const[apts,setApts]=useState([]);const[qs,setQs]=useState('');
+const emptyVilla={name:'',area:'',notes:'',is_active:1};
+const[villa,setVilla]=useState(emptyVilla);const[editingVilla,setEditingVilla]=useState(null);const[modalOpen,setModalOpen]=useState(false);
+const load=()=>{api('/villas').then(setVillas);api('/apartments').then(setApts)};
+useEffect(()=>{load()},[]);
+async function saveVilla(e){e.preventDefault();await runAction(async()=>{await api(editingVilla?'/villas/'+editingVilla:'/villas',{method:editingVilla?'PUT':'POST',body:JSON.stringify(villa)});setVilla(emptyVilla);setEditingVilla(null);setModalOpen(false);load()},editingVilla?'تم تعديل الفيلا':'تمت إضافة الفيلا')}
+async function removeVilla(r){if(!confirm(`تأكيد حذف فيلا "${r.name}"؟ سيتم حذف كل الشقق المرتبطة بها.`))return;await runAction(async()=>{await api('/villas/'+r.id,{method:'DELETE'});load()},'تم حذف الفيلا')}
+const rows=villas.map(v=>({...v,aptCount:apts.filter(a=>a.villa_id===v.id).length}));
+const filtered=rows.filter(r=>!qs||r.name.includes(qs)||(r.area||'').includes(qs));
+const activeCount=rows.filter(r=>r.is_active).length;
+const maxApts=Math.max(...rows.map(x=>x.aptCount),1);
+return <>
+<div className="villasPageHeader">
+  <div className="villasPageTitle"><Building2 size={20}/><h2>الفلل</h2><span className="tenantListCount">{rows.length}</span></div>
+  <div className="villasPageActions">
+    <div className="tenantSearch"><input placeholder="بحث بالاسم أو المنطقة..." value={qs} onChange={e=>setQs(e.target.value)}/></div>
+    {isAdmin&&<button onClick={()=>{setEditingVilla(null);setVilla(emptyVilla);setModalOpen(true)}}><Plus size={16}/>إضافة فيلا</button>}
+  </div>
+</div>
+<div className="villasSummaryBar">
+  <div className="villasSumCard"><span className="villasSumVal">{rows.length}</span><span className="villasSumLbl">إجمالي الفلل</span></div>
+  <div className="villasSumCard"><span className="villasSumVal" style={{color:'#15803d'}}>{activeCount}</span><span className="villasSumLbl">فيلا نشطة</span></div>
+  <div className="villasSumCard"><span className="villasSumVal">{apts.length}</span><span className="villasSumLbl">إجمالي الشقق</span></div>
+  <div className="villasSumCard"><span className="villasSumVal">{rows.length>0?(apts.length/rows.length).toFixed(1):0}</span><span className="villasSumLbl">متوسط الشقق</span></div>
+</div>
+{filtered.length===0&&<div className="tenantEmpty"><Building2 size={36} style={{opacity:.2}}/><p>{qs?'لا توجد نتائج مطابقة':'لا يوجد فلل بعد'}</p></div>}
+<div className="villasGrid">
+{filtered.map(r=><div key={r.id} className={'villaCard'+(r.is_active?'':' villaCardInactive')}>
+  <div className="villaCardBanner" style={{background:villaGradient(r.name)}}>
+    <span className="villaCardInitials">{r.name.replace('فيلا','').trim().slice(0,2)||r.name.slice(0,2)}</span>
+    <span className={'villaCardStatusBadge'+(r.is_active?' villaCardStatusActive':' villaCardStatusInactive')}>{r.is_active?'نشطة':'متوقفة'}</span>
+  </div>
+  <div className="villaCardBody">
+    <div className="villaCardNameRow">
+      <h3 className="villaCardName">{r.name}</h3>
+      {isAdmin&&<div className="villaCardActions">
+        <button className="iconBtn secondary" onClick={()=>{setEditingVilla(r.id);setVilla({name:r.name,area:r.area||'',notes:r.notes||'',is_active:r.is_active});setModalOpen(true)}}><Edit size={14}/></button>
+        <button className="iconBtn danger" onClick={()=>removeVilla(r)}><Trash2 size={14}/></button>
+      </div>}
+    </div>
+    {r.area&&<div className="villaCardAreaChip"><span>{r.area}</span></div>}
+    {r.notes&&<p className="villaCardNotes">{r.notes}</p>}
+    <div className="villaCardFooter">
+      <div className="villaCardAptCount"><Home size={14}/><span className="villaCardAptNum">{r.aptCount}</span><span className="villaCardAptLbl">شقة</span></div>
+      <div className="villaCardBarWrap"><div className="villaCardBar"><div className="villaCardBarFill" style={{width:Math.round(r.aptCount/maxApts*100)+'%',background:villaGradient(r.name)}}/></div></div>
+    </div>
+  </div>
+</div>)}
+</div>
+<Modal open={modalOpen} onClose={()=>setModalOpen(false)} title={editingVilla?'تعديل فيلا':'إضافة فيلا'}><form className="form compact" onSubmit={saveVilla}>
+  <Field label="اسم الفيلا" required><input required placeholder="فيلا الياسمين" value={villa.name} onChange={e=>setVilla({...villa,name:e.target.value})}/></Field>
+  <Field label="المنطقة"><input placeholder="دبي" value={villa.area} onChange={e=>setVilla({...villa,area:e.target.value})}/></Field>
+  <Field label="ملاحظات" wide><input value={villa.notes||''} onChange={e=>setVilla({...villa,notes:e.target.value})}/></Field>
+  {editingVilla&&<Field label="الحالة"><select value={villa.is_active} onChange={e=>setVilla({...villa,is_active:Number(e.target.value)})}><option value={1}>فعّال</option><option value={0}>متوقف</option></select></Field>}
+  <button>{editingVilla?'حفظ التعديل':'إضافة'}</button><button type="button" className="secondary" onClick={()=>setModalOpen(false)}>إلغاء</button>
+</form></Modal>
+</>;}
+
 
 function AptLeasesView({apt,api,isAdmin,onBack}){
 const[leasesDetail,setLeasesDetail]=useState(null);
