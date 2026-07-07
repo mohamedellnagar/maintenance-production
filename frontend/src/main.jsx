@@ -1122,14 +1122,10 @@ return <>
 </div>
 
 <Modal open={open} onClose={()=>setOpen(false)} title={editing?'تعديل عقد':'إضافة عقد إيجار'}><form className="form" onSubmit={saveLease}>
-  <Field label="المستأجر" required><select required value={form.tenant_id} onChange={e=>setForm({...form,tenant_id:e.target.value})}><option value="">اختر المستأجر</option>{tenants.map(t=><option key={t.id} value={t.id}>{t.name}</option>)}</select></Field>
   <Field label="الفيلا" required><select required value={form._villa_id||''} onChange={e=>setForm({...form,_villa_id:e.target.value,apartment_id:''})}><option value="">اختر الفيلا</option>{villas.map(v=><option key={v.id} value={v.id}>{v.name}</option>)}</select></Field>
   <Field label="الشقة" required><select required value={form.apartment_id} onChange={e=>setForm({...form,apartment_id:e.target.value})} disabled={!form._villa_id}><option value="">اختر الشقة</option>{apts.filter(a=>a.villa_id==form._villa_id).map(a=><option key={a.id} value={a.id}>{a.apartment_no}</option>)}</select></Field>
-  <Field label="تاريخ البداية" required><input required type="date" value={form.start_date} onChange={e=>setForm({...form,start_date:e.target.value})}/></Field>
-  <Field label="تاريخ النهاية" required><input required type="date" value={form.end_date} onChange={e=>setForm({...form,end_date:e.target.value})}/></Field>
-  <Field label="إجمالي الإيجار (AED)" required><input required type="number" min="0.01" step="0.01" value={form.total_amount} onChange={e=>setForm({...form,total_amount:e.target.value})}/></Field>
+  <LeaseFormFields form={form} setForm={setForm} tenants={tenants}/>
   {editing&&<Field label="الحالة"><select value={form.is_active} onChange={e=>setForm({...form,is_active:Number(e.target.value)})}><option value={1}>فعّال</option><option value={0}>منتهي</option></select></Field>}
-  <Field label="ملاحظات" wide><textarea value={form.notes} onChange={e=>setForm({...form,notes:e.target.value})}/></Field>
   <button><Plus size={16}/>{editing?'حفظ التعديل':'إضافة العقد'}</button><button type="button" className="secondary" onClick={()=>setOpen(false)}>إلغاء</button>
 </form></Modal>
 <Modal open={instOpen} onClose={()=>setInstOpen(false)} title={editingInst?'تعديل دفعة':'إضافة دفعة'}><form className="form compact" onSubmit={saveInst}>
