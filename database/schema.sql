@@ -26,6 +26,10 @@ CREATE TABLE apartments (
   id BIGINT PRIMARY KEY AUTO_INCREMENT,
   villa_id BIGINT NOT NULL,
   apartment_no VARCHAR(60) NOT NULL,
+  apt_type VARCHAR(50) NULL,
+  bathrooms TINYINT UNSIGNED NOT NULL DEFAULT 1,
+  has_balcony BOOLEAN NOT NULL DEFAULT FALSE,
+  rental_status ENUM('available','rented') NOT NULL DEFAULT 'available',
   floor VARCHAR(60),
   notes TEXT,
   is_active BOOLEAN NOT NULL DEFAULT TRUE,
@@ -136,3 +140,4 @@ INSERT INTO users (name,email,password_hash,role) VALUES
 INSERT INTO villas(name, area) VALUES ('فيلا التميمي','دبي'),('فيلا الجوهري','دبي'),('فيلا المنصوري','دبي');
 INSERT INTO apartments(villa_id, apartment_no, floor) VALUES (1,'1','أرضي'),(1,'2','أول'),(2,'1','أرضي'),(3,'4','ثاني');
 INSERT INTO technicians(name, specialty) VALUES ('غزال','تكييف'),('سند','تكييف'),('فريد','سباكة'),('معاذ','كهرباء'),('عبد الرافع','عام');
+

@@ -274,7 +274,7 @@ const api=useApi();const isAdmin=user?.role==='ADMIN';
 const[villas,setVillas]=useState([]),[apts,setApts]=useState([]);
 const[selectedApt,setSelectedApt]=useState(null);
 const[q,setQ]=useState('');
-const emptyApt={villa_id:'',apartment_no:'',floor:''};const[apt,setApt]=useState(emptyApt);const[editingApt,setEditingApt]=useState(null);const[modalOpen,setModalOpen]=useState(false);
+const emptyApt={villa_id:'',apartment_no:'',apt_type:'',bathrooms:1,has_balcony:false,rental_status:'available',floor:'',notes:''};const[apt,setApt]=useState(emptyApt);const[editingApt,setEditingApt]=useState(null);const[modalOpen,setModalOpen]=useState(false);
 const load=()=>{api('/villas').then(setVillas);api('/apartments').then(setApts)};
 useEffect(()=>{load()},[]);
 
@@ -305,24 +305,54 @@ return <>
   </div>
   <div className="aptGrid">
     {vapts.map(r=>(
-    <div key={r.id} className="aptCard">
-      <div className="aptCardNum">{r.apartment_no}</div>
-      {r.floor&&<div className="aptCardFloor"><Home size={11}/>{r.floor}</div>}
+    <div key={r.id} className={'aptCard'+(r.rental_status==='rented'?' aptCardRented':'')}>
+      <div className="aptCardHeader">
+        <div className="aptCardNum">{r.apartment_no}</div>
+        <span className={'aptCardStatus'+(r.rental_status==='rented'?' aptCardStatusRented':' aptCardStatusAvail')}>{r.rental_status==='rented'?'مأجورة':'متاحة'}</span>
+      </div>
+      {r.apt_type&&<div className="aptCardType">{r.apt_type}</div>}
+      <div className="aptCardMeta">
+        {r.floor&&<span><Home size={10}/>{r.floor}</span>}
+        <span>🚿 {r.bathrooms??1}</span>
+        {r.has_balcony?<span>🏠 بلكونة</span>:null}
+      </div>
       <div className="aptCardActions">
         <button className="secondary aptCardBtn" onClick={()=>setSelectedApt(r)}><Banknote size={13}/>العقود</button>
         {isAdmin&&<>
-          <button className="secondary iconBtn aptCardIcon" onClick={()=>{setEditingApt(r.id);setApt({villa_id:r.villa_id,apartment_no:r.apartment_no,floor:r.floor||''});setModalOpen(true)}}><Edit size={13}/></button>
+          <button className="secondary iconBtn aptCardIcon" onClick={()=>{setEditingApt(r.id);setApt({villa_id:r.villa_id,apartment_no:r.apartment_no,apt_type:r.apt_type||'',bathrooms:r.bathrooms??1,has_balcony:!!r.has_balcony,rental_status:r.rental_status||'available',floor:r.floor||'',notes:r.notes||''});setModalOpen(true)}}><Edit size={13}/></button>
           <button className="danger iconBtn aptCardIcon" onClick={()=>removeApt(r)}><Trash2 size={13}/></button>
         </>}
       </div>
     </div>))}
   </div>
 </div>))}
-<Modal open={modalOpen} onClose={()=>setModalOpen(false)} title={editingApt?'تعديل شقة':'إضافة شقة'}><form className="form compact" onSubmit={saveApt}>
+<Modal open={modalOpen} onClose={()=>setModalOpen(false)} title={editingApt?'تعديل شقة':'إضافة شقة'}>
+<form className="form compact" onSubmit={saveApt}>
   <Field label="الفيلا" required><select required value={apt.villa_id} onChange={e=>setApt({...apt,villa_id:e.target.value})}><option value="">اختر الفيلا</option>{villas.map(v=><option key={v.id} value={v.id}>{v.name}</option>)}</select></Field>
   <Field label="رقم الشقة" required><input required value={apt.apartment_no} onChange={e=>setApt({...apt,apartment_no:e.target.value})}/></Field>
+  <Field label="نوع الشقة"><select value={apt.apt_type||''} onChange={e=>setApt({...apt,apt_type:e.target.value})}>
+    <option value="">— اختر النوع —</option>
+    <option value="استديو">استديو</option>
+    <option value="غرفة وصالة">غرفة وصالة</option>
+    <option value="غرفتان وصالة">غرفتان وصالة</option>
+    <option value="3 غرف وصالة">3 غرف وصالة</option>
+    <option value="4 غرف وصالة">4 غرف وصالة</option>
+    <option value="5 غرف وصالة">5 غرف وصالة</option>
+    <option value="دوبلكس">دوبلكس</option>
+    <option value="بنتهاوس">بنتهاوس</option>
+  </select></Field>
+  <Field label="عدد الحمامات"><select value={apt.bathrooms??1} onChange={e=>setApt({...apt,bathrooms:Number(e.target.value)})}>
+    {[1,2,3,4,5].map(n=><option key={n} value={n}>{n} حمام{n===1?'':n===2?'ان':'ات'}</option>)}
+  </select></Field>
+  <Field label="الحالة"><select value={apt.rental_status||'available'} onChange={e=>setApt({...apt,rental_status:e.target.value})}>
+    <option value="available">متاحة للإيجار</option>
+    <option value="rented">مأجورة</option>
+  </select></Field>
+  <Field label="بلكونة"><label style={{display:'flex',alignItems:'center',gap:8,cursor:'pointer'}}><input type="checkbox" checked={!!apt.has_balcony} onChange={e=>setApt({...apt,has_balcony:e.target.checked})} style={{width:18,height:18}}/> يوجد بلكونة</label></Field>
   <Field label="الدور"><input value={apt.floor||''} onChange={e=>setApt({...apt,floor:e.target.value})}/></Field>
-  <button>{editingApt?'حفظ التعديل':'إضافة'}</button><button type="button" className="secondary" onClick={()=>setModalOpen(false)}>إلغاء</button>
+  <Field label="ملاحظات"><input value={apt.notes||''} onChange={e=>setApt({...apt,notes:e.target.value})}/></Field>
+  <button>{editingApt?'حفظ التعديل':'إضافة'}</button>
+  <button type="button" className="secondary" onClick={()=>setModalOpen(false)}>إلغاء</button>
 </form></Modal>
 </>;
 }

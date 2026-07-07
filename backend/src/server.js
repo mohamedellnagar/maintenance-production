@@ -113,8 +113,12 @@ app.get('/api/apartments', auth, wrap(async (req, res) => {
 }));
 app.post('/api/apartments', auth, wrap(async (req, res) => {
   requireFields(req.body, ['villa_id', 'apartment_no']);
-  const { villa_id, apartment_no, floor, notes, is_active } = req.body;
-  const [r] = await pool.query('INSERT INTO apartments SET ?', { villa_id, apartment_no, floor, notes, is_active: is_active ?? 1 });
+  const { villa_id, apartment_no, apt_type, bathrooms, has_balcony, rental_status, floor, notes, is_active } = req.body;
+  const [r] = await pool.query('INSERT INTO apartments SET ?', {
+    villa_id, apartment_no, apt_type: apt_type || null,
+    bathrooms: bathrooms ?? 1, has_balcony: has_balcony ? 1 : 0,
+    rental_status: rental_status || 'available', floor, notes, is_active: is_active ?? 1
+  });
   ok(res, { id: r.insertId });
 }));
 app.put('/api/apartments/:id', auth, wrap(async (req, res) => {
