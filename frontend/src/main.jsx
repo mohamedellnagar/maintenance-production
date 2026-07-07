@@ -1264,10 +1264,10 @@ function printMonthPDF(g){
   <table><thead><tr><th>تاريخ الاستحقاق</th><th>المستأجر</th><th>الفيلا / الشقة</th><th>المبلغ</th><th>المحصّل</th><th>المتبقي</th><th>الحالة</th></tr></thead>
   <tbody>${rows}</tbody></table>
   <div class="footer"><span>Maintenance Pro — نظام إدارة الفلل والشقق</span><span>صفحة 1</span></div>
-  <script>window.onload=()=>{window.print();}<\/script>
   </body></html>`;
   const w=window.open('','_blank','width=900,height=700');
   w.document.write(html);w.document.close();
+  setTimeout(()=>w.print(),400);
 }
 
 async function openPayments(inst){
