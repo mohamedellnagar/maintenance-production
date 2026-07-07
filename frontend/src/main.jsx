@@ -325,97 +325,113 @@ const LEASE_STATUS_CSS={active:'status-on',expired:'status-off'};
 
 function TenantsMgmt({user}){
 const api=useApi();const isAdmin=user?.role==='ADMIN';
-const[rows,setRows]=useState([]);
+const[rows,setRows]=useState([]);const[qs,setQs]=useState('');
 const[villas,setVillas]=useState([]);const[apts,setApts]=useState([]);
-// tenant detail
-const[selected,setSelected]=useState(null); // {tenant, leasesDetail:[{lease,installments},...]}
-// tenant form
+const[selected,setSelected]=useState(null);
 const empty={name:'',phone:'',national_id:'',email:'',notes:''};
 const[form,setForm]=useState(empty);const[editing,setEditing]=useState(null);const[tenantOpen,setTenantOpen]=useState(false);
-// new lease form
 const emptyLease={apartment_id:'',_villa_id:'',start_date:'',end_date:'',total_amount:'',notes:''};
 const[leaseForm,setLeaseForm]=useState(emptyLease);const[leaseOpen,setLeaseOpen]=useState(false);
-// installment
 const[instForm,setInstForm]=useState({due_date:'',amount:'',notes:''});const[instOpen,setInstOpen]=useState(false);const[editingInst,setEditingInst]=useState(null);const[targetLeaseId,setTargetLeaseId]=useState(null);
-// payments
 const[paymentsInst,setPaymentsInst]=useState(null);const[payments,setPayments]=useState([]);
 const[payForm,setPayForm]=useState({amount:'',payment_date:new Date().toISOString().slice(0,10),notes:''});const[payOpen,setPayOpen]=useState(false);
 
 const load=()=>api('/tenants').then(setRows);
 useEffect(()=>{load();api('/villas').then(setVillas);api('/apartments').then(setApts)},[]);
 
-async function loadTenantLeases(tenantId){
-  const leases=await api('/leases?tenant_id='+tenantId);
-  const leasesDetail=await Promise.all((leases||[]).map(l=>api('/leases/'+l.id)));
-  return leasesDetail;
-}
-async function openTenant(t){
-  const leasesDetail=await loadTenantLeases(t.id);
-  setSelected({tenant:t,leasesDetail});
-}
-async function reloadSelected(){
-  if(!selected)return;
-  const leasesDetail=await loadTenantLeases(selected.tenant.id);
-  setSelected(s=>({...s,leasesDetail}));
-}
+async function loadTenantLeases(tenantId){const leases=await api('/leases?tenant_id='+tenantId);const leasesDetail=await Promise.all((leases||[]).map(l=>api('/leases/'+l.id)));return leasesDetail;}
+async function openTenant(t){const leasesDetail=await loadTenantLeases(t.id);setSelected({tenant:t,leasesDetail});}
+async function reloadSelected(){if(!selected)return;const leasesDetail=await loadTenantLeases(selected.tenant.id);setSelected(s=>({...s,leasesDetail}));}
 
 async function saveTenant(e){e.preventDefault();await runAction(async()=>{await api(editing?'/tenants/'+editing:'/tenants',{method:editing?'PUT':'POST',body:JSON.stringify(form)});setForm(empty);setEditing(null);setTenantOpen(false);load();if(selected&&editing===selected.tenant.id)setSelected(s=>({...s,tenant:{...s.tenant,...form}}))},editing?'تم حفظ التعديل':'تمت إضافة المستأجر')}
 async function removeTenant(r){if(!confirm('تأكيد حذف المستأجر؟'))return;await runAction(async()=>{await api('/tenants/'+r.id,{method:'DELETE'});load();if(selected?.tenant.id===r.id)setSelected(null)},'تم الحذف')}
-
 async function saveLease(e){e.preventDefault();await runAction(async()=>{const{_villa_id,...rest}=leaseForm;await api('/leases',{method:'POST',body:JSON.stringify({...rest,tenant_id:selected.tenant.id})});setLeaseForm(emptyLease);setLeaseOpen(false);reloadSelected()},'تمت إضافة العقد الجديد')}
-
 async function saveInst(e){e.preventDefault();await runAction(async()=>{if(editingInst){await api('/installments/'+editingInst,{method:'PUT',body:JSON.stringify(instForm)})}else{await api('/leases/'+targetLeaseId+'/installments',{method:'POST',body:JSON.stringify(instForm)})}setInstForm({due_date:'',amount:'',notes:''});setEditingInst(null);setInstOpen(false);reloadSelected()},editingInst?'تم تعديل الدفعة':'تمت إضافة الدفعة')}
 async function removeInst(id){if(!confirm('تأكيد حذف الدفعة؟'))return;await runAction(async()=>{await api('/installments/'+id,{method:'DELETE'});reloadSelected()},'تم الحذف')}
-
 async function openPayments(inst){setPaymentsInst(inst);const p=await api('/installments/'+inst.id+'/payments');setPayments(p||[]);setPayOpen(true)}
 async function addPayment(e){e.preventDefault();await runAction(async()=>{await api('/installments/'+paymentsInst.id+'/payments',{method:'POST',body:JSON.stringify(payForm)});const p=await api('/installments/'+paymentsInst.id+'/payments');setPayments(p||[]);setPayForm({amount:'',payment_date:new Date().toISOString().slice(0,10),notes:''});reloadSelected()},'تم تسجيل الدفعة')}
 async function removePayment(id){if(!confirm('تأكيد حذف هذا الدفع؟'))return;await runAction(async()=>{await api('/payments/'+id,{method:'DELETE'});const p=await api('/installments/'+paymentsInst.id+'/payments');setPayments(p||[]);reloadSelected()},'تم الحذف')}
 
+const AVATAR_COLORS=['#0f766e','#0e7490','#1d4ed8','#7c3aed','#be185d','#b45309','#15803d','#dc2626'];
+function avatarColor(name){let h=0;for(let i=0;i<name.length;i++)h=(h*31+name.charCodeAt(i))%AVATAR_COLORS.length;return AVATAR_COLORS[h];}
+
+const filtered=rows.filter(r=>!qs||r.name.includes(qs)||(r.phone||'').includes(qs)||(r.national_id||'').includes(qs));
+
+// ─── Detail view ───────────────────────────────────────────────
 if(selected){
   const{tenant,leasesDetail}=selected;
   const sorted=[...leasesDetail].sort((a,b)=>new Date(b.lease.start_date)-new Date(a.lease.start_date));
+  const totalCollected=leasesDetail.reduce((s,{installments})=>s+installments.reduce((ss,i)=>ss+Number(i.collected_amount),0),0);
+  const totalAmount=leasesDetail.reduce((s,{lease})=>s+Number(lease.total_amount),0);
+  const activeLeases=leasesDetail.filter(({lease})=>leaseStatus(lease)==='active').length;
   return <>
-  <div className="tenantDetailHeader">
-    <button type="button" className="backBtn" onClick={()=>setSelected(null)}><ChevronRight size={18}/>رجوع</button>
-    <div className="tenantDetailInfo">
-      <div className="tenantDetailAvatar">{tenant.name[0]}</div>
-      <div><h3 className="tenantDetailName">{tenant.name}</h3><div className="tenantDetailMeta">{tenant.phone&&<span>{tenant.phone}</span>}{tenant.national_id&&<span>هوية: {tenant.national_id}</span>}{tenant.email&&<span>{tenant.email}</span>}</div></div>
-    </div>
-    <div className="tenantDetailActions">
-      <button onClick={()=>setLeaseOpen(true)}><Plus size={15}/>عقد جديد</button>
-      <button className="secondary" onClick={()=>{setEditing(tenant.id);setForm({name:tenant.name,phone:tenant.phone||'',national_id:tenant.national_id||'',email:tenant.email||'',notes:tenant.notes||''});setTenantOpen(true)}}><Edit size={15}/>تعديل البيانات</button>
+  {/* Profile hero */}
+  <div className="tenantProfile">
+    <div className="tenantProfileBg"/>
+    <div className="tenantProfileBody">
+      <button type="button" className="tenantProfileBack" onClick={()=>setSelected(null)}><ChevronRight size={16}/>رجوع</button>
+      <div className="tenantProfileMain">
+        <div className="tenantProfileAvatarWrap">
+          <div className="tenantProfileAvatar" style={{background:avatarColor(tenant.name)}}>{tenant.name[0]}</div>
+          {activeLeases>0&&<span className="tenantProfileActiveDot"/>}
+        </div>
+        <div className="tenantProfileInfo">
+          <h2 className="tenantProfileName">{tenant.name}</h2>
+          <div className="tenantProfileContacts">
+            {tenant.phone&&<span className="tenantProfileContact"><span className="tenantProfileContactIcon">📞</span>{tenant.phone}</span>}
+            {tenant.national_id&&<span className="tenantProfileContact"><span className="tenantProfileContactIcon">🪪</span>{tenant.national_id}</span>}
+            {tenant.email&&<span className="tenantProfileContact"><span className="tenantProfileContactIcon">✉️</span>{tenant.email}</span>}
+          </div>
+        </div>
+      </div>
+      <div className="tenantProfileStats">
+        <div className="tenantProfileStat"><span className="tenantProfileStatVal">{leasesDetail.length}</span><span className="tenantProfileStatLbl">إجمالي العقود</span></div>
+        <div className="tenantProfileStatDiv"/>
+        <div className="tenantProfileStat"><span className="tenantProfileStatVal" style={{color:'#15803d'}}>{activeLeases}</span><span className="tenantProfileStatLbl">عقد نشط</span></div>
+        <div className="tenantProfileStatDiv"/>
+        <div className="tenantProfileStat"><span className="tenantProfileStatVal">{totalCollected.toLocaleString()}</span><span className="tenantProfileStatLbl">محصّل (AED)</span></div>
+        <div className="tenantProfileStatDiv"/>
+        <div className="tenantProfileStat"><span className="tenantProfileStatVal" style={{color:(totalAmount-totalCollected)>0?'#dc2626':'#15803d'}}>{(totalAmount-totalCollected).toLocaleString()}</span><span className="tenantProfileStatLbl">متبقي (AED)</span></div>
+      </div>
+      <div className="tenantProfileActions">
+        <button onClick={()=>setLeaseOpen(true)}><Plus size={15}/>عقد جديد</button>
+        <button className="secondary" onClick={()=>{setEditing(tenant.id);setForm({name:tenant.name,phone:tenant.phone||'',national_id:tenant.national_id||'',email:tenant.email||'',notes:tenant.notes||''});setTenantOpen(true)}}><Edit size={15}/>تعديل</button>
+        {isAdmin&&<button className="danger secondary" onClick={()=>removeTenant(tenant)}><Trash2 size={15}/></button>}
+      </div>
     </div>
   </div>
 
-  {sorted.length===0&&<div className="panel"><div className="empty" style={{padding:32,textAlign:'center',color:'var(--muted)'}}>لا يوجد عقد لهذا المستأجر بعد — اضغط "عقد جديد" لإنشاء أول عقد</div></div>}
-
-  {sorted.map(({lease,installments},idx)=>{
-    const st=leaseStatus(lease);
-    const collected=installments.reduce((s,i)=>s+Number(i.collected_amount),0);
-    const remaining=Number(lease.total_amount)-collected;
-    const pct=Number(lease.total_amount)>0?Math.min(100,collected/Number(lease.total_amount)*100):0;
-    return <div key={lease.id} className={'leaseBlock'+(st==='expired'?' leaseBlockExpired':'')}>
-      <div className="leaseBlockStrip">
-        <div className="leaseBlockMeta">
-          {idx===0&&st==='active'?<span className="leaseBlockBadge leaseBlockBadgeActive">الحالي</span>:<span className="leaseBlockBadge leaseBlockBadgeExpired">منتهي</span>}
-          <span className="leaseBlockLocation"><Building2 size={13}/>{lease.villa_name} / {lease.apartment_no}</span>
-          <span className="leaseBlockDates"><Calendar size={12}/>{new Date(lease.start_date).toLocaleDateString('ar-AE')} — {new Date(lease.end_date).toLocaleDateString('ar-AE')}</span>
+  {/* Leases */}
+  <div className="tenantLeasesSection">
+    {sorted.length===0?<div className="tenantLeasesEmpty"><Banknote size={32} style={{opacity:.3}}/><p>لا يوجد عقد بعد — اضغط "عقد جديد" للبدء</p></div>:
+    sorted.map(({lease,installments},idx)=>{
+      const st=leaseStatus(lease);
+      const collected=installments.reduce((s,i)=>s+Number(i.collected_amount),0);
+      const remaining=Number(lease.total_amount)-collected;
+      const pct=Number(lease.total_amount)>0?Math.min(100,collected/Number(lease.total_amount)*100):0;
+      return <div key={lease.id} className={'leaseBlock'+(st==='expired'?' leaseBlockExpired':'')}>
+        <div className="leaseBlockStrip">
+          <div className="leaseBlockMeta">
+            {st==='active'?<span className="leaseBlockBadge leaseBlockBadgeActive">نشط</span>:<span className="leaseBlockBadge leaseBlockBadgeExpired">منتهي</span>}
+            <span className="leaseBlockLocation"><Building2 size={13}/>{lease.villa_name} / {lease.apartment_no}</span>
+            <span className="leaseBlockDates"><Calendar size={12}/>{new Date(lease.start_date).toLocaleDateString('ar-AE')} — {new Date(lease.end_date).toLocaleDateString('ar-AE')}</span>
+          </div>
+          <div className="leaseBlockFin">
+            <span className="leaseBlockFinItem"><span className="leaseBlockFinVal">{Number(lease.total_amount).toLocaleString()}</span><span className="leaseBlockFinLbl">إجمالي</span></span>
+            <span className="leaseBlockSep"/>
+            <span className="leaseBlockFinItem"><span className="leaseBlockFinVal leaseBlockFinGreen">{collected.toLocaleString()}</span><span className="leaseBlockFinLbl">محصّل</span></span>
+            <span className="leaseBlockSep"/>
+            <span className="leaseBlockFinItem"><span className={'leaseBlockFinVal'+(remaining>0?' leaseBlockFinRed':'')}>{remaining.toLocaleString()}</span><span className="leaseBlockFinLbl">متبقي</span></span>
+          </div>
         </div>
-        <div className="leaseBlockFin">
-          <span className="leaseBlockFinItem"><span className="leaseBlockFinVal">{Number(lease.total_amount).toFixed(0)}</span><span className="leaseBlockFinLbl">AED إجمالي</span></span>
-          <span className="leaseBlockSep"/>
-          <span className="leaseBlockFinItem"><span className="leaseBlockFinVal leaseBlockFinGreen">{collected.toFixed(0)}</span><span className="leaseBlockFinLbl">محصّل</span></span>
-          <span className="leaseBlockSep"/>
-          <span className="leaseBlockFinItem"><span className={'leaseBlockFinVal'+(remaining>0?' leaseBlockFinRed':'')}>{remaining.toFixed(0)}</span><span className="leaseBlockFinLbl">متبقي</span></span>
-        </div>
-      </div>
-      <div className="leaseBlockBar"><div className="leaseBlockBarFill" style={{width:pct+'%'}}/></div>
-      <InstTable installments={installments} isAdmin={isAdmin} leaseId={lease.id}
-        onAdd={id=>{setTargetLeaseId(id);setEditingInst(null);setInstForm({due_date:'',amount:'',notes:''});setInstOpen(true)}}
-        onEdit={(i,lid)=>{setTargetLeaseId(lid);setEditingInst(i.id);setInstForm({due_date:String(i.due_date).slice(0,10),amount:i.amount,notes:i.notes||''});setInstOpen(true)}}
-        onDelete={removeInst} onPayments={openPayments}/>
-    </div>;
-  })}
+        <div className="leaseBlockBar"><div className="leaseBlockBarFill" style={{width:pct+'%'}}/></div>
+        <InstTable installments={installments} isAdmin={isAdmin} leaseId={lease.id}
+          onAdd={id=>{setTargetLeaseId(id);setEditingInst(null);setInstForm({due_date:'',amount:'',notes:''});setInstOpen(true)}}
+          onEdit={(i,lid)=>{setTargetLeaseId(lid);setEditingInst(i.id);setInstForm({due_date:String(i.due_date).slice(0,10),amount:i.amount,notes:i.notes||''});setInstOpen(true)}}
+          onDelete={removeInst} onPayments={openPayments}/>
+      </div>;
+    })}
+  </div>
 
   <Modal open={leaseOpen} onClose={()=>setLeaseOpen(false)} title="إضافة عقد إيجار جديد"><form className="form" onSubmit={saveLease}>
     <Field label="الفيلا" required><select required value={leaseForm._villa_id} onChange={e=>setLeaseForm({...leaseForm,_villa_id:e.target.value,apartment_id:''})}><option value="">اختر الفيلا</option>{villas.map(v=><option key={v.id} value={v.id}>{v.name}</option>)}</select></Field>
@@ -443,16 +459,50 @@ if(selected){
       </form>
     </div>}
   </Modal>
+  <Modal open={tenantOpen} onClose={()=>setTenantOpen(false)} title={editing?'تعديل مستأجر':'إضافة مستأجر'}><form className="form compact" onSubmit={saveTenant}>
+    <Field label="الاسم" required><input required value={form.name} onChange={e=>setForm({...form,name:e.target.value})}/></Field>
+    <Field label="الهاتف"><input value={form.phone} onChange={e=>setForm({...form,phone:e.target.value})}/></Field>
+    <Field label="رقم الهوية"><input value={form.national_id} onChange={e=>setForm({...form,national_id:e.target.value})}/></Field>
+    <Field label="الإيميل"><input type="email" value={form.email} onChange={e=>setForm({...form,email:e.target.value})}/></Field>
+    <Field label="ملاحظات" wide><textarea value={form.notes} onChange={e=>setForm({...form,notes:e.target.value})}/></Field>
+    <button>{editing?'حفظ التعديل':'إضافة'}</button><button type="button" className="secondary" onClick={()=>setTenantOpen(false)}>إلغاء</button>
+  </form></Modal>
   </>
 }
 
-return <><Panel title="المستأجرين"><div className="panelActions"><button onClick={()=>{setEditing(null);setForm(empty);setTenantOpen(true)}}><Plus size={16}/>إضافة مستأجر</button></div>
-<Table rows={rows} cols={['name','phone','national_id','email']} searchable actions={r=><>
-  <button className="secondary" onClick={()=>openTenant(r)}><Eye size={15}/>العقود</button>
-  <button onClick={()=>{setEditing(r.id);setForm({name:r.name,phone:r.phone||'',national_id:r.national_id||'',email:r.email||'',notes:r.notes||''});setTenantOpen(true)}}><Edit size={15}/></button>
-  {isAdmin&&<button className="danger" onClick={()=>removeTenant(r)}><Trash2 size={15}/></button>}
-</>}/>
-</Panel>
+// ─── List view ───────────────────────────────────────────────
+return <>
+<div className="tenantListHeader">
+  <div className="tenantListTitle"><UserCheck size={20}/><h2>المستأجرين</h2><span className="tenantListCount">{rows.length}</span></div>
+  <div className="tenantListActions">
+    <div className="tenantSearch"><input placeholder="بحث بالاسم أو الهاتف..." value={qs} onChange={e=>setQs(e.target.value)}/></div>
+    <button onClick={()=>{setEditing(null);setForm(empty);setTenantOpen(true)}}><Plus size={16}/>إضافة مستأجر</button>
+  </div>
+</div>
+
+{filtered.length===0&&<div className="tenantEmpty"><UserCheck size={36} style={{opacity:.2}}/><p>{qs?'لا توجد نتائج مطابقة':'لا يوجد مستأجرين بعد'}</p></div>}
+
+<div className="tenantGrid">
+{filtered.map(r=><div key={r.id} className="tenantCard" onClick={()=>openTenant(r)}>
+  <div className="tenantCardTop">
+    <div className="tenantCardAvatar" style={{background:avatarColor(r.name)}}>{r.name[0]}</div>
+    <div className="tenantCardInfo">
+      <div className="tenantCardName">{r.name}</div>
+      {r.phone&&<div className="tenantCardPhone">{r.phone}</div>}
+      {r.national_id&&<div className="tenantCardId">🪪 {r.national_id}</div>}
+    </div>
+  </div>
+  {r.email&&<div className="tenantCardEmail">{r.email}</div>}
+  <div className="tenantCardFooter">
+    <button className="tenantCardViewBtn" onClick={e=>{e.stopPropagation();openTenant(r)}}><Eye size={14}/>العقود</button>
+    <div className="tenantCardIconBtns">
+      <button className="iconBtn secondary" onClick={e=>{e.stopPropagation();setEditing(r.id);setForm({name:r.name,phone:r.phone||'',national_id:r.national_id||'',email:r.email||'',notes:r.notes||''});setTenantOpen(true)}}><Edit size={14}/></button>
+      {isAdmin&&<button className="iconBtn danger" onClick={e=>{e.stopPropagation();removeTenant(r)}}><Trash2 size={14}/></button>}
+    </div>
+  </div>
+</div>)}
+</div>
+
 <Modal open={tenantOpen} onClose={()=>setTenantOpen(false)} title={editing?'تعديل مستأجر':'إضافة مستأجر'}><form className="form compact" onSubmit={saveTenant}>
   <Field label="الاسم" required><input required value={form.name} onChange={e=>setForm({...form,name:e.target.value})}/></Field>
   <Field label="الهاتف"><input value={form.phone} onChange={e=>setForm({...form,phone:e.target.value})}/></Field>
@@ -460,7 +510,8 @@ return <><Panel title="المستأجرين"><div className="panelActions"><butt
   <Field label="الإيميل"><input type="email" value={form.email} onChange={e=>setForm({...form,email:e.target.value})}/></Field>
   <Field label="ملاحظات" wide><textarea value={form.notes} onChange={e=>setForm({...form,notes:e.target.value})}/></Field>
   <button>{editing?'حفظ التعديل':'إضافة'}</button><button type="button" className="secondary" onClick={()=>setTenantOpen(false)}>إلغاء</button>
-</form></Modal></>
+</form></Modal>
+</>
 }
 
 function Leases({user}){const api=useApi();const isAdmin=user?.role==='ADMIN';const[rows,setRows]=useState([]);const[tenants,setTenants]=useState([]);const[apts,setApts]=useState([]);const[villas,setVillas]=useState([]);const[selectedLease,setSelectedLease]=useState(null);const[leaseDetail,setLeaseDetail]=useState(null);const empty={apartment_id:'',tenant_id:'',start_date:'',end_date:'',total_amount:'',notes:'',is_active:1};const[form,setForm]=useState(empty);const[editing,setEditing]=useState(null);const[open,setOpen]=useState(false);const[instForm,setInstForm]=useState({due_date:'',amount:'',notes:''});const[instOpen,setInstOpen]=useState(false);const[editingInst,setEditingInst]=useState(null);const[paymentsInst,setPaymentsInst]=useState(null);const[payments,setPayments]=useState([]);const[payForm,setPayForm]=useState({amount:'',payment_date:new Date().toISOString().slice(0,10),notes:''});const[payOpen,setPayOpen]=useState(false);
