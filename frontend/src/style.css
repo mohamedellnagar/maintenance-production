@@ -436,7 +436,7 @@ button.danger{background:#fee2e2;color:var(--danger)}.actionsCell{display:flex;g
 .ptMonthCurrent .ptMonthHeader{background:linear-gradient(90deg,#f0fdf4,#f8fafc)}
 .ptMonthHeader:hover{background:#f1f5f9}
 .ptMonthHeaderRight{display:flex;align-items:center;gap:8px;flex-shrink:0;min-width:140px}
-.ptMonthName{font-size:14px;font-weight:700;color:var(--fg)}
+.ptMonthName{font-size:14px;font-weight:700;color:var(--text)}
 .ptMonthCurrentBadge{font-size:10px;font-weight:700;background:var(--brand);color:#fff;padding:2px 8px;border-radius:20px}
 .ptMonthOverdueBadge{font-size:10px;font-weight:700;background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:20px;display:flex;align-items:center;gap:3px;border:1px solid #fecaca}
 .ptMonthHeaderLeft{display:flex;align-items:center;gap:10px;color:var(--muted)}
