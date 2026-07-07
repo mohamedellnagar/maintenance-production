@@ -526,7 +526,7 @@ app.get('/api/import/template', auth, adminOnly, (req, res) => {
     XLSX.utils.book_append_sheet(wb, ws, s.name);
   }
 
-  const buf = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
+  const buf = Buffer.from(XLSX.write(wb, { type: 'array', bookType: 'xlsx' }));
   res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
   res.setHeader('Content-Disposition', 'attachment; filename*=UTF-8\'\'%D9%86%D9%85%D9%88%D8%B0%D8%AC_%D8%A7%D9%84%D8%A7%D8%B3%D8%AA%D9%8A%D8%B1%D8%A7%D8%AF.xlsx');
   res.send(buf);
