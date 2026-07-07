@@ -950,7 +950,7 @@ return <>
           const isToday=r.due_date===today;
           return <tr key={r.id} className={'ptRow ptRow-'+r.status+(isToday?' ptRowToday':'')}>
             <td className="ptRowDate">
-              <span className="ptRowDateMain">{new Date(r.due_date).toLocaleDateString('ar-AE',{day:'numeric',month:'short'})}</span>
+              <span className="ptRowDateMain">{(()=>{const AR_M=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];const p=(r.due_date.slice?r.due_date:String(r.due_date)).slice(0,10).split('-');return `${parseInt(p[2])} ${AR_M[parseInt(p[1],10)-1]}`;})()}</span>
               {isToday&&<span className="ptRowTodayBadge">اليوم</span>}
             </td>
             <td className="ptRowTenant">{r.tenant_name}</td>
