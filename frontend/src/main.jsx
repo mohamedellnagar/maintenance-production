@@ -100,6 +100,13 @@ function ImportData(){
     installments:['اسم الفيلا *','رقم الشقة *','اسم المستأجر *','تاريخ الاستحقاق *','المبلغ *','تاريخ الدفع (فارغ = لم يُدفع)'],
   };
 
+  function downloadTemplate(){
+    const token=localStorage.token;
+    const base=import.meta.env.VITE_API_URL||(location.hostname==='localhost'?'http://localhost:4000/api':'/api');
+    fetch(base+'/import/template',{headers:{Authorization:'Bearer '+token}})
+      .then(r=>r.blob()).then(blob=>{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='نموذج_الاستيراد.xlsx';a.click();});
+  }
+
   return <Panel title="استيراد البيانات">
     {result?<div className="importResult">
       <div className="importResultIcon"><CheckSquare size={48} color="#10b981"/></div>
@@ -115,6 +122,13 @@ function ImportData(){
       <button onClick={()=>setResult(null)}><Upload size={16}/>استيراد ملف آخر</button>
     </div>:
     <div className="importWrap">
+      <div className="importTemplateBar">
+        <div>
+          <p className="importTemplateTitle">قبل الرفع — حمّل النموذج المعتمد</p>
+          <small className="importTemplateSub">أدخل بياناتك في النموذج ثم ارفعه هنا. لا تغير أسماء الأعمدة أو الشيتات.</small>
+        </div>
+        <button className="secondary" onClick={downloadTemplate}><Download size={15}/>تحميل النموذج</button>
+      </div>
       <div className="importDropZone" onClick={()=>fileRef.current.click()}>
         <FileSpreadsheet size={40} color="#10b981"/>
         <p>{file?file.name:'اضغط لرفع ملف Excel (.xlsx)'}</p>
