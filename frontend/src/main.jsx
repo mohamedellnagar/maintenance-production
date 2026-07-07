@@ -835,9 +835,11 @@ const totalDueSoonAmt=kpiDueSoon.reduce((s,r)=>s+Number(r.amount)-Number(r.colle
 // Group by month
 const groups={};
 filtered.forEach(r=>{
-  const d=new Date(r.due_date);
-  const key=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
-  const label=d.toLocaleDateString('ar-AE',{year:'numeric',month:'long'});
+  const raw=r.due_date.slice?r.due_date.slice(0,10):String(r.due_date).slice(0,10);
+  const [yr,mo]=raw.split('-');
+  const key=`${yr}-${mo}`;
+  const AR_MONTHS=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+  const label=`${AR_MONTHS[parseInt(mo,10)-1]} ${yr}`;
   if(!groups[key])groups[key]={key,label,rows:[],total:0,collected:0};
   groups[key].rows.push(r);
   groups[key].total+=Number(r.amount);
