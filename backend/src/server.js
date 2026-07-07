@@ -87,13 +87,13 @@ app.get('/api/dashboard', auth, wrap(async (req, res) => {
     LEFT JOIN (SELECT installment_id, SUM(amount) collected FROM installment_payments GROUP BY installment_id) ip_sum ON ip_sum.installment_id=li.id
     LEFT JOIN installment_payments ip_pmt ON ip_pmt.installment_id=li.id`);
 
-  // Apartment occupancy
+  // Apartment occupancy — derived from active leases, not manual field
   const [[aptKpi]] = await pool.query(`
     SELECT
       COUNT(*) total,
-      SUM(rental_status='rented') rented,
-      SUM(rental_status='available') available
-    FROM apartments WHERE is_active=1`);
+      SUM(EXISTS(SELECT 1 FROM leases l WHERE l.apartment_id=a.id AND l.is_active=1 AND l.end_date>=CURDATE())) rented,
+      SUM(NOT EXISTS(SELECT 1 FROM leases l WHERE l.apartment_id=a.id AND l.is_active=1 AND l.end_date>=CURDATE())) available
+    FROM apartments a WHERE a.is_active=1`);
 
   // Overdue installments list (top 5)
   const [overdueList] = await pool.query(`
@@ -167,7 +167,15 @@ crud('technicians', 'technicians', ['name', 'specialty', 'phone', 'notes', 'is_a
 app.get('/api/apartments', auth, wrap(async (req, res) => {
   const q = req.query.villa_id ? 'WHERE a.villa_id=?' : '';
   const params = req.query.villa_id ? [req.query.villa_id] : [];
-  const [rows] = await pool.query(`SELECT a.*,v.name villa_name FROM apartments a JOIN villas v ON v.id=a.villa_id ${q} ORDER BY v.name,a.apartment_no`, params);
+  const [rows] = await pool.query(`
+    SELECT a.*, v.name villa_name,
+      CASE WHEN EXISTS(
+        SELECT 1 FROM leases l
+        WHERE l.apartment_id=a.id AND l.is_active=1 AND l.end_date>=CURDATE()
+      ) THEN 'rented' ELSE 'available' END AS rental_status
+    FROM apartments a
+    JOIN villas v ON v.id=a.villa_id
+    ${q} ORDER BY v.name, a.apartment_no`, params);
   ok(res, rows);
 }));
 app.post('/api/apartments', auth, wrap(async (req, res) => {

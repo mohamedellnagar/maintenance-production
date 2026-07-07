@@ -532,10 +532,7 @@ return <>
   <Field label="عدد الحمامات"><select value={apt.bathrooms??1} onChange={e=>setApt({...apt,bathrooms:Number(e.target.value)})}>
     {[1,2,3,4,5].map(n=><option key={n} value={n}>{n} حمام{n===1?'':n===2?'ان':'ات'}</option>)}
   </select></Field>
-  <Field label="الحالة"><select value={apt.rental_status||'available'} onChange={e=>setApt({...apt,rental_status:e.target.value})}>
-    <option value="available">متاحة للإيجار</option>
-    <option value="rented">مأجورة</option>
-  </select></Field>
+  {/* rental_status is auto-computed from active leases — not shown in form */}
   <Field label="بلكونة"><label style={{display:'flex',alignItems:'center',gap:8,cursor:'pointer'}}><input type="checkbox" checked={!!apt.has_balcony} onChange={e=>setApt({...apt,has_balcony:e.target.checked})} style={{width:18,height:18}}/> يوجد بلكونة</label></Field>
   <Field label="الدور"><input value={apt.floor||''} onChange={e=>setApt({...apt,floor:e.target.value})}/></Field>
   <Field label="ملاحظات"><input value={apt.notes||''} onChange={e=>setApt({...apt,notes:e.target.value})}/></Field>
