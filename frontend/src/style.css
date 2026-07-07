@@ -502,3 +502,93 @@ button.danger{background:#fee2e2;color:var(--danger)}.actionsCell{display:flex;g
 .aptCardMeta{display:flex;gap:8px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin-bottom:8px;align-items:center}
 .aptCardMeta span{display:flex;align-items:center;gap:3px}
 .aptCardRented{border-color:#fecaca}
+
+/* ========== NEW DASHBOARD ========== */
+.dashRoot{display:flex;flex-direction:column;gap:14px;padding-bottom:24px}
+
+/* Header */
+.dashHeader{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;background:linear-gradient(135deg,#0f2027,#203a43,#0f766e);border-radius:20px;padding:18px 24px;color:#fff}
+.dashHeaderRight{display:flex;align-items:center;gap:12px}
+.dashHeaderTitle{font-size:20px;font-weight:800;display:flex;align-items:center;gap:8px}
+.dashHeaderIcon{color:#5eead4}
+.dashLiveChip{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700}
+.dashLiveDot{width:7px;height:7px;border-radius:50%;background:#4ade80;box-shadow:0 0 6px #4ade80;animation:pulse 1.5s infinite}
+.dashHeaderLeft{display:flex;align-items:center;gap:10px}
+.dashLastUpdated{font-size:11px;color:rgba(255,255,255,.7)}
+.dashRefreshBtn{background:rgba(255,255,255,.15)!important;color:#fff!important;border:1px solid rgba(255,255,255,.25)!important;padding:6px 12px!important;border-radius:10px!important;font-size:12px}
+.dashRefreshSpin svg{animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Section labels */
+.dashSectionLabel{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;padding-right:4px}
+
+/* KPI cards */
+.dashKpiRow{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:900px){.dashKpiRow{grid-template-columns:repeat(2,1fr)}}
+.dashKpi{position:relative;background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px 18px;display:flex;align-items:flex-start;gap:14px;overflow:hidden;transition:transform .15s,box-shadow .15s}
+.dashKpi:hover{transform:translateY(-2px);box-shadow:0 8px 24px #1018280f}
+.dashKpiIcon{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;flex-shrink:0}
+.dashKpiBody{flex:1;min-width:0}
+.dashKpiVal{font-size:24px;font-weight:900;line-height:1;margin-bottom:4px}
+.dashKpiLabel{font-size:12px;color:var(--muted);white-space:nowrap}
+.dashKpiSub{position:absolute;bottom:10px;left:14px;font-size:11px;color:var(--muted);background:var(--bg);padding:2px 6px;border-radius:6px}
+.dashKpiAlert{position:absolute;top:10px;left:10px;width:8px;height:8px;border-radius:50%;background:#dc2626;animation:pulse 1.5s infinite}
+
+.dashKpi-teal .dashKpiIcon{background:#ccfbf1;color:#0f766e}
+.dashKpi-teal .dashKpiVal{color:#0f766e}
+.dashKpi-amber .dashKpiIcon{background:#fef3c7;color:#b45309}
+.dashKpi-amber .dashKpiVal{color:#b45309}
+.dashKpi-blue .dashKpiIcon{background:#dbeafe;color:#1d4ed8}
+.dashKpi-blue .dashKpiVal{color:#1d4ed8}
+.dashKpi-purple .dashKpiIcon{background:#f3e8ff;color:#7e22ce}
+.dashKpi-purple .dashKpiVal{color:#7e22ce}
+.dashKpi-green .dashKpiIcon{background:#dcfce7;color:#15803d}
+.dashKpi-green .dashKpiVal{color:#15803d}
+.dashKpi-danger .dashKpiIcon{background:#fee2e2;color:#dc2626}
+.dashKpi-danger .dashKpiVal{color:#dc2626}
+.dashKpi-danger{border-color:#fecaca}
+
+/* Occupancy bar */
+.dashOccupancy{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px 24px;display:flex;align-items:center;gap:20px}
+.dashOccCard{text-align:center;min-width:70px}
+.dashOccNum{font-size:28px;font-weight:900}
+.dashOccLabel{font-size:12px;color:var(--muted)}
+.dashOccRented .dashOccNum{color:#dc2626}
+.dashOccAvail .dashOccNum{color:#15803d}
+.dashOccBarWrap{flex:1;text-align:center}
+.dashOccBarTrack{height:12px;background:#f1f5f9;border-radius:8px;overflow:hidden;margin-bottom:6px}
+.dashOccBarFill{height:100%;background:linear-gradient(90deg,#0f766e,#14b8a6);border-radius:8px;transition:width .5s ease}
+.dashOccPct{font-size:13px;font-weight:700;color:var(--text)}
+
+/* Charts */
+.dashChartsRow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:800px){.dashChartsRow{grid-template-columns:1fr}}
+.dashChart{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px 18px}
+.dashChartTitle{font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+
+/* Bottom panels */
+.dashBottomRow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:800px){.dashBottomRow{grid-template-columns:1fr}}
+.dashPanel{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px 18px;max-height:340px;overflow-y:auto}
+.dashPanelTitle{font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+
+/* Activity rows */
+.dashActivityRow{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid #f1f5f9}
+.dashActivityRow:last-child{border-bottom:none}
+.dashActivityDot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0}
+.dashActivityDot-maint{background:#0f766e}
+.dashActivityBody{flex:1;min-width:0}
+.dashActivityMain{font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px}
+.dashActivityChip{background:#f0fdf4;color:#0f766e;font-size:10px;padding:1px 6px;border-radius:8px;font-weight:600}
+.dashActivitySub{font-size:11px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dashActivityMeta{display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0}
+.dashActivityCost{font-size:11px;font-weight:700;color:#b45309}
+.dashActivityDate{font-size:10px;color:var(--muted)}
+
+/* Overdue rows */
+.dashOverdueRow{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f1f5f9}
+.dashOverdueRow:last-child{border-bottom:none}
+.dashOverdueDays{width:36px;height:36px;border-radius:10px;background:#fee2e2;color:#dc2626;display:grid;place-items:center;font-size:11px;font-weight:800;flex-shrink:0}
+.dashOverdueAmt{font-size:14px;font-weight:800;color:#dc2626;white-space:nowrap;text-align:left}
+.dashOverdueAmt span{font-size:10px;font-weight:500;color:var(--muted)}
+.dashNoOverdue{display:flex;flex-direction:column;align-items:center;gap:10px;padding:24px;color:var(--muted);font-size:13px}

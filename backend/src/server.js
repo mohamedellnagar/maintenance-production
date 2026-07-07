@@ -45,13 +45,72 @@ app.get('/api/dashboard', auth, wrap(async (req, res) => {
   const whereSql = where.length ? `WHERE ${where.join(' AND ')}` : '';
   const andSql = where.length ? `AND ${where.join(' AND ')}` : '';
 
+  // Maintenance KPIs
   const [[today]] = await pool.query(`SELECT COUNT(*) records, COALESCE(SUM(spare_part_cost),0) cost FROM maintenance_records WHERE record_date=CURDATE()`);
   const [[month]] = await pool.query(`SELECT COUNT(*) records, COALESCE(SUM(spare_part_cost),0) cost FROM maintenance_records WHERE YEAR(record_date)=YEAR(CURDATE()) AND MONTH(record_date)=MONTH(CURDATE())`);
   const [[filtered]] = await pool.query(`SELECT COUNT(*) records, COALESCE(SUM(r.spare_part_cost),0) cost FROM maintenance_records r ${whereSql}`, params);
   const [byTech] = await pool.query(`SELECT t.name, COUNT(r.id) total, COALESCE(SUM(r.spare_part_cost),0) cost FROM technicians t LEFT JOIN maintenance_records r ON r.technician_id=t.id ${andSql} GROUP BY t.id ORDER BY total DESC LIMIT 8`, params);
   const [byVilla] = await pool.query(`SELECT v.name, COUNT(r.id) total, COALESCE(SUM(r.spare_part_cost),0) cost FROM villas v LEFT JOIN maintenance_records r ON r.villa_id=v.id ${andSql} GROUP BY v.id ORDER BY total DESC LIMIT 8`, params);
-  const [recent] = await pool.query(`SELECT r.*,v.name villa_name,a.apartment_no,t.name technician_name FROM maintenance_records r JOIN villas v ON v.id=r.villa_id JOIN apartments a ON a.id=r.apartment_id JOIN technicians t ON t.id=r.technician_id ${whereSql} ORDER BY r.record_date DESC,r.id DESC LIMIT 10`, params);
-  ok(res, { today, month, filtered, byTech, byVilla, recent });
+  const [recent] = await pool.query(`SELECT r.id,r.record_date,r.description,r.spare_part_cost,r.issue_type,v.name villa_name,a.apartment_no,t.name technician_name FROM maintenance_records r JOIN villas v ON v.id=r.villa_id LEFT JOIN apartments a ON a.id=r.apartment_id JOIN technicians t ON t.id=r.technician_id ${whereSql} ORDER BY r.record_date DESC,r.id DESC LIMIT 8`, params);
+
+  // Last 6 months trend (maintenance records count per month)
+  const [monthlyTrend] = await pool.query(`
+    SELECT DATE_FORMAT(record_date,'%Y-%m') mo, COUNT(*) cnt, COALESCE(SUM(spare_part_cost),0) cost
+    FROM maintenance_records WHERE record_date >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
+    GROUP BY mo ORDER BY mo ASC`);
+
+  // Lease / financial KPIs
+  const [[leaseKpi]] = await pool.query(`
+    SELECT
+      COUNT(DISTINCT l.id) total_leases,
+      SUM(CASE WHEN l.is_active=1 AND l.end_date>=CURDATE() THEN 1 ELSE 0 END) active_leases,
+      COUNT(DISTINCT t.id) total_tenants
+    FROM leases l JOIN tenants t ON t.id=l.tenant_id`);
+
+  const [[installmentKpi]] = await pool.query(`
+    SELECT
+      COALESCE(SUM(CASE
+        WHEN COALESCE(ip_sum.collected,0)<li.amount AND li.due_date<CURDATE() THEN li.amount-COALESCE(ip_sum.collected,0)
+        ELSE 0 END),0) overdue_amount,
+      COUNT(CASE
+        WHEN COALESCE(ip_sum.collected,0)<li.amount AND li.due_date<CURDATE() THEN 1 END) overdue_count,
+      COALESCE(SUM(CASE
+        WHEN ip_sum.collected>=li.amount THEN li.amount ELSE 0 END),0) collected_total,
+      COALESCE(SUM(CASE
+        WHEN li.due_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(),INTERVAL 30 DAY)
+          AND COALESCE(ip_sum.collected,0)<li.amount THEN li.amount-COALESCE(ip_sum.collected,0)
+        ELSE 0 END),0) due_soon_amount,
+      COALESCE(SUM(CASE
+        WHEN YEAR(ip_pmt.payment_date)=YEAR(CURDATE()) AND MONTH(ip_pmt.payment_date)=MONTH(CURDATE())
+        THEN ip_pmt.amount ELSE 0 END),0) collected_this_month
+    FROM lease_installments li
+    LEFT JOIN (SELECT installment_id, SUM(amount) collected FROM installment_payments GROUP BY installment_id) ip_sum ON ip_sum.installment_id=li.id
+    LEFT JOIN installment_payments ip_pmt ON ip_pmt.installment_id=li.id`);
+
+  // Apartment occupancy
+  const [[aptKpi]] = await pool.query(`
+    SELECT
+      COUNT(*) total,
+      SUM(rental_status='rented') rented,
+      SUM(rental_status='available') available
+    FROM apartments WHERE is_active=1`);
+
+  // Overdue installments list (top 5)
+  const [overdueList] = await pool.query(`
+    SELECT li.id, li.due_date, li.amount, COALESCE(SUM(ip.amount),0) collected,
+      t.name tenant_name, v.name villa_name, a.apartment_no
+    FROM lease_installments li
+    JOIN leases l ON l.id=li.lease_id
+    JOIN apartments a ON a.id=l.apartment_id
+    JOIN villas v ON v.id=a.villa_id
+    JOIN tenants t ON t.id=l.tenant_id
+    LEFT JOIN installment_payments ip ON ip.installment_id=li.id
+    WHERE li.due_date<CURDATE()
+    GROUP BY li.id
+    HAVING collected<li.amount
+    ORDER BY li.due_date ASC LIMIT 5`);
+
+  ok(res, { today, month, filtered, byTech, byVilla, recent, monthlyTrend, leaseKpi, installmentKpi, aptKpi, overdueList });
 }));
 
 function pageGuard(pageId) {
