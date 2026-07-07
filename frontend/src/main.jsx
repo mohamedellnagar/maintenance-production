@@ -1264,10 +1264,12 @@ function printMonthPDF(g){
   <table><thead><tr><th>تاريخ الاستحقاق</th><th>المستأجر</th><th>الفيلا / الشقة</th><th>المبلغ</th><th>المحصّل</th><th>المتبقي</th><th>الحالة</th></tr></thead>
   <tbody>${rows}</tbody></table>
   <div class="footer"><span>Maintenance Pro — نظام إدارة الفلل والشقق</span><span>صفحة 1</span></div>
+  <div class="no-print" style="text-align:center;margin-top:20px"><button onclick="window.print()" style="padding:10px 32px;background:#1e40af;color:#fff;border:none;border-radius:8px;font-size:15px;cursor:pointer;font-family:inherit">🖨️ طباعة / حفظ PDF</button></div>
   </body></html>`;
-  const w=window.open('','_blank','width=900,height=700');
-  w.document.write(html);w.document.close();
-  setTimeout(()=>w.print(),400);
+  const blob=new Blob([html],{type:'text/html;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const w=window.open(url,'_blank');
+  if(w)w.onload=()=>{w.focus();w.print();URL.revokeObjectURL(url);};
 }
 
 async function openPayments(inst){
