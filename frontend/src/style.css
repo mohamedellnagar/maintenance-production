@@ -287,18 +287,32 @@ button.danger{background:#fee2e2;color:var(--danger)}.actionsCell{display:flex;g
 .villaSectionCount{font-size:12px;color:var(--muted);background:#f1f5f9;padding:3px 10px;border-radius:20px}
 .villaSectionAdd{padding:5px 12px;font-size:12px;border-radius:9px;margin-bottom:0}
 
-.aptGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;padding:12px}
-.aptCard{border:1px solid var(--line);border-radius:12px;padding:12px 12px 10px;display:flex;flex-direction:column;gap:6px;background:#fafafa;transition:box-shadow .15s,border-color .15s}
-.aptCard:hover{box-shadow:0 3px 12px #0f766e15;border-color:#a7f3d0}
-.aptCardNum{font-size:22px;font-weight:900;color:var(--brand);line-height:1}
-.aptCardFloor{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--muted)}
-.aptCardActions{display:flex;gap:5px;flex-wrap:wrap;margin-top:2px}
-.aptCardBtn{padding:5px 10px;font-size:11px;border-radius:8px;margin-bottom:0;flex:1}
-.aptCardIcon{padding:5px 7px;margin-bottom:0;border-radius:8px}
+/* apartment rows (dense, scannable) */
+.aptCountChip{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px}
+.aptCountRented{background:#fef2f2;color:#dc2626}
+.aptCountAvail{background:#f0fdf4;color:#15803d}
+.aptRows{display:flex;flex-direction:column}
+.aptRow{display:flex;align-items:center;gap:12px;padding:11px 16px;border-bottom:1px solid var(--line);cursor:pointer;transition:background .12s}
+.aptRow:last-child{border-bottom:none}
+.aptRow:hover{background:var(--hover)}
+.aptRowDot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.aptRowDotRented{background:#dc2626}
+.aptRowDotAvail{background:#22c55e}
+.aptRowNo{font-size:15px;font-weight:800;color:var(--fg);min-width:56px;flex-shrink:0}
+.aptRowStatus{font-size:10.5px;font-weight:700;padding:2px 9px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.aptRowStatusRented{background:#fef2f2;color:#dc2626}
+.aptRowStatusAvail{background:#f0fdf4;color:#15803d}
+.aptRowMeta{flex:1;display:flex;align-items:center;gap:12px;flex-wrap:wrap;min-width:0}
+.aptRowType{font-size:12.5px;font-weight:600;color:var(--text)}
+.aptRowMetaItem{display:flex;align-items:center;gap:4px;font-size:11.5px;color:var(--muted)}
+.aptRowMetaItem svg{opacity:.7}
+.aptRowActions{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.aptRowBtn{padding:5px 12px;font-size:12px;border-radius:8px;margin-bottom:0;display:flex;align-items:center;gap:5px}
+.aptRowActions .iconBtn{padding:5px 7px;margin-bottom:0;border-radius:8px}
 
-@media(max-width:1000px){
-  .aptGrid{grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;padding:10px}
-  .aptCardNum{font-size:18px}
+@media(max-width:700px){
+  .aptRow{flex-wrap:wrap;gap:8px}
+  .aptRowMeta{order:3;flex-basis:100%}
 }
 
 /* ── Leases list page ──────────────────────────────────────────── */
@@ -589,16 +603,6 @@ button.danger{background:#fee2e2;color:var(--danger)}.actionsCell{display:flex;g
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
 .ptKpiAmtCur{font-size:.75rem;font-weight:700;display:block;margin-top:1px}
 .ptKpiSub{font-size:.72rem;color:var(--muted);display:block;margin-top:2px}
-
-/* Apartment card - new fields */
-.aptCardHeader{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
-.aptCardStatus{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap}
-.aptCardStatusRented{background:#fef2f2;color:#dc2626}
-.aptCardStatusAvail{background:#f0fdf4;color:#15803d}
-.aptCardType{font-size:12px;color:var(--muted);margin-bottom:6px}
-.aptCardMeta{display:flex;gap:8px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin-bottom:8px;align-items:center}
-.aptCardMeta span{display:flex;align-items:center;gap:3px}
-.aptCardRented{border-color:#fecaca}
 
 /* ========== NEW DASHBOARD ========== */
 .dashRoot{display:flex;flex-direction:column;gap:14px;padding-bottom:24px}

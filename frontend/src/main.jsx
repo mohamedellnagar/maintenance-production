@@ -1,4 +1,4 @@
-import React,{useEffect,useMemo,useState,useCallback,useRef}from'react';import{createRoot}from'react-dom/client';import{Home,Users,Wrench,Building2,LayoutDashboard,FileText,Plus,Trash2,Edit,LogOut,Download,X,Mail,Lock,Eye,EyeOff,Loader2,ShieldCheck,Filter,RotateCcw,ClipboardList,Wallet,TrendingUp,Coins,Check,Settings as SettingsIcon,UserCheck,Banknote,ChevronRight,Calendar,DollarSign,ListChecks,AlertCircle,CheckCircle2,Clock,ChevronDown,RefreshCw,Activity,KeyRound,BarChart2,BedDouble,DoorOpen,ArrowUpRight,ArrowDownRight,Zap,Upload,FileSpreadsheet,CheckSquare,Printer,MapPin,Phone,CreditCard,ArrowRight,Shield}from'lucide-react';import{BarChart,Bar,XAxis,YAxis,Tooltip,ResponsiveContainer,CartesianGrid,LabelList,AreaChart,Area}from'recharts';import'./style.css';
+import React,{useEffect,useMemo,useState,useCallback,useRef}from'react';import{createRoot}from'react-dom/client';import{Home,Users,Wrench,Building2,LayoutDashboard,FileText,Plus,Trash2,Edit,LogOut,Download,X,Mail,Lock,Eye,EyeOff,Loader2,ShieldCheck,Filter,RotateCcw,ClipboardList,Wallet,TrendingUp,Coins,Check,Settings as SettingsIcon,UserCheck,Banknote,ChevronRight,Calendar,DollarSign,ListChecks,AlertCircle,CheckCircle2,Clock,ChevronDown,RefreshCw,Activity,KeyRound,BarChart2,BedDouble,DoorOpen,ArrowUpRight,ArrowDownRight,Zap,Upload,FileSpreadsheet,CheckSquare,Printer,MapPin,Phone,CreditCard,ArrowRight,Shield,Droplet}from'lucide-react';import{BarChart,Bar,XAxis,YAxis,Tooltip,ResponsiveContainer,CartesianGrid,LabelList,AreaChart,Area}from'recharts';import'./style.css';
 const API=import.meta.env.VITE_API_URL||(location.hostname==='localhost'?'http://localhost:4000/api':'/api');
 const AR_MONTHS=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
 
@@ -632,38 +632,41 @@ return <>
   {isAdmin&&<button onClick={()=>openAdd()}><Plus size={15}/>إضافة شقة</button>}
 </div>
 {grouped.length===0&&<div className="panel"><div className="empty" style={{padding:32,textAlign:'center'}}>لا توجد شقق</div></div>}
-{grouped.map(({villa,apts:vapts})=>(
+{grouped.map(({villa,apts:vapts})=>{
+  const rented=vapts.filter(a=>a.rental_status==='rented').length;
+  const avail=vapts.length-rented;
+  return (
 <div key={villa.id} className="villaSection">
   <div className="villaSectionHeader">
     <div className="villaSectionTitle"><Building2 size={16}/>{villa.name}{villa.area&&<span className="villaSectionArea">{villa.area}</span>}</div>
     <div className="villaSectionRight">
-      <span className="villaSectionCount">{vapts.length} شقة</span>
+      <span className="aptCountChip aptCountRented">{rented} مأجورة</span>
+      <span className="aptCountChip aptCountAvail">{avail} متاحة</span>
       {isAdmin&&<button className="secondary villaSectionAdd" onClick={()=>openAdd(String(villa.id))}><Plus size={13}/>إضافة</button>}
     </div>
   </div>
-  <div className="aptGrid">
-    {vapts.map(r=>(
-    <div key={r.id} className={'aptCard'+(r.rental_status==='rented'?' aptCardRented':'')}>
-      <div className="aptCardHeader">
-        <div className="aptCardNum">{r.apartment_no}</div>
-        <span className={'aptCardStatus'+(r.rental_status==='rented'?' aptCardStatusRented':' aptCardStatusAvail')}>{r.rental_status==='rented'?'مأجورة':'متاحة'}</span>
+  <div className="aptRows">
+    {vapts.map(r=>{const rented=r.rental_status==='rented';return(
+    <div key={r.id} className="aptRow" onClick={()=>setSelectedApt(r)}>
+      <span className={'aptRowDot'+(rented?' aptRowDotRented':' aptRowDotAvail')}/>
+      <span className="aptRowNo">{r.apartment_no}</span>
+      <span className={'aptRowStatus'+(rented?' aptRowStatusRented':' aptRowStatusAvail')}>{rented?'مأجورة':'متاحة'}</span>
+      <div className="aptRowMeta">
+        {r.apt_type&&<span className="aptRowType">{r.apt_type}</span>}
+        {r.floor&&<span className="aptRowMetaItem"><Home size={11}/>{r.floor}</span>}
+        <span className="aptRowMetaItem"><Droplet size={11}/>{r.bathrooms??1}</span>
+        {r.has_balcony?<span className="aptRowMetaItem">بلكونة</span>:null}
       </div>
-      {r.apt_type&&<div className="aptCardType">{r.apt_type}</div>}
-      <div className="aptCardMeta">
-        {r.floor&&<span><Home size={10}/>{r.floor}</span>}
-        <span>🚿 {r.bathrooms??1}</span>
-        {r.has_balcony?<span>🏠 بلكونة</span>:null}
-      </div>
-      <div className="aptCardActions">
-        <button className="secondary aptCardBtn" onClick={()=>setSelectedApt(r)}><Banknote size={13}/>العقود</button>
+      <div className="aptRowActions" onClick={e=>e.stopPropagation()}>
+        <button className="secondary aptRowBtn" onClick={()=>setSelectedApt(r)}><Banknote size={13}/>العقود</button>
         {isAdmin&&<>
-          <button className="secondary iconBtn aptCardIcon" onClick={()=>{setEditingApt(r.id);setApt({villa_id:r.villa_id,apartment_no:r.apartment_no,apt_type:r.apt_type||'',bathrooms:r.bathrooms??1,has_balcony:!!r.has_balcony,rental_status:r.rental_status||'available',floor:r.floor||'',notes:r.notes||''});setModalOpen(true)}}><Edit size={13}/></button>
-          <button className="danger iconBtn aptCardIcon" onClick={()=>removeApt(r)}><Trash2 size={13}/></button>
+          <button className="secondary iconBtn" onClick={()=>{setEditingApt(r.id);setApt({villa_id:r.villa_id,apartment_no:r.apartment_no,apt_type:r.apt_type||'',bathrooms:r.bathrooms??1,has_balcony:!!r.has_balcony,rental_status:r.rental_status||'available',floor:r.floor||'',notes:r.notes||''});setModalOpen(true)}}><Edit size={13}/></button>
+          <button className="danger iconBtn" onClick={()=>removeApt(r)}><Trash2 size={13}/></button>
         </>}
       </div>
-    </div>))}
+    </div>);})}
   </div>
-</div>))}
+</div>);})}
 <Modal open={modalOpen} onClose={()=>setModalOpen(false)} title={editingApt?'تعديل شقة':'إضافة شقة'}>
 <form className="form compact" onSubmit={saveApt}>
   <Field label="الفيلا" required><select required value={apt.villa_id} onChange={e=>setApt({...apt,villa_id:e.target.value})}><option value="">اختر الفيلا</option>{villas.map(v=><option key={v.id} value={v.id}>{v.name}</option>)}</select></Field>
