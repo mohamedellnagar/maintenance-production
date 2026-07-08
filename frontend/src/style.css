@@ -164,12 +164,13 @@ button.danger{background:#fee2e2;color:var(--danger)}.actionsCell{display:flex;g
 .instTblDate{color:var(--text);white-space:nowrap}
 .instTblAmt{font-weight:700;white-space:nowrap}
 .instTblCur{font-size:10px;font-weight:400;color:var(--muted)}
-.instTblBarCell{display:flex;align-items:center;gap:6px}
+.instTblBarWrap{display:flex;align-items:center;gap:6px}
 .instTblBar{width:70px;height:5px;background:#e2e8f0;border-radius:4px;overflow:hidden;flex-shrink:0}
 .instTblBarFill{height:100%;background:var(--brand);border-radius:4px;transition:width .4s}
 .instTblPct{font-size:10px;color:var(--muted);min-width:26px}
-.instTblActions{display:flex;gap:4px;justify-content:flex-end}
-.instTblActions button{padding:4px 6px;border-radius:7px;margin-bottom:0}
+.instTblActions{width:1%;white-space:nowrap}
+.instTblActionsWrap{display:flex;gap:4px;justify-content:flex-end}
+.instTblActionsWrap button{padding:4px 6px;border-radius:7px;margin-bottom:0}
 .statusBadgeSm{font-size:10px;padding:2px 7px}
 
 /* ── old card classes kept for fallback ─────────────────────────────── */

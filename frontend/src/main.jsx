@@ -746,12 +746,14 @@ function InstTable({installments,isAdmin,leaseId,onAdd,onEdit,onDelete,onPayment
   <tr key={i.id}>
     <td className="instTblDate">{new Date(i.due_date).toLocaleDateString('ar-AE')}</td>
     <td className="instTblAmt">{Number(i.amount).toFixed(0)} <span className="instTblCur">AED</span></td>
-    <td className="instTblBarCell"><div className="instTblBar"><div className="instTblBarFill" style={{width:pct+'%'}}/></div><span className="instTblPct">{Math.round(pct)}%</span></td>
+    <td className="instTblBarCell"><div className="instTblBarWrap"><div className="instTblBar"><div className="instTblBarFill" style={{width:pct+'%'}}/></div><span className="instTblPct">{Math.round(pct)}%</span></div></td>
     <td><span className={'statusBadge statusBadgeSm '+INST_STATUS_CSS[i.status]}>{INST_STATUS_LABELS[i.status]}</span></td>
     <td className="instTblActions">
-      <button className="secondary iconBtn" title="المدفوعات" onClick={()=>onPayments(i)}><DollarSign size={13}/></button>
-      <button className="secondary iconBtn" onClick={()=>onEdit(i,leaseId)}><Edit size={13}/></button>
-      {isAdmin&&<button className="danger iconBtn" onClick={()=>onDelete(i.id)}><Trash2 size={13}/></button>}
+      <div className="instTblActionsWrap">
+        <button className="secondary iconBtn" title="المدفوعات" onClick={()=>onPayments(i)}><DollarSign size={13}/></button>
+        <button className="secondary iconBtn" onClick={()=>onEdit(i,leaseId)}><Edit size={13}/></button>
+        {isAdmin&&<button className="danger iconBtn" onClick={()=>onDelete(i.id)}><Trash2 size={13}/></button>}
+      </div>
     </td>
   </tr>);})}</tbody></table>}
 </div>);}
