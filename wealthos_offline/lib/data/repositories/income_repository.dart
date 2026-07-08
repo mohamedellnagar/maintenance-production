@@ -99,6 +99,11 @@ class IncomeRepository {
         if (closeDate.isAfter(existing.fromDate)) {
           await db.update('income_history', {'to_date': closeDate.toIso8601String()},
               where: 'id = ?', whereArgs: [existing.id]);
+        } else {
+          // الفترة القديمة تبدأ في نفس شهر الجديدة: استُبدلت قبل أن تسري —
+          // تُحذف تفاديًا لبقاء فترتين مفتوحتين متزامنتين.
+          await db.delete('income_history',
+              where: 'id = ?', whereArgs: [existing.id]);
         }
       }
     }
@@ -139,7 +144,11 @@ class IncomeRepository {
     for (final h in all) {
       if (!DateRangeUtils.contains(date, h.fromDate, h.toDate)) continue;
       final current = bySource[h.sourceId];
-      if (current == null || h.fromDate.isAfter(current.fromDate)) {
+      // الأحدث بدايةً يفوز؛ وعند تساوي البداية يفوز الأحدث إدخالًا (id أكبر).
+      if (current == null ||
+          h.fromDate.isAfter(current.fromDate) ||
+          (h.fromDate == current.fromDate &&
+              (h.id ?? 0) > (current.id ?? 0))) {
         bySource[h.sourceId] = h;
       }
     }

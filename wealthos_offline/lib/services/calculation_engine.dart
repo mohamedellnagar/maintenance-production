@@ -214,13 +214,16 @@ class CalculationEngine {
 
   /// من بين فترات مصدر واحد، يعيد مبلغ الفترة الفعّالة في [date]
   /// (الأحدث بدايةً عند التداخل)، أو null إن لم تطابق أي فترة.
+  ///
+  /// الفترات تصل مرتّبة تصاعديًا بالبداية ثم بترتيب الإدخال، لذا عند تساوي
+  /// البداية (`!isBefore`) تفوز الفترة الأحدث إدخالًا.
   double? _activePeriodAmount(
       Iterable<(DateTime, DateTime?, double)> periods, DateTime date) {
     DateTime? bestFrom;
     double? bestAmount;
     for (final (from, to, amount) in periods) {
       if (DateRangeUtils.contains(date, from, to)) {
-        if (bestFrom == null || from.isAfter(bestFrom)) {
+        if (bestFrom == null || !from.isBefore(bestFrom)) {
           bestFrom = from;
           bestAmount = amount;
         }

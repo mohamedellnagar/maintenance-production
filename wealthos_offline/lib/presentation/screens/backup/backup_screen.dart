@@ -72,6 +72,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
     if (picked == null || picked.files.single.path == null) return;
     final password = await _askPassword('فكّ تشفير النسخة');
     if (password == null || password.isEmpty) return;
+    if (!mounted) return;
 
     final confirmed = await showDialog<bool>(
       context: context,

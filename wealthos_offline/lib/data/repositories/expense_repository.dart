@@ -99,6 +99,10 @@ class ExpenseRepository {
           await db.update('expense_history',
               {'to_date': closeDate.toIso8601String()},
               where: 'id = ?', whereArgs: [existing.id]);
+        } else {
+          // فترة قديمة تبدأ في نفس شهر الجديدة: استُبدلت قبل أن تسري — تُحذف.
+          await db.delete('expense_history',
+              where: 'id = ?', whereArgs: [existing.id]);
         }
       }
     }
@@ -139,7 +143,11 @@ class ExpenseRepository {
     for (final h in all) {
       if (!DateRangeUtils.contains(date, h.fromDate, h.toDate)) continue;
       final current = byCategory[h.categoryId];
-      if (current == null || h.fromDate.isAfter(current.fromDate)) {
+      // الأحدث بدايةً يفوز؛ وعند تساوي البداية يفوز الأحدث إدخالًا (id أكبر).
+      if (current == null ||
+          h.fromDate.isAfter(current.fromDate) ||
+          (h.fromDate == current.fromDate &&
+              (h.id ?? 0) > (current.id ?? 0))) {
         byCategory[h.categoryId] = h;
       }
     }

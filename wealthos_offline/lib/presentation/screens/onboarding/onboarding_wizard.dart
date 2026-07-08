@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/enums.dart';
 import '../../../core/localization/app_strings.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../data/models/app_meta.dart';
 import '../../../data/models/expense.dart';
 import '../../../data/models/goal.dart';
 import '../../../data/models/income.dart';
