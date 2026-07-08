@@ -1,4 +1,4 @@
-import React,{useEffect,useMemo,useState,useCallback,useRef}from'react';import{createRoot}from'react-dom/client';import{Home,Users,Wrench,Building2,LayoutDashboard,FileText,Plus,Trash2,Edit,LogOut,Download,X,Mail,Lock,Eye,EyeOff,Loader2,ShieldCheck,Filter,RotateCcw,ClipboardList,Wallet,TrendingUp,Coins,Check,Settings as SettingsIcon,UserCheck,Banknote,ChevronRight,Calendar,DollarSign,ListChecks,AlertCircle,CheckCircle2,Clock,ChevronDown,RefreshCw,Activity,KeyRound,BarChart2,BedDouble,DoorOpen,ArrowUpRight,ArrowDownRight,Zap,Upload,FileSpreadsheet,CheckSquare,Printer,MapPin,Phone,CreditCard}from'lucide-react';import{BarChart,Bar,XAxis,YAxis,Tooltip,ResponsiveContainer,CartesianGrid,LabelList,AreaChart,Area}from'recharts';import'./style.css';
+import React,{useEffect,useMemo,useState,useCallback,useRef}from'react';import{createRoot}from'react-dom/client';import{Home,Users,Wrench,Building2,LayoutDashboard,FileText,Plus,Trash2,Edit,LogOut,Download,X,Mail,Lock,Eye,EyeOff,Loader2,ShieldCheck,Filter,RotateCcw,ClipboardList,Wallet,TrendingUp,Coins,Check,Settings as SettingsIcon,UserCheck,Banknote,ChevronRight,Calendar,DollarSign,ListChecks,AlertCircle,CheckCircle2,Clock,ChevronDown,RefreshCw,Activity,KeyRound,BarChart2,BedDouble,DoorOpen,ArrowUpRight,ArrowDownRight,Zap,Upload,FileSpreadsheet,CheckSquare,Printer,MapPin,Phone,CreditCard,ArrowRight}from'lucide-react';import{BarChart,Bar,XAxis,YAxis,Tooltip,ResponsiveContainer,CartesianGrid,LabelList,AreaChart,Area}from'recharts';import'./style.css';
 const API=import.meta.env.VITE_API_URL||(location.hostname==='localhost'?'http://localhost:4000/api':'/api');
 const AR_MONTHS=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
 
@@ -557,7 +557,7 @@ async function removePayment(id){if(!confirm('تأكيد حذف هذا الدف�
 if(!leasesDetail)return <div className="panel">جاري التحميل...</div>;
 return <>
 <div className="tenantDetailHeader">
-  <button type="button" className="backBtn" onClick={onBack}><ChevronRight size={18}/>رجوع</button>
+  <button type="button" className="pageBackBtn" onClick={onBack}><ArrowRight size={16}/>رجوع</button>
   <div className="tenantDetailInfo">
     <div className="tenantDetailAvatar" style={{borderRadius:14,background:'linear-gradient(135deg,#0e7490,#0f766e)'}}><Home size={22}/></div>
     <div><h3 className="tenantDetailName">{apt.villa_name} — شقة {apt.apartment_no}</h3><div className="tenantDetailMeta">{apt.floor&&<span>الدور: {apt.floor}</span>}</div></div>
@@ -800,11 +800,11 @@ if(selected){
   const totalAmount=leasesDetail.reduce((s,{lease})=>s+Number(lease.total_amount),0);
   const activeLeases=leasesDetail.filter(({lease})=>leaseStatus(lease)==='active').length;
   return <>
+  <button type="button" className="pageBackBtn" onClick={()=>setSelected(null)}><ArrowRight size={16}/>رجوع</button>
   {/* Profile hero */}
   <div className="tenantProfile">
     <div className="tenantProfileBg"/>
     <div className="tenantProfileBody">
-      <button type="button" className="tenantProfileBack" onClick={()=>setSelected(null)}><ChevronRight size={16}/>رجوع</button>
       <div className="tenantProfileMain">
         <div className="tenantProfileAvatarWrap">
           <div className="tenantProfileAvatar" style={{background:avatarColor(tenant.name)}}>{tenant.name[0]}</div>
@@ -871,7 +871,7 @@ if(selected){
   <Modal open={leaseOpen} onClose={()=>setLeaseOpen(false)} title="إضافة عقد إيجار جديد"><form className="form" onSubmit={saveLease}>
     <Field label="الفيلا" required><select required value={leaseForm._villa_id} onChange={e=>setLeaseForm({...leaseForm,_villa_id:e.target.value,apartment_id:''})}><option value="">اختر الفيلا</option>{villas.map(v=><option key={v.id} value={v.id}>{v.name}</option>)}</select></Field>
     <Field label="الشقة" required><select required value={leaseForm.apartment_id} onChange={e=>setLeaseForm({...leaseForm,apartment_id:e.target.value})} disabled={!leaseForm._villa_id}><option value="">اختر الشقة</option>{apts.filter(a=>a.villa_id==leaseForm._villa_id).map(a=><option key={a.id} value={a.id}>{a.apartment_no}</option>)}</select></Field>
-    <LeaseFormFields form={leaseForm} setForm={setLeaseForm} tenants={tenants}/>
+    <LeaseFormFields form={leaseForm} setForm={setLeaseForm} tenants={rows}/>
     <button><Plus size={16}/>إضافة العقد</button><button type="button" className="secondary" onClick={()=>setLeaseOpen(false)}>إلغاء</button>
   </form></Modal>
   <Modal open={instOpen} onClose={()=>setInstOpen(false)} title={editingInst?'تعديل دفعة':'إضافة دفعة'}><form className="form compact" onSubmit={saveInst}>
@@ -989,39 +989,41 @@ if(selectedLease&&leaseDetail){
   const pct=Number(lease.total_amount)>0?Math.min(100,Math.round(collected/Number(lease.total_amount)*100)):0;
   const overdueCount=installments.filter(i=>i.status==='overdue').length;
   return <>
+  <button className="pageBackBtn" onClick={()=>{setSelectedLease(null);setLeaseDetail(null)}}><ArrowRight size={16}/>رجوع</button>
   <div className="leaseDetailPage">
-    {/* Hero */}
-    <div className="leaseDetailHero">
-      <div className="leaseDetailHeroBg"/>
-      <div className="leaseDetailHeroBody">
-        <button className="leaseDetailBack" onClick={()=>{setSelectedLease(null);setLeaseDetail(null)}}><ChevronRight size={16}/>رجوع</button>
-        <div className="leaseDetailHeroTop">
-          <div className="leaseDetailHeroIcon"><Banknote size={28}/></div>
-          <div className="leaseDetailHeroInfo">
-            <div className="leaseDetailHeroMeta">
-              <span className={st==='active'?'leaseBlockBadge leaseBlockBadgeActive':'leaseBlockBadge leaseBlockBadgeExpired'}>{st==='active'?'نشط':'منتهي'}</span>
-              {overdueCount>0&&<span className="leaseDetailOverdueBadge">⚠ {overdueCount} دفعة متأخرة</span>}
-            </div>
-            <h2 className="leaseDetailHeroName">{lease.tenant_name}</h2>
-            <div className="leaseDetailHeroSub"><Building2 size={14}/>{lease.villa_name} — شقة {lease.apartment_no}<span className="leaseDetailHeroDiv"/><Calendar size={13}/>{new Date(lease.start_date).toLocaleDateString('ar-AE')} — {new Date(lease.end_date).toLocaleDateString('ar-AE')}</div>
+    {/* Hero Card */}
+    <div className="ldCard">
+      {/* Top row: identity + actions */}
+      <div className="ldCardTop">
+        <div className="ldCardLeft">
+          <div className="ldCardBadges">
+            <span className={st==='active'?'leaseBlockBadge leaseBlockBadgeActive':'leaseBlockBadge leaseBlockBadgeExpired'}>{st==='active'?'نشط':'منتهي'}</span>
+            {overdueCount>0&&<span className="ldOverdueBadge"><AlertCircle size={11}/>{overdueCount} دفعة متأخرة</span>}
           </div>
-          <div className="leaseDetailHeroActions">
-            <button onClick={()=>{setInstOpen(true);setEditingInst(null);setInstForm({due_date:'',amount:'',notes:''})}}><Plus size={15}/>إضافة دفعة</button>
-            <button className="secondary" onClick={()=>{setEditing(lease.id);setForm({apartment_id:lease.apartment_id,tenant_id:lease.tenant_id,start_date:String(lease.start_date).slice(0,10),end_date:String(lease.end_date).slice(0,10),total_amount:lease.total_amount,notes:lease.notes||'',is_active:lease.is_active,_villa_id:''});setOpen(true)}}><Edit size={15}/>تعديل</button>
-            {isAdmin&&<button className="danger secondary" onClick={()=>removeLease(lease)}><Trash2 size={15}/></button>}
+          <h2 className="ldCardName">{lease.tenant_name}</h2>
+          <div className="ldCardMeta">
+            <span><Building2 size={12}/>{lease.villa_name} — شقة {lease.apartment_no}</span>
+            <span className="ldCardMetaSep"/>
+            <span><Calendar size={12}/>{new Date(lease.start_date).toLocaleDateString('ar-AE')} — {new Date(lease.end_date).toLocaleDateString('ar-AE')}</span>
           </div>
         </div>
-        {/* Financial stats */}
-        <div className="leaseDetailStats">
-          <div className="leaseDetailStat"><span className="leaseDetailStatVal">{Number(lease.total_amount).toLocaleString()}</span><span className="leaseDetailStatLbl">إجمالي (AED)</span></div>
-          <div className="leaseDetailStatDiv"/>
-          <div className="leaseDetailStat"><span className="leaseDetailStatVal" style={{color:'#15803d'}}>{collected.toLocaleString()}</span><span className="leaseDetailStatLbl">محصّل (AED)</span></div>
-          <div className="leaseDetailStatDiv"/>
-          <div className="leaseDetailStat"><span className="leaseDetailStatVal" style={{color:remaining>0?'#dc2626':'#15803d'}}>{remaining.toLocaleString()}</span><span className="leaseDetailStatLbl">متبقي (AED)</span></div>
-          <div className="leaseDetailStatDiv"/>
-          <div className="leaseDetailStat"><span className="leaseDetailStatVal" style={{color:pct===100?'#15803d':'var(--text)'}}>{pct}%</span><span className="leaseDetailStatLbl">نسبة التحصيل</span></div>
+        <div className="ldCardActions">
+          <button onClick={()=>{setInstOpen(true);setEditingInst(null);setInstForm({due_date:'',amount:'',notes:''})}}><Plus size={14}/>إضافة دفعة</button>
+          <button className="secondary" onClick={()=>{setEditing(lease.id);setForm({apartment_id:lease.apartment_id,tenant_id:lease.tenant_id,start_date:String(lease.start_date).slice(0,10),end_date:String(lease.end_date).slice(0,10),total_amount:lease.total_amount,notes:lease.notes||'',is_active:lease.is_active,_villa_id:''});setOpen(true)}}><Edit size={14}/>تعديل</button>
+          {isAdmin&&<button className="iconBtn danger secondary" onClick={()=>removeLease(lease)}><Trash2 size={14}/></button>}
         </div>
-        <div className="leaseDetailProgressBar"><div className="leaseDetailProgressFill" style={{width:pct+'%',background:st==='expired'?'#94a3b8':undefined}}/></div>
+      </div>
+      {/* Stats row */}
+      <div className="ldCardStats">
+        <div className="ldStat"><span className="ldStatLbl">إجمالي الإيجار</span><span className="ldStatVal">{Number(lease.total_amount).toLocaleString()} <em>AED</em></span></div>
+        <div className="ldStat ldStatGreen"><span className="ldStatLbl">تم التحصيل</span><span className="ldStatVal">{collected.toLocaleString()} <em>AED</em></span></div>
+        <div className={'ldStat'+(remaining>0?' ldStatRed':' ldStatGreen')}><span className="ldStatLbl">المتبقي</span><span className="ldStatVal">{remaining.toLocaleString()} <em>AED</em></span></div>
+        <div className="ldStat ldStatBlue"><span className="ldStatLbl">نسبة التحصيل</span><span className="ldStatVal ldStatBig">{pct}%</span></div>
+      </div>
+      {/* Progress */}
+      <div className="ldProgressWrap">
+        <div className="ldProgressTrack"><div className="ldProgressFill" style={{width:pct+'%',background:st==='expired'?'#94a3b8':'linear-gradient(90deg,#0f766e,#0e7490)'}}/></div>
+        <span className="ldProgressLabel">{pct}% مكتمل</span>
       </div>
     </div>
     {/* Installments */}
