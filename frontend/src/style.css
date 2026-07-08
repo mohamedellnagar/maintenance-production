@@ -383,6 +383,9 @@ button.danger{background:#fee2e2;color:var(--danger)}.actionsCell{display:flex;g
 }
 
 /* ── Terminate Modal ── */
+.ldDepositChip{display:inline-flex;align-items:center;gap:6px;margin-top:6px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:20px;padding:4px 12px;font-size:12px;color:#1d4ed8;font-weight:600}
+.ldDepositType{background:#1d4ed8;color:#fff;font-size:10px;padding:1px 7px;border-radius:10px}
+.ldDepositNotes{font-weight:400;color:#3b82f6}
 .ldTerminateBtn{color:#b45309;border-color:#fde68a}
 .ldTerminateBtn:hover{background:#fef3c7;border-color:#f59e0b}
 .terminateModal{display:flex;flex-direction:column;gap:14px}
@@ -406,6 +409,9 @@ button.danger{background:#fee2e2;color:var(--danger)}.actionsCell{display:flex;g
 .terminateResultOwes .terminateResultAmt{color:#dc2626}
 .terminateResultRefund .terminateResultAmt{color:#15803d}
 .terminateResultSub{font-size:11px;color:var(--muted)}
+.terminateDepositNote{display:flex;align-items:center;gap:5px;margin-top:6px;font-size:11px;font-weight:600;color:#1d4ed8;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:5px 10px}
+.terminateCalcDeposit{background:#eff6ff;border-radius:8px;padding:5px 10px;margin:2px -4px;color:#1d4ed8}
+.terminateCalcDeposit strong{color:#1d4ed8}
 
 /* ── Villas page ───────────────────────────────────────────────── */
 .villasPageHeader{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:14px}

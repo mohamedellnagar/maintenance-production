@@ -1,4 +1,4 @@
-import React,{useEffect,useMemo,useState,useCallback,useRef}from'react';import{createRoot}from'react-dom/client';import{Home,Users,Wrench,Building2,LayoutDashboard,FileText,Plus,Trash2,Edit,LogOut,Download,X,Mail,Lock,Eye,EyeOff,Loader2,ShieldCheck,Filter,RotateCcw,ClipboardList,Wallet,TrendingUp,Coins,Check,Settings as SettingsIcon,UserCheck,Banknote,ChevronRight,Calendar,DollarSign,ListChecks,AlertCircle,CheckCircle2,Clock,ChevronDown,RefreshCw,Activity,KeyRound,BarChart2,BedDouble,DoorOpen,ArrowUpRight,ArrowDownRight,Zap,Upload,FileSpreadsheet,CheckSquare,Printer,MapPin,Phone,CreditCard,ArrowRight}from'lucide-react';import{BarChart,Bar,XAxis,YAxis,Tooltip,ResponsiveContainer,CartesianGrid,LabelList,AreaChart,Area}from'recharts';import'./style.css';
+import React,{useEffect,useMemo,useState,useCallback,useRef}from'react';import{createRoot}from'react-dom/client';import{Home,Users,Wrench,Building2,LayoutDashboard,FileText,Plus,Trash2,Edit,LogOut,Download,X,Mail,Lock,Eye,EyeOff,Loader2,ShieldCheck,Filter,RotateCcw,ClipboardList,Wallet,TrendingUp,Coins,Check,Settings as SettingsIcon,UserCheck,Banknote,ChevronRight,Calendar,DollarSign,ListChecks,AlertCircle,CheckCircle2,Clock,ChevronDown,RefreshCw,Activity,KeyRound,BarChart2,BedDouble,DoorOpen,ArrowUpRight,ArrowDownRight,Zap,Upload,FileSpreadsheet,CheckSquare,Printer,MapPin,Phone,CreditCard,ArrowRight,Shield}from'lucide-react';import{BarChart,Bar,XAxis,YAxis,Tooltip,ResponsiveContainer,CartesianGrid,LabelList,AreaChart,Area}from'recharts';import'./style.css';
 const API=import.meta.env.VITE_API_URL||(location.hostname==='localhost'?'http://localhost:4000/api':'/api');
 const AR_MONTHS=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
 
@@ -1007,6 +1007,12 @@ if(selectedLease&&leaseDetail){
             <span className="ldCardMetaSep"/>
             <span><Calendar size={12}/>{new Date(lease.start_date).toLocaleDateString('ar-AE')} — {new Date(lease.end_date).toLocaleDateString('ar-AE')}</span>
           </div>
+          {Number(lease.deposit_amount)>0&&<div className="ldDepositChip">
+            <Shield size={12}/>
+            <span>تأمين: {Number(lease.deposit_amount).toLocaleString()} AED</span>
+            {lease.deposit_type&&<span className="ldDepositType">{lease.deposit_type==='cash'?'كاش':'شيك'}</span>}
+            {lease.deposit_notes&&<span className="ldDepositNotes">— {lease.deposit_notes}</span>}
+          </div>}
         </div>
         <div className="ldCardActions">
           <button onClick={()=>{setInstOpen(true);setEditingInst(null);setInstForm({due_date:'',amount:'',notes:''})}}><Plus size={14}/>إضافة دفعة</button>
@@ -1072,6 +1078,8 @@ if(selectedLease&&leaseDetail){
     const amtForUsedDays=totalDays>0?Math.round((usedDays/totalDays)*totalAmt*100)/100:0;
     const alreadyCollected=installments.reduce((s,i)=>s+Number(i.collected_amount),0);
     const unpaidInsts=installments.filter(i=>i.status!=='collected');
+    const depositAmt=Number(lease.deposit_amount||0);
+    const depositType=lease.deposit_type;
     const balance=alreadyCollected-amtForUsedDays;
     const tenantOwes=balance<0;
     return <Modal open={terminateOpen} onClose={()=>setTerminateOpen(false)} title="إنهاء العقد مبكراً">
@@ -1092,6 +1100,10 @@ if(selectedLease&&leaseDetail){
             <div className="terminateCalcRow"><span>الأيام المتبقية</span><strong>{Math.max(0,totalDays-usedDays)} يوم</strong></div>
             <div className="terminateCalcDivider"/>
             <div className="terminateCalcRow"><span>الإجمالي الأصلي</span><strong>{totalAmt.toLocaleString()} AED</strong></div>
+            {depositAmt>0&&<div className="terminateCalcRow terminateCalcDeposit">
+              <span>التأمين{depositType?` (${depositType==='cash'?'كاش':'شيك'})`:''}</span>
+              <strong>{depositAmt.toLocaleString()} AED</strong>
+            </div>}
             <div className="terminateCalcRow terminateCalcHighlight"><span>المستحق عن {usedDays} يوم</span><strong>{amtForUsedDays.toLocaleString()} AED</strong></div>
             <div className="terminateCalcRow"><span>تم تحصيله فعلاً</span><strong style={{color:'#15803d'}}>{alreadyCollected.toLocaleString()} AED</strong></div>
           </div>
@@ -1112,6 +1124,7 @@ if(selectedLease&&leaseDetail){
               <div className="terminateResultTitle">{tenantOwes?'المستأجر مدين بـ':'مبلغ مسترد للمستأجر'}</div>
               <div className="terminateResultAmt">{Math.abs(balance).toLocaleString()} AED</div>
               <div className="terminateResultSub">{tenantOwes?`دفع ${alreadyCollected.toLocaleString()} ومستحق عليه ${amtForUsedDays.toLocaleString()}`:`دفع ${alreadyCollected.toLocaleString()} ومستحق له ${amtForUsedDays.toLocaleString()} فقط`}</div>
+              {depositAmt>0&&<div className="terminateDepositNote"><Shield size={11}/>{tenantOwes?`يُخصم من التأمين (${depositAmt.toLocaleString()} AED ${depositType==='cash'?'كاش':'شيك'})`:`يُرد التأمين (${depositAmt.toLocaleString()} AED ${depositType==='cash'?'كاش':'شيك'}) بشكل منفصل`}</div>}
             </div>
           </div>
         </>}
