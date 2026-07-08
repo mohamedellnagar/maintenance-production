@@ -1,4 +1,4 @@
-import React,{useEffect,useMemo,useState,useCallback,useRef}from'react';import{createRoot}from'react-dom/client';import{Home,Users,Wrench,Building2,LayoutDashboard,FileText,Plus,Trash2,Edit,LogOut,Download,X,Mail,Lock,Eye,EyeOff,Loader2,ShieldCheck,Filter,RotateCcw,ClipboardList,Wallet,TrendingUp,Coins,Check,Settings as SettingsIcon,UserCheck,Banknote,ChevronRight,Calendar,DollarSign,ListChecks,AlertCircle,CheckCircle2,Clock,ChevronDown,RefreshCw,Activity,KeyRound,BarChart2,BedDouble,DoorOpen,ArrowUpRight,ArrowDownRight,Zap,Upload,FileSpreadsheet,CheckSquare,Printer}from'lucide-react';import{BarChart,Bar,XAxis,YAxis,Tooltip,ResponsiveContainer,CartesianGrid,LabelList,AreaChart,Area}from'recharts';import'./style.css';
+import React,{useEffect,useMemo,useState,useCallback,useRef}from'react';import{createRoot}from'react-dom/client';import{Home,Users,Wrench,Building2,LayoutDashboard,FileText,Plus,Trash2,Edit,LogOut,Download,X,Mail,Lock,Eye,EyeOff,Loader2,ShieldCheck,Filter,RotateCcw,ClipboardList,Wallet,TrendingUp,Coins,Check,Settings as SettingsIcon,UserCheck,Banknote,ChevronRight,Calendar,DollarSign,ListChecks,AlertCircle,CheckCircle2,Clock,ChevronDown,RefreshCw,Activity,KeyRound,BarChart2,BedDouble,DoorOpen,ArrowUpRight,ArrowDownRight,Zap,Upload,FileSpreadsheet,CheckSquare,Printer,MapPin}from'lucide-react';import{BarChart,Bar,XAxis,YAxis,Tooltip,ResponsiveContainer,CartesianGrid,LabelList,AreaChart,Area}from'recharts';import'./style.css';
 const API=import.meta.env.VITE_API_URL||(location.hostname==='localhost'?'http://localhost:4000/api':'/api');
 const AR_MONTHS=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
 
@@ -451,27 +451,37 @@ return <>
 </div>
 {filtered.length===0&&<div className="tenantEmpty"><Building2 size={36} style={{opacity:.2}}/><p>{qs?'لا توجد نتائج مطابقة':'لا يوجد فلل بعد'}</p></div>}
 <div className="villasGrid">
-{filtered.map(r=><div key={r.id} className={'villaCard'+(r.is_active?'':' villaCardInactive')}>
-  <div className="villaCardBanner" style={{background:villaGradient(r.name)}}>
-    <span className="villaCardInitials">{r.name.replace('فيلا','').trim().slice(0,2)||r.name.slice(0,2)}</span>
-    <span className={'villaCardStatusBadge'+(r.is_active?' villaCardStatusActive':' villaCardStatusInactive')}>{r.is_active?'نشطة':'متوقفة'}</span>
-  </div>
-  <div className="villaCardBody">
-    <div className="villaCardNameRow">
-      <h3 className="villaCardName">{r.name}</h3>
-      {isAdmin&&<div className="villaCardActions">
-        <button className="iconBtn secondary" onClick={()=>{setEditingVilla(r.id);setVilla({name:r.name,area:r.area||'',notes:r.notes||'',is_active:r.is_active});setModalOpen(true)}}><Edit size={14}/></button>
-        <button className="iconBtn danger" onClick={()=>removeVilla(r)}><Trash2 size={14}/></button>
-      </div>}
+{filtered.map(r=>{
+  const grad=villaGradient(r.name);
+  const initials=r.name.replace(/فيلا\s*/,'').trim().slice(0,2)||r.name.slice(0,2);
+  const pct=maxApts>0?Math.round(r.aptCount/maxApts*100):0;
+  return <div key={r.id} className={'villaCard2'+(r.is_active?'':' villaCard2Inactive')}>
+    <div className="villaCard2Accent" style={{background:grad}}/>
+    <div className="villaCard2Inner">
+      <div className="villaCard2Top">
+        <div className="villaCard2Avatar" style={{background:grad}}>{initials}</div>
+        <div className="villaCard2Info">
+          <h3 className="villaCard2Name">{r.name}</h3>
+          {r.area&&<span className="villaCard2Area"><MapPin size={11}/>{r.area}</span>}
+        </div>
+        <div className="villaCard2Right">
+          <span className={'villaCard2Status'+(r.is_active?' vc2Active':' vc2Inactive')}>{r.is_active?'نشطة':'متوقفة'}</span>
+          {isAdmin&&<div className="villaCardActions">
+            <button className="iconBtn secondary" onClick={()=>{setEditingVilla(r.id);setVilla({name:r.name,area:r.area||'',notes:r.notes||'',is_active:r.is_active});setModalOpen(true)}}><Edit size={13}/></button>
+            <button className="iconBtn danger" onClick={()=>removeVilla(r)}><Trash2 size={13}/></button>
+          </div>}
+        </div>
+      </div>
+      {r.notes&&<p className="villaCard2Notes">{r.notes}</p>}
+      <div className="villaCard2Stats">
+        <div className="villaCard2Stat"><span className="vc2StatNum" style={{color:grad.includes('linear')?'#1e40af':grad}}>{r.aptCount}</span><span className="vc2StatLbl">شقة</span></div>
+        <div className="villaCard2StatDivider"/>
+        <div className="villaCard2Stat"><span className="vc2StatNum">{pct}%</span><span className="vc2StatLbl">من الأعلى</span></div>
+      </div>
+      <div className="villaCard2BarTrack"><div className="villaCard2BarFill" style={{width:pct+'%',background:grad}}/></div>
     </div>
-    {r.area&&<div className="villaCardAreaChip"><span>{r.area}</span></div>}
-    {r.notes&&<p className="villaCardNotes">{r.notes}</p>}
-    <div className="villaCardFooter">
-      <div className="villaCardAptCount"><Home size={14}/><span className="villaCardAptNum">{r.aptCount}</span><span className="villaCardAptLbl">شقة</span></div>
-      <div className="villaCardBarWrap"><div className="villaCardBar"><div className="villaCardBarFill" style={{width:Math.round(r.aptCount/maxApts*100)+'%',background:villaGradient(r.name)}}/></div></div>
-    </div>
-  </div>
-</div>)}
+  </div>;
+})}
 </div>
 <Modal open={modalOpen} onClose={()=>setModalOpen(false)} title={editingVilla?'تعديل فيلا':'إضافة فيلا'}><form className="form compact" onSubmit={saveVilla}>
   <Field label="اسم الفيلا" required><input required placeholder="فيلا الياسمين" value={villa.name} onChange={e=>setVilla({...villa,name:e.target.value})}/></Field>
