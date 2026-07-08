@@ -34,6 +34,12 @@ CALL _add_col_if_missing('leases', 'terminated_at',  "DATE NULL DEFAULT NULL");
 -- lease_installments: cancellation flag
 CALL _add_col_if_missing('lease_installments', 'is_cancelled', "TINYINT(1) NOT NULL DEFAULT 0");
 
+-- apartments: type / bathrooms / balcony / rental status (needed by import + apt CRUD)
+CALL _add_col_if_missing('apartments', 'apt_type',      "VARCHAR(50) NULL");
+CALL _add_col_if_missing('apartments', 'bathrooms',     "TINYINT UNSIGNED NOT NULL DEFAULT 1");
+CALL _add_col_if_missing('apartments', 'has_balcony',   "BOOLEAN NOT NULL DEFAULT FALSE");
+CALL _add_col_if_missing('apartments', 'rental_status', "ENUM('available','rented') NOT NULL DEFAULT 'available'");
+
 DROP PROCEDURE IF EXISTS _add_col_if_missing;
 
 -- Verify
@@ -45,4 +51,9 @@ UNION ALL
 SELECT 'lease_installments', COLUMN_NAME, COLUMN_TYPE
 FROM information_schema.COLUMNS
 WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'lease_installments'
-  AND COLUMN_NAME = 'is_cancelled';
+  AND COLUMN_NAME = 'is_cancelled'
+UNION ALL
+SELECT 'apartments', COLUMN_NAME, COLUMN_TYPE
+FROM information_schema.COLUMNS
+WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'apartments'
+  AND COLUMN_NAME IN ('apt_type','bathrooms','has_balcony','rental_status');
