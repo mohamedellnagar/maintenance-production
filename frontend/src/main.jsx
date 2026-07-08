@@ -43,7 +43,7 @@ return <div className="login">
   </div>
 </div>}
 
-const ALL_PAGES=[['dashboard','لوحة التحكم',LayoutDashboard],['records','كشف الصيانة',FileText],['villas','الفلل',Building2],['apartments','الشقق',Home],['technicians','الفنيين',Wrench],['tenants_mgmt','المستأجرين',UserCheck],['leases','الإيجارات',Banknote],['payments_tracker','الالتزامات',ListChecks]];
+const ALL_PAGES=[['dashboard','لوحة التحكم',LayoutDashboard],['records','كشف الصيانة',FileText],['villas','الفلل',Building2],['apartments','الشقق',Home],['technicians','الفنيين',Wrench],['tenants_mgmt','المستأجرين',UserCheck],['leases','الإيجارات',Banknote],['payments_tracker','الدفعات',ListChecks]];
 function PermissionsSettings(){const api=useApi();const[perms,setPerms]=useState(null);const[saving,setSaving]=useState(false);useEffect(()=>{api('/permissions').then(setPerms)},[]);
 function toggle(pageId){if(pageId==='dashboard')return;setPerms({...perms,SUPERVISOR:perms.SUPERVISOR.includes(pageId)?perms.SUPERVISOR.filter(p=>p!==pageId):[...perms.SUPERVISOR,pageId]})}
 async function save(){setSaving(true);await runAction(async()=>{await api('/permissions/SUPERVISOR',{method:'PUT',body:JSON.stringify({allowed_pages:perms.SUPERVISOR})})},'تم حفظ الصلاحيات');setSaving(false)}
