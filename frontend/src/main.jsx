@@ -960,6 +960,8 @@ const[paymentsInst,setPaymentsInst]=useState(null);const[payments,setPayments]=u
 const[payForm,setPayForm]=useState({amount:'',payment_date:new Date().toISOString().slice(0,10),notes:''});const[payOpen,setPayOpen]=useState(false);
 const[terminateOpen,setTerminateOpen]=useState(false);const[terminateDate,setTerminateDate]=useState('');
 const[extraDeductions,setExtraDeductions]=useState([]);const[extraDesc,setExtraDesc]=useState('');const[extraAmt,setExtraAmt]=useState('');
+const[expandedVillas,setExpandedVillas]=useState(()=>new Set());
+const toggleLeaseVilla=id=>setExpandedVillas(prev=>{const n=new Set(prev);n.has(id)?n.delete(id):n.add(id);return n});
 
 const load=()=>api('/leases').then(setRows);
 const loadDetail=(id)=>api('/leases/'+id).then(d=>{setLeaseDetail(d);setSelectedLease(id)});
@@ -1357,37 +1359,59 @@ return <>
 
 {filtered.length===0&&<div className="tenantEmpty"><Banknote size={36} style={{opacity:.2}}/><p>{qs||statusFilter!=='all'?'لا توجد نتائج مطابقة':'لا يوجد عقود بعد'}</p></div>}
 
-<div className="leasesGrid">
-{filtered.map(r=>{
-  const st=r.is_active&&r.end_date>=today?'active':'expired';
-  const collected=Number(r.collected_amount||0);
-  const total=Number(r.total_amount||0);
-  const remaining=total-collected;
-  const pct=total>0?Math.min(100,Math.round(collected/total*100)):0;
-  return <div key={r.id} className={'leaseCard'+(st==='expired'?' leaseCardExpired':'')} onClick={()=>loadDetail(r.id)}>
-    <div className="leaseCardHeader">
-      <span className={st==='active'?'leaseBlockBadge leaseBlockBadgeActive':'leaseBlockBadge leaseBlockBadgeExpired'}>{st==='active'?'نشط':'منتهي'}</span>
-      <div className="leaseCardActions" onClick={e=>e.stopPropagation()}>
-        <button className="iconBtn secondary" onClick={()=>{setEditing(r.id);setForm({apartment_id:r.apartment_id,tenant_id:r.tenant_id,start_date:String(r.start_date).slice(0,10),end_date:String(r.end_date).slice(0,10),total_amount:r.total_amount,fees_amount:r.fees_amount||'',deposit_amount:r.deposit_amount||'',deposit_type:r.deposit_type||'',deposit_notes:r.deposit_notes||'',notes:r.notes||'',is_active:r.is_active,_villa_id:''});setOpen(true)}}><Edit size={14}/></button>
-        {isAdmin&&<button className="iconBtn danger" onClick={()=>removeLease(r)}><Trash2 size={14}/></button>}
+{(()=>{
+  // group filtered leases by villa
+  const groups={};
+  filtered.forEach(r=>{const k=r.villa_id||r.villa_name;(groups[k]=groups[k]||{villa_id:r.villa_id,villa_name:r.villa_name,leases:[]}).leases.push(r);});
+  const list=Object.values(groups).sort((a,b)=>String(a.villa_name).localeCompare(String(b.villa_name),'ar'));
+  return list.map(g=>{
+    const activeInG=g.leases.filter(r=>r.is_active&&r.end_date>=today).length;
+    const isOpen=expandedVillas.has(g.villa_id)||!!qs;
+    return <div key={g.villa_id} className={'villaSection'+(isOpen?' villaSectionOpen':'')}>
+      <div className="villaSectionHeader villaSectionHeaderClickable" onClick={()=>toggleLeaseVilla(g.villa_id)}>
+        <div className="villaSectionTitle">
+          <ChevronDown size={16} className={'villaChevron'+(isOpen?' villaChevronOpen':'')}/>
+          <Building2 size={16}/>{g.villa_name}
+        </div>
+        <div className="villaSectionRight">
+          <span className="aptCountChip">{g.leases.length} عقد</span>
+          <span className="aptCountChip aptCountAvail">{activeInG} نشط</span>
+        </div>
       </div>
-    </div>
-    <div className="leaseCardTenant">{r.tenant_name}</div>
-    <div className="leaseCardLocation"><Building2 size={13}/>{r.villa_name}<span className="leaseCardAptChip">شقة {r.apartment_no}</span></div>
-    <div className="leaseCardDates"><Calendar size={12}/>{new Date(r.start_date).toLocaleDateString('ar-AE')} — {new Date(r.end_date).toLocaleDateString('ar-AE')}</div>
-    <div className="leaseCardFinRow">
-      <div className="leaseCardFin"><span className="leaseCardFinVal">{total.toLocaleString()}</span><span className="leaseCardFinLbl">إجمالي</span></div>
-      <div className="leaseCardFin"><span className="leaseCardFinVal" style={{color:'#15803d'}}>{collected.toLocaleString()}</span><span className="leaseCardFinLbl">محصّل</span></div>
-      <div className="leaseCardFin"><span className="leaseCardFinVal" style={{color:remaining>0?'#dc2626':'#15803d'}}>{remaining.toLocaleString()}</span><span className="leaseCardFinLbl">متبقي</span></div>
-    </div>
-    <div className="leaseCardProgressWrap">
-      <div className="leaseCardProgressBar"><div className="leaseCardProgressFill" style={{width:pct+'%',background:st==='expired'?'#94a3b8':undefined}}/></div>
-      <span className="leaseCardPct">{pct}%</span>
-    </div>
-    <button className="leaseCardViewBtn"><Eye size={13}/>عرض الدفعات</button>
-  </div>;
-})}
-</div>
+      {isOpen&&<div className="leasesGrid leasesGridInSection">
+      {g.leases.map(r=>{
+        const st=r.is_active&&r.end_date>=today?'active':'expired';
+        const collected=Number(r.collected_amount||0);
+        const total=Number(r.total_amount||0);
+        const remaining=total-collected;
+        const pct=total>0?Math.min(100,Math.round(collected/total*100)):0;
+        return <div key={r.id} className={'leaseCard'+(st==='expired'?' leaseCardExpired':'')} onClick={()=>loadDetail(r.id)}>
+          <div className="leaseCardHeader">
+            <span className={st==='active'?'leaseBlockBadge leaseBlockBadgeActive':'leaseBlockBadge leaseBlockBadgeExpired'}>{st==='active'?'نشط':'منتهي'}</span>
+            <div className="leaseCardActions" onClick={e=>e.stopPropagation()}>
+              <button className="iconBtn secondary" onClick={()=>{setEditing(r.id);setForm({apartment_id:r.apartment_id,tenant_id:r.tenant_id,start_date:String(r.start_date).slice(0,10),end_date:String(r.end_date).slice(0,10),total_amount:r.total_amount,fees_amount:r.fees_amount||'',deposit_amount:r.deposit_amount||'',deposit_type:r.deposit_type||'',deposit_notes:r.deposit_notes||'',notes:r.notes||'',is_active:r.is_active,_villa_id:''});setOpen(true)}}><Edit size={14}/></button>
+              {isAdmin&&<button className="iconBtn danger" onClick={()=>removeLease(r)}><Trash2 size={14}/></button>}
+            </div>
+          </div>
+          <div className="leaseCardTenant">{r.tenant_name}</div>
+          <div className="leaseCardLocation"><span className="leaseCardAptChip">شقة {r.apartment_no}</span></div>
+          <div className="leaseCardDates"><Calendar size={12}/>{new Date(r.start_date).toLocaleDateString('ar-AE')} — {new Date(r.end_date).toLocaleDateString('ar-AE')}</div>
+          <div className="leaseCardFinRow">
+            <div className="leaseCardFin"><span className="leaseCardFinVal">{total.toLocaleString()}</span><span className="leaseCardFinLbl">إجمالي</span></div>
+            <div className="leaseCardFin"><span className="leaseCardFinVal" style={{color:'#15803d'}}>{collected.toLocaleString()}</span><span className="leaseCardFinLbl">محصّل</span></div>
+            <div className="leaseCardFin"><span className="leaseCardFinVal" style={{color:remaining>0?'#dc2626':'#15803d'}}>{remaining.toLocaleString()}</span><span className="leaseCardFinLbl">متبقي</span></div>
+          </div>
+          <div className="leaseCardProgressWrap">
+            <div className="leaseCardProgressBar"><div className="leaseCardProgressFill" style={{width:pct+'%',background:st==='expired'?'#94a3b8':undefined}}/></div>
+            <span className="leaseCardPct">{pct}%</span>
+          </div>
+          <button className="leaseCardViewBtn"><Eye size={13}/>عرض الدفعات</button>
+        </div>;
+      })}
+      </div>}
+    </div>;
+  });
+})()}
 
 <Modal open={open} onClose={()=>setOpen(false)} title={editing?'تعديل عقد':'إضافة عقد إيجار'}><form className="form" onSubmit={saveLease}>
   <Field label="الفيلا" required><select required value={form._villa_id||''} onChange={e=>setForm({...form,_villa_id:e.target.value,apartment_id:''})}><option value="">اختر الفيلا</option>{villas.map(v=><option key={v.id} value={v.id}>{v.name}</option>)}</select></Field>

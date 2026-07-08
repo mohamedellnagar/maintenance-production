@@ -306,7 +306,7 @@ app.get('/api/leases', auth, pageGuard('leases'), wrap(async (req, res) => {
   if (req.query.is_active !== undefined) { where.push('l.is_active=?'); p.push(req.query.is_active); }
   const [rows] = await pool.query(`
     SELECT l.*, t.name tenant_name, t.phone tenant_phone,
-      a.apartment_no, v.name villa_name,
+      a.apartment_no, v.name villa_name, v.id villa_id,
       (SELECT COUNT(*) FROM lease_installments li WHERE li.lease_id=l.id) installments_count,
       (SELECT COALESCE(SUM(ip.amount),0) FROM lease_installments li JOIN installment_payments ip ON ip.installment_id=li.id WHERE li.lease_id=l.id) collected_amount
     FROM leases l
