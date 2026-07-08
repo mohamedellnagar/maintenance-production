@@ -955,6 +955,7 @@ const[form,setForm]=useState(empty);const[editing,setEditing]=useState(null);con
 const[instForm,setInstForm]=useState({due_date:'',amount:'',notes:''});const[instOpen,setInstOpen]=useState(false);const[editingInst,setEditingInst]=useState(null);
 const[paymentsInst,setPaymentsInst]=useState(null);const[payments,setPayments]=useState([]);
 const[payForm,setPayForm]=useState({amount:'',payment_date:new Date().toISOString().slice(0,10),notes:''});const[payOpen,setPayOpen]=useState(false);
+const[terminateOpen,setTerminateOpen]=useState(false);const[terminateDate,setTerminateDate]=useState('');
 
 const load=()=>api('/leases').then(setRows);
 const loadDetail=(id)=>api('/leases/'+id).then(d=>{setLeaseDetail(d);setSelectedLease(id)});
@@ -1010,6 +1011,7 @@ if(selectedLease&&leaseDetail){
         <div className="ldCardActions">
           <button onClick={()=>{setInstOpen(true);setEditingInst(null);setInstForm({due_date:'',amount:'',notes:''})}}><Plus size={14}/>إضافة دفعة</button>
           <button className="secondary" onClick={()=>{setEditing(lease.id);setForm({apartment_id:lease.apartment_id,tenant_id:lease.tenant_id,start_date:String(lease.start_date).slice(0,10),end_date:String(lease.end_date).slice(0,10),total_amount:lease.total_amount,notes:lease.notes||'',is_active:lease.is_active,_villa_id:''});setOpen(true)}}><Edit size={14}/>تعديل</button>
+          <button className="secondary ldTerminateBtn" onClick={()=>{setTerminateDate('');setTerminateOpen(true)}}><X size={14}/>إنهاء العقد</button>
           {isAdmin&&<button className="iconBtn danger secondary" onClick={()=>removeLease(lease)}><Trash2 size={14}/></button>}
         </div>
       </div>
@@ -1057,6 +1059,68 @@ if(selectedLease&&leaseDetail){
       </form>
     </div>}
   </Modal>
+  {/* ── Terminate Modal ── */}
+  {(()=>{
+    if(!terminateOpen||!leaseDetail)return null;
+    const{lease,installments}=leaseDetail;
+    const tDate=terminateDate?new Date(terminateDate):null;
+    const startDate=new Date(String(lease.start_date).slice(0,10));
+    const endDate=new Date(String(lease.end_date).slice(0,10));
+    const totalDays=Math.round((endDate-startDate)/(1000*60*60*24));
+    const usedDays=tDate?Math.max(0,Math.round((tDate-startDate)/(1000*60*60*24))):0;
+    const totalAmt=Number(lease.total_amount);
+    const amtForUsedDays=totalDays>0?Math.round((usedDays/totalDays)*totalAmt*100)/100:0;
+    const alreadyCollected=installments.reduce((s,i)=>s+Number(i.collected_amount),0);
+    const unpaidInsts=installments.filter(i=>i.status!=='collected');
+    const balance=alreadyCollected-amtForUsedDays;
+    const tenantOwes=balance<0;
+    return <Modal open={terminateOpen} onClose={()=>setTerminateOpen(false)} title="إنهاء العقد مبكراً">
+      <div className="terminateModal">
+        <div className="terminateDateRow">
+          <Field label="تاريخ الإنهاء" required>
+            <input type="date" value={terminateDate}
+              min={String(lease.start_date).slice(0,10)}
+              max={String(lease.end_date).slice(0,10)}
+              onChange={e=>setTerminateDate(e.target.value)}/>
+          </Field>
+        </div>
+        {tDate&&<>
+          {/* Days calc */}
+          <div className="terminateCalcBox">
+            <div className="terminateCalcRow"><span>مدة العقد الكاملة</span><strong>{totalDays} يوم</strong></div>
+            <div className="terminateCalcRow"><span>أيام الإقامة الفعلية</span><strong>{usedDays} يوم</strong></div>
+            <div className="terminateCalcRow"><span>الأيام المتبقية</span><strong>{Math.max(0,totalDays-usedDays)} يوم</strong></div>
+            <div className="terminateCalcDivider"/>
+            <div className="terminateCalcRow"><span>الإجمالي الأصلي</span><strong>{totalAmt.toLocaleString()} AED</strong></div>
+            <div className="terminateCalcRow terminateCalcHighlight"><span>المستحق عن {usedDays} يوم</span><strong>{amtForUsedDays.toLocaleString()} AED</strong></div>
+            <div className="terminateCalcRow"><span>تم تحصيله فعلاً</span><strong style={{color:'#15803d'}}>{alreadyCollected.toLocaleString()} AED</strong></div>
+          </div>
+          {/* Unpaid installments */}
+          {unpaidInsts.length>0&&<div className="terminateUnpaid">
+            <div className="terminateUnpaidTitle">دفعات لم تُحصَّل ({unpaidInsts.length})</div>
+            {unpaidInsts.map(i=><div key={i.id} className="terminateUnpaidRow">
+              <span>{String(i.due_date).slice(0,10)}</span>
+              <span className={'statusBadge statusBadgeSm '+INST_STATUS_CSS[i.status]}>{INST_STATUS_LABELS[i.status]}</span>
+              <span>{Number(i.amount).toLocaleString()} AED</span>
+              <span style={{color:'#dc2626'}}>محصّل: {Number(i.collected_amount).toLocaleString()}</span>
+            </div>)}
+          </div>}
+          {/* Settlement result */}
+          <div className={'terminateResult'+(tenantOwes?' terminateResultOwes':' terminateResultRefund')}>
+            <div className="terminateResultIcon">{tenantOwes?'⚠️':'✅'}</div>
+            <div>
+              <div className="terminateResultTitle">{tenantOwes?'المستأجر مدين بـ':'مبلغ مسترد للمستأجر'}</div>
+              <div className="terminateResultAmt">{Math.abs(balance).toLocaleString()} AED</div>
+              <div className="terminateResultSub">{tenantOwes?`دفع ${alreadyCollected.toLocaleString()} ومستحق عليه ${amtForUsedDays.toLocaleString()}`:`دفع ${alreadyCollected.toLocaleString()} ومستحق له ${amtForUsedDays.toLocaleString()} فقط`}</div>
+            </div>
+          </div>
+        </>}
+        <div style={{display:'flex',gap:8,marginTop:8}}>
+          <button type="button" className="secondary" style={{flex:1}} onClick={()=>setTerminateOpen(false)}>إغلاق</button>
+        </div>
+      </div>
+    </Modal>;
+  })()}
   </>
 }
 
