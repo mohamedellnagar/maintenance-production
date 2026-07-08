@@ -600,9 +600,14 @@ app.post('/api/import/preview', auth, adminOnly, upload.single('file'), wrap(asy
 
 function toDate(v) {
   if (!v) return null;
-  if (v instanceof Date) return v.toISOString().slice(0, 10);
-  const s = String(v).trim();
+  if (v instanceof Date) return isNaN(v) ? null : v.toISOString().slice(0, 10);
+  // normalize Arabic-Indic and Persian digits to ASCII
+  let s = String(v).trim().replace(/[٠-٩]/g, d => String(d.charCodeAt(0) - 0x0660))
+                          .replace(/[۰-۹]/g, d => String(d.charCodeAt(0) - 0x06F0));
   if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+  // dd/mm/yyyy or dd-mm-yyyy → yyyy-mm-dd
+  const m = s.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{4})$/);
+  if (m) { const [, dd, mm, yy] = m; return `${yy}-${mm.padStart(2,'0')}-${dd.padStart(2,'0')}`; }
   const d = new Date(s);
   return isNaN(d) ? null : d.toISOString().slice(0, 10);
 }
@@ -661,6 +666,7 @@ app.post('/api/import/confirm', auth, adminOnly, upload.single('file'), wrap(asy
       if (!aptId) { report.skipped.push(`عقد: شقة ${aptNo} في "${vName}" غير موجودة`); continue; }
       if (!tenId) { report.skipped.push(`عقد: مستأجر "${tName}" غير موجود`); continue; }
       const startDate=toDate(r['تاريخ البداية *']), endDate=toDate(r['تاريخ النهاية *']);
+      if (!startDate || !endDate) { report.skipped.push(`عقد "${tName}" في شقة ${aptNo}: تاريخ غير صالح (استخدم صيغة YYYY-MM-DD)`); continue; }
       const [[ex]] = await conn.query('SELECT id FROM leases WHERE apartment_id=? AND tenant_id=? AND start_date=?', [aptId, tenId, startDate]);
       if (ex) { leaseMap[`${vName}|${aptNo}|${tName}`]=ex.id; report.skipped.push(`عقد "${tName}" في شقة ${aptNo} موجود بالفعل`); continue; }
       const isActive = endDate >= new Date().toISOString().slice(0,10) ? 1 : 0;
@@ -675,6 +681,7 @@ app.post('/api/import/confirm', auth, adminOnly, upload.single('file'), wrap(asy
       const leaseId=leaseMap[`${vName}|${aptNo}|${tName}`];
       if (!leaseId) { report.skipped.push(`دفعة: لم يُعثر على عقد لـ"${tName}" في شقة ${aptNo}`); continue; }
       const dueDate=toDate(r['تاريخ الاستحقاق *']), amount=Number(r['المبلغ *'])||0;
+      if (!dueDate) { report.skipped.push(`دفعة لـ"${tName}" في شقة ${aptNo}: تاريخ استحقاق غير صالح (استخدم صيغة YYYY-MM-DD)`); continue; }
       const [[ex]] = await conn.query('SELECT id FROM lease_installments WHERE lease_id=? AND due_date=? AND amount=?', [leaseId, dueDate, amount]);
       if (ex) {
         const payDate=toDate(r['تاريخ الدفع (فارغ = لم يُدفع)']);
@@ -719,6 +726,15 @@ app.use((err, req, res, next) => {
       : 'البيانات مكررة';
     return res.status(409).json({ message: msg });
   }
+  // surface common data-shape errors with a helpful Arabic message
+  const DATA_ERRORS = {
+    ER_BAD_NULL_ERROR: 'حقل مطلوب فارغ أو بقيمة غير صالحة (تحقق من التواريخ والمبالغ)',
+    ER_TRUNCATED_WRONG_VALUE: 'قيمة غير صالحة في أحد الحقول (غالباً تاريخ بصيغة خاطئة — استخدم YYYY-MM-DD)',
+    ER_TRUNCATED_WRONG_VALUE_FOR_FIELD: 'قيمة غير صالحة في أحد الحقول (تحقق من صيغة التواريخ والأرقام)',
+    ER_DATA_TOO_LONG: 'إحدى القيم أطول من المسموح في أحد الحقول',
+    WARN_DATA_TRUNCATED: 'قيمة غير صالحة في أحد الحقول',
+  };
+  if (DATA_ERRORS[err.code]) return res.status(400).json({ message: DATA_ERRORS[err.code] });
   const status = err.status || (err.code === 'ER_NO_REFERENCED_ROW_2' ? 400 : 500);
   if (status === 500) console.error(err);
   res.status(status).json({ message: status === 500 ? 'Internal server error' : err.message });
