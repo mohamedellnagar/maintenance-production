@@ -285,6 +285,10 @@ button.danger{background:#fee2e2;color:var(--danger)}.actionsCell{display:flex;g
 .villaSectionArea{font-size:11px;font-weight:400;color:var(--muted);background:#e2e8f0;padding:2px 8px;border-radius:20px}
 .villaSectionRight{display:flex;align-items:center;gap:10px}
 .villaSectionCount{font-size:12px;color:var(--muted);background:#f1f5f9;padding:3px 10px;border-radius:20px}
+.villaSectionHeaderClickable{cursor:pointer;user-select:none}
+.villaSectionHeaderClickable:hover{background:linear-gradient(135deg,#e7fbef,#eef2f7)}
+.villaChevron{transition:transform .2s;color:var(--muted);flex-shrink:0}
+.villaChevronOpen{transform:rotate(180deg)}
 .villaSectionAdd{padding:5px 12px;font-size:12px;border-radius:9px;margin-bottom:0}
 
 /* apartment rows (dense, scannable) */

@@ -612,6 +612,8 @@ const api=useApi();const isAdmin=user?.role==='ADMIN';
 const[villas,setVillas]=useState([]),[apts,setApts]=useState([]);
 const[selectedApt,setSelectedApt]=useState(null);
 const[q,setQ]=useState('');
+const[expanded,setExpanded]=useState(()=>new Set());
+const toggleVilla=id=>setExpanded(prev=>{const n=new Set(prev);n.has(id)?n.delete(id):n.add(id);return n});
 const emptyApt={villa_id:'',apartment_no:'',apt_type:'',bathrooms:1,has_balcony:false,rental_status:'available',floor:'',notes:''};const[apt,setApt]=useState(emptyApt);const[editingApt,setEditingApt]=useState(null);const[modalOpen,setModalOpen]=useState(false);
 const load=()=>{api('/villas').then(setVillas);api('/apartments').then(setApts)};
 useEffect(()=>{load()},[]);
@@ -635,17 +637,22 @@ return <>
 {grouped.map(({villa,apts:vapts})=>{
   const rented=vapts.filter(a=>a.rental_status==='rented').length;
   const avail=vapts.length-rented;
+  const isOpen=expanded.has(villa.id)||!!qs;   // auto-open while searching
   return (
-<div key={villa.id} className="villaSection">
-  <div className="villaSectionHeader">
-    <div className="villaSectionTitle"><Building2 size={16}/>{villa.name}{villa.area&&<span className="villaSectionArea">{villa.area}</span>}</div>
-    <div className="villaSectionRight">
+<div key={villa.id} className={'villaSection'+(isOpen?' villaSectionOpen':'')}>
+  <div className="villaSectionHeader villaSectionHeaderClickable" onClick={()=>toggleVilla(villa.id)}>
+    <div className="villaSectionTitle">
+      <ChevronDown size={16} className={'villaChevron'+(isOpen?' villaChevronOpen':'')}/>
+      <Building2 size={16}/>{villa.name}{villa.area&&<span className="villaSectionArea">{villa.area}</span>}
+    </div>
+    <div className="villaSectionRight" onClick={e=>e.stopPropagation()}>
+      <span className="aptCountChip">{vapts.length} شقة</span>
       <span className="aptCountChip aptCountRented">{rented} مأجورة</span>
       <span className="aptCountChip aptCountAvail">{avail} متاحة</span>
       {isAdmin&&<button className="secondary villaSectionAdd" onClick={()=>openAdd(String(villa.id))}><Plus size={13}/>إضافة</button>}
     </div>
   </div>
-  <div className="aptRows">
+  {isOpen&&<div className="aptRows">
     {vapts.map(r=>{const rented=r.rental_status==='rented';return(
     <div key={r.id} className="aptRow" onClick={()=>setSelectedApt(r)}>
       <span className={'aptRowDot'+(rented?' aptRowDotRented':' aptRowDotAvail')}/>
@@ -665,7 +672,7 @@ return <>
         </>}
       </div>
     </div>);})}
-  </div>
+  </div>}
 </div>);})}
 <Modal open={modalOpen} onClose={()=>setModalOpen(false)} title={editingApt?'تعديل شقة':'إضافة شقة'}>
 <form className="form compact" onSubmit={saveApt}>
