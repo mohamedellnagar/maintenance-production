@@ -1378,34 +1378,36 @@ return <>
           <span className="aptCountChip aptCountAvail">{activeInG} نشط</span>
         </div>
       </div>
-      {isOpen&&<div className="leasesGrid leasesGridInSection">
+      {isOpen&&<div className="leaseRows">
       {g.leases.map(r=>{
         const st=r.is_active&&r.end_date>=today?'active':'expired';
         const collected=Number(r.collected_amount||0);
         const total=Number(r.total_amount||0);
         const remaining=total-collected;
         const pct=total>0?Math.min(100,Math.round(collected/total*100)):0;
-        return <div key={r.id} className={'leaseCard'+(st==='expired'?' leaseCardExpired':'')} onClick={()=>loadDetail(r.id)}>
-          <div className="leaseCardHeader">
+        return <div key={r.id} className={'leaseRow'+(st==='expired'?' leaseRowExpired':'')} onClick={()=>loadDetail(r.id)}>
+          <div className="leaseRowMain">
             <span className={st==='active'?'leaseBlockBadge leaseBlockBadgeActive':'leaseBlockBadge leaseBlockBadgeExpired'}>{st==='active'?'نشط':'منتهي'}</span>
-            <div className="leaseCardActions" onClick={e=>e.stopPropagation()}>
-              <button className="iconBtn secondary" onClick={()=>{setEditing(r.id);setForm({apartment_id:r.apartment_id,tenant_id:r.tenant_id,start_date:String(r.start_date).slice(0,10),end_date:String(r.end_date).slice(0,10),total_amount:r.total_amount,fees_amount:r.fees_amount||'',deposit_amount:r.deposit_amount||'',deposit_type:r.deposit_type||'',deposit_notes:r.deposit_notes||'',notes:r.notes||'',is_active:r.is_active,_villa_id:''});setOpen(true)}}><Edit size={14}/></button>
-              {isAdmin&&<button className="iconBtn danger" onClick={()=>removeLease(r)}><Trash2 size={14}/></button>}
+            <div className="leaseRowIdentity">
+              <span className="leaseRowTenant">{r.tenant_name}</span>
+              <span className="leaseRowAptChip">شقة {r.apartment_no}</span>
             </div>
           </div>
-          <div className="leaseCardTenant">{r.tenant_name}</div>
-          <div className="leaseCardLocation"><span className="leaseCardAptChip">شقة {r.apartment_no}</span></div>
-          <div className="leaseCardDates"><Calendar size={12}/>{new Date(r.start_date).toLocaleDateString('ar-AE')} — {new Date(r.end_date).toLocaleDateString('ar-AE')}</div>
-          <div className="leaseCardFinRow">
-            <div className="leaseCardFin"><span className="leaseCardFinVal">{total.toLocaleString()}</span><span className="leaseCardFinLbl">إجمالي</span></div>
-            <div className="leaseCardFin"><span className="leaseCardFinVal" style={{color:'#15803d'}}>{collected.toLocaleString()}</span><span className="leaseCardFinLbl">محصّل</span></div>
-            <div className="leaseCardFin"><span className="leaseCardFinVal" style={{color:remaining>0?'#dc2626':'#15803d'}}>{remaining.toLocaleString()}</span><span className="leaseCardFinLbl">متبقي</span></div>
+          <div className="leaseRowDates"><Calendar size={12}/>{new Date(r.start_date).toLocaleDateString('ar-AE')} — {new Date(r.end_date).toLocaleDateString('ar-AE')}</div>
+          <div className="leaseRowFin">
+            <div className="leaseRowFinItem"><span className="leaseRowFinVal">{total.toLocaleString()}</span><span className="leaseRowFinLbl">إجمالي</span></div>
+            <div className="leaseRowFinItem"><span className="leaseRowFinVal" style={{color:'#15803d'}}>{collected.toLocaleString()}</span><span className="leaseRowFinLbl">محصّل</span></div>
+            <div className="leaseRowFinItem"><span className="leaseRowFinVal" style={{color:remaining>0?'#dc2626':'#15803d'}}>{remaining.toLocaleString()}</span><span className="leaseRowFinLbl">متبقي</span></div>
           </div>
-          <div className="leaseCardProgressWrap">
-            <div className="leaseCardProgressBar"><div className="leaseCardProgressFill" style={{width:pct+'%',background:st==='expired'?'#94a3b8':undefined}}/></div>
-            <span className="leaseCardPct">{pct}%</span>
+          <div className="leaseRowProgress">
+            <div className="leaseRowProgressBar"><div className="leaseRowProgressFill" style={{width:pct+'%',background:st==='expired'?'#94a3b8':undefined}}/></div>
+            <span className="leaseRowPct">{pct}%</span>
           </div>
-          <button className="leaseCardViewBtn"><Eye size={13}/>عرض الدفعات</button>
+          <div className="leaseRowActions" onClick={e=>e.stopPropagation()}>
+            <button className="secondary leaseRowViewBtn" onClick={()=>loadDetail(r.id)}><Eye size={13}/>الدفعات</button>
+            <button className="iconBtn secondary" onClick={()=>{setEditing(r.id);setForm({apartment_id:r.apartment_id,tenant_id:r.tenant_id,start_date:String(r.start_date).slice(0,10),end_date:String(r.end_date).slice(0,10),total_amount:r.total_amount,fees_amount:r.fees_amount||'',deposit_amount:r.deposit_amount||'',deposit_type:r.deposit_type||'',deposit_notes:r.deposit_notes||'',notes:r.notes||'',is_active:r.is_active,_villa_id:''});setOpen(true)}}><Edit size={14}/></button>
+            {isAdmin&&<button className="iconBtn danger" onClick={()=>removeLease(r)}><Trash2 size={14}/></button>}
+          </div>
         </div>;
       })}
       </div>}

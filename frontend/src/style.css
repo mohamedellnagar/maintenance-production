@@ -337,6 +337,33 @@ button.danger{background:#fee2e2;color:var(--danger)}.actionsCell{display:flex;g
 .leasesToolbarRight{display:flex;align-items:center;gap:10px}
 .leasesGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
 .leasesGridInSection{padding:14px;gap:12px}
+/* horizontal lease rows inside a villa section */
+.leaseRows{display:flex;flex-direction:column}
+.leaseRow{display:flex;align-items:center;gap:18px;padding:13px 18px;border-bottom:1px solid var(--line);cursor:pointer;transition:background .12s;border-right:3px solid #22c55e}
+.leaseRow:last-child{border-bottom:none}
+.leaseRow:hover{background:var(--hover)}
+.leaseRowExpired{border-right-color:#cbd5e1}
+.leaseRowMain{display:flex;align-items:center;gap:12px;flex:1;min-width:180px}
+.leaseRowIdentity{display:flex;flex-direction:column;gap:4px;min-width:0}
+.leaseRowTenant{font-size:14px;font-weight:700;color:var(--fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.leaseRowAptChip{align-self:flex-start;font-size:10.5px;font-weight:700;color:var(--brand);background:#f0fdf4;border:1px solid #a7f3d0;border-radius:20px;padding:1px 9px}
+.leaseRowDates{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--muted);white-space:nowrap;flex-shrink:0}
+.leaseRowFin{display:flex;align-items:center;gap:20px;flex-shrink:0}
+.leaseRowFinItem{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:64px}
+.leaseRowFinVal{font-size:14px;font-weight:800;line-height:1}
+.leaseRowFinLbl{font-size:10px;color:var(--muted)}
+.leaseRowProgress{display:flex;align-items:center;gap:8px;width:130px;flex-shrink:0}
+.leaseRowProgressBar{flex:1;height:6px;background:#e2e8f0;border-radius:6px;overflow:hidden}
+.leaseRowProgressFill{height:100%;background:var(--brand);border-radius:6px;transition:width .4s}
+.leaseRowPct{font-size:11px;font-weight:700;color:var(--muted);min-width:30px}
+.leaseRowActions{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.leaseRowViewBtn{display:flex;align-items:center;gap:5px;font-size:12px;padding:6px 12px;border-radius:8px;margin-bottom:0;white-space:nowrap}
+.leaseRowActions .iconBtn{padding:6px 8px;margin-bottom:0;border-radius:8px}
+@media(max-width:1100px){
+  .leaseRow{flex-wrap:wrap;gap:12px}
+  .leaseRowProgress{width:100%;order:5}
+  .leaseRowActions{margin-inline-start:auto}
+}
 .leaseCard{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;cursor:pointer;transition:box-shadow .18s,transform .18s,border-color .18s;border-right:4px solid var(--brand)}
 .leaseCard:hover{box-shadow:0 6px 24px #0f766e18;border-color:#99f6e4;transform:translateY(-2px)}
 .leaseCardExpired{border-right-color:#cbd5e1;opacity:.85}
