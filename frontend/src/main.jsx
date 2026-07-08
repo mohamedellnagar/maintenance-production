@@ -1,4 +1,4 @@
-import React,{useEffect,useMemo,useState,useCallback,useRef}from'react';import{createRoot}from'react-dom/client';import{Home,Users,Wrench,Building2,LayoutDashboard,FileText,Plus,Trash2,Edit,LogOut,Download,X,Mail,Lock,Eye,EyeOff,Loader2,ShieldCheck,Filter,RotateCcw,ClipboardList,Wallet,TrendingUp,Coins,Check,Settings as SettingsIcon,UserCheck,Banknote,ChevronRight,Calendar,DollarSign,ListChecks,AlertCircle,CheckCircle2,Clock,ChevronDown,RefreshCw,Activity,KeyRound,BarChart2,BedDouble,DoorOpen,ArrowUpRight,ArrowDownRight,Zap,Upload,FileSpreadsheet,CheckSquare,Printer,MapPin}from'lucide-react';import{BarChart,Bar,XAxis,YAxis,Tooltip,ResponsiveContainer,CartesianGrid,LabelList,AreaChart,Area}from'recharts';import'./style.css';
+import React,{useEffect,useMemo,useState,useCallback,useRef}from'react';import{createRoot}from'react-dom/client';import{Home,Users,Wrench,Building2,LayoutDashboard,FileText,Plus,Trash2,Edit,LogOut,Download,X,Mail,Lock,Eye,EyeOff,Loader2,ShieldCheck,Filter,RotateCcw,ClipboardList,Wallet,TrendingUp,Coins,Check,Settings as SettingsIcon,UserCheck,Banknote,ChevronRight,Calendar,DollarSign,ListChecks,AlertCircle,CheckCircle2,Clock,ChevronDown,RefreshCw,Activity,KeyRound,BarChart2,BedDouble,DoorOpen,ArrowUpRight,ArrowDownRight,Zap,Upload,FileSpreadsheet,CheckSquare,Printer,MapPin,Phone,CreditCard}from'lucide-react';import{BarChart,Bar,XAxis,YAxis,Tooltip,ResponsiveContainer,CartesianGrid,LabelList,AreaChart,Area}from'recharts';import'./style.css';
 const API=import.meta.env.VITE_API_URL||(location.hostname==='localhost'?'http://localhost:4000/api':'/api');
 const AR_MONTHS=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
 
@@ -914,23 +914,22 @@ return <>
 
 {filtered.length===0&&<div className="tenantEmpty"><UserCheck size={36} style={{opacity:.2}}/><p>{qs?'لا توجد نتائج مطابقة':'لا يوجد مستأجرين بعد'}</p></div>}
 
-<div className="tenantGrid">
-{filtered.map(r=><div key={r.id} className="tenantCard" onClick={()=>openTenant(r)}>
-  <div className="tenantCardTop">
-    <div className="tenantCardAvatar" style={{background:avatarColor(r.name)}}>{r.name[0]}</div>
-    <div className="tenantCardInfo">
-      <div className="tenantCardName">{r.name}</div>
-      {r.phone&&<div className="tenantCardPhone">{r.phone}</div>}
-      {r.national_id&&<div className="tenantCardId">🪪 {r.national_id}</div>}
+<div className="tenantRows">
+{filtered.map((r,i)=><div key={r.id} className="tenantRow" onClick={()=>openTenant(r)}>
+  <span className="tenantRowIdx">{i+1}</span>
+  <div className="tenantRowAvatar" style={{background:avatarColor(r.name)}}>{r.name[0]}</div>
+  <div className="tenantRowMain">
+    <span className="tenantRowName">{r.name}</span>
+    <div className="tenantRowMeta">
+      {r.phone&&<span className="tenantRowMetaItem"><Phone size={11}/>{r.phone}</span>}
+      {r.national_id&&<span className="tenantRowMetaItem"><CreditCard size={11}/>{r.national_id}</span>}
+      {r.email&&<span className="tenantRowMetaItem"><Mail size={11}/>{r.email}</span>}
     </div>
   </div>
-  {r.email&&<div className="tenantCardEmail">{r.email}</div>}
-  <div className="tenantCardFooter">
-    <button className="tenantCardViewBtn" onClick={e=>{e.stopPropagation();openTenant(r)}}><Eye size={14}/>العقود</button>
-    <div className="tenantCardIconBtns">
-      <button className="iconBtn secondary" onClick={e=>{e.stopPropagation();setEditing(r.id);setForm({name:r.name,phone:r.phone||'',national_id:r.national_id||'',email:r.email||'',notes:r.notes||''});setTenantOpen(true)}}><Edit size={14}/></button>
-      {isAdmin&&<button className="iconBtn danger" onClick={e=>{e.stopPropagation();removeTenant(r)}}><Trash2 size={14}/></button>}
-    </div>
+  <div className="tenantRowActions" onClick={e=>e.stopPropagation()}>
+    <button className="tenantRowViewBtn" onClick={e=>{e.stopPropagation();openTenant(r)}}><Eye size={13}/>العقود</button>
+    <button className="iconBtn secondary" onClick={e=>{e.stopPropagation();setEditing(r.id);setForm({name:r.name,phone:r.phone||'',national_id:r.national_id||'',email:r.email||'',notes:r.notes||''});setTenantOpen(true)}}><Edit size={13}/></button>
+    {isAdmin&&<button className="iconBtn danger" onClick={e=>{e.stopPropagation();removeTenant(r)}}><Trash2 size={13}/></button>}
   </div>
 </div>)}
 </div>
