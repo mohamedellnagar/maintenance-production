@@ -487,6 +487,11 @@ button.danger{background:#fee2e2;color:var(--danger)}.actionsCell{display:flex;g
 .villaCard2Status{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;white-space:nowrap}
 .vc2Active{background:#dcfce7;color:#15803d;border:1px solid #86efac}
 .vc2Inactive{background:#f1f5f9;color:#64748b;border:1px solid #cbd5e1}
+/* villa rows */
+.villaRowStatus{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.villaRowStatus.vc2Active{background:#dcfce7;color:#15803d;border:1px solid #86efac}
+.villaRowStatus.vc2Inactive{background:#f1f5f9;color:#64748b;border:1px solid #cbd5e1}
+.villaRowNotes{max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;opacity:.85}
 .villaCardActions{display:flex;gap:4px}
 .villaCard2Notes{margin:0;font-size:11.5px;color:var(--muted);line-height:1.55;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;padding:8px 12px;background:var(--hover);border-radius:8px}
 .villaCard2Stats{display:flex;align-items:center;gap:0;border:1px solid var(--line);border-radius:10px;overflow:hidden}

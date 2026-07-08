@@ -450,36 +450,27 @@ return <>
   <div className="villasSumCard"><span className="villasSumVal">{rows.length>0?(apts.length/rows.length).toFixed(1):0}</span><span className="villasSumLbl">متوسط الشقق</span></div>
 </div>
 {filtered.length===0&&<div className="tenantEmpty"><Building2 size={36} style={{opacity:.2}}/><p>{qs?'لا توجد نتائج مطابقة':'لا يوجد فلل بعد'}</p></div>}
-<div className="villasGrid">
-{filtered.map(r=>{
+<div className="tenantRows">
+{filtered.map((r,idx)=>{
   const grad=villaGradient(r.name);
-  const initials=r.name.replace(/فيلا\s*/,'').trim().slice(0,2)||r.name.slice(0,2);
-  const pct=maxApts>0?Math.round(r.aptCount/maxApts*100):0;
-  return <div key={r.id} className={'villaCard2'+(r.is_active?'':' villaCard2Inactive')}>
-    <div className="villaCard2Accent" style={{background:grad}}/>
-    <div className="villaCard2Inner">
-      <div className="villaCard2Top">
-        <div className="villaCard2Avatar" style={{background:grad}}>{initials}</div>
-        <div className="villaCard2Info">
-          <h3 className="villaCard2Name">{r.name}</h3>
-          {r.area&&<span className="villaCard2Area"><MapPin size={11}/>{r.area}</span>}
-        </div>
-        <div className="villaCard2Right">
-          <span className={'villaCard2Status'+(r.is_active?' vc2Active':' vc2Inactive')}>{r.is_active?'نشطة':'متوقفة'}</span>
-          {isAdmin&&<div className="villaCardActions">
-            <button className="iconBtn secondary" onClick={()=>{setEditingVilla(r.id);setVilla({name:r.name,area:r.area||'',notes:r.notes||'',is_active:r.is_active});setModalOpen(true)}}><Edit size={13}/></button>
-            <button className="iconBtn danger" onClick={()=>removeVilla(r)}><Trash2 size={13}/></button>
-          </div>}
-        </div>
+  const core=r.name.replace(/فيلا\s*/,'').replace(/^ال/,'').trim();
+  const initials=(core||r.name).slice(0,2);
+  return <div key={r.id} className="tenantRow villaRow">
+    <span className="tenantRowIdx">{idx+1}</span>
+    <div className="tenantRowAvatar" style={{background:grad}}>{initials}</div>
+    <div className="tenantRowMain">
+      <span className="tenantRowName">{r.name}</span>
+      <div className="tenantRowMeta">
+        {r.area&&<span className="tenantRowMetaItem"><MapPin size={12}/>{r.area}</span>}
+        <span className="tenantRowMetaItem"><Home size={12}/>{r.aptCount} شقة</span>
+        {r.notes&&<span className="tenantRowMetaItem villaRowNotes">{r.notes}</span>}
       </div>
-      {r.notes&&<p className="villaCard2Notes">{r.notes}</p>}
-      <div className="villaCard2Stats">
-        <div className="villaCard2Stat"><span className="vc2StatNum" style={{color:grad.includes('linear')?'#1e40af':grad}}>{r.aptCount}</span><span className="vc2StatLbl">شقة</span></div>
-        <div className="villaCard2StatDivider"/>
-        <div className="villaCard2Stat"><span className="vc2StatNum">{pct}%</span><span className="vc2StatLbl">من الأعلى</span></div>
-      </div>
-      <div className="villaCard2BarTrack"><div className="villaCard2BarFill" style={{width:pct+'%',background:grad}}/></div>
     </div>
+    <span className={'villaRowStatus'+(r.is_active?' vc2Active':' vc2Inactive')}>{r.is_active?'نشطة':'متوقفة'}</span>
+    {isAdmin&&<div className="tenantRowActions">
+      <button className="iconBtn secondary" onClick={()=>{setEditingVilla(r.id);setVilla({name:r.name,area:r.area||'',notes:r.notes||'',is_active:r.is_active});setModalOpen(true)}}><Edit size={13}/></button>
+      <button className="iconBtn danger" onClick={()=>removeVilla(r)}><Trash2 size={13}/></button>
+    </div>}
   </div>;
 })}
 </div>
