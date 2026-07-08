@@ -806,10 +806,15 @@ if(selected){
         <div className="tenantProfileInfo">
           <h2 className="tenantProfileName">{tenant.name}</h2>
           <div className="tenantProfileContacts">
-            {tenant.phone&&<span className="tenantProfileContact"><span className="tenantProfileContactIcon">📞</span>{tenant.phone}</span>}
-            {tenant.national_id&&<span className="tenantProfileContact"><span className="tenantProfileContactIcon">🪪</span>{tenant.national_id}</span>}
-            {tenant.email&&<span className="tenantProfileContact"><span className="tenantProfileContactIcon">✉️</span>{tenant.email}</span>}
+            {tenant.phone&&<span className="tenantProfileContact"><Phone size={13}/>{tenant.phone}</span>}
+            {tenant.national_id&&<span className="tenantProfileContact"><CreditCard size={13}/>{tenant.national_id}</span>}
+            {tenant.email&&<span className="tenantProfileContact"><Mail size={13}/>{tenant.email}</span>}
           </div>
+        </div>
+        <div className="tenantProfileActions">
+          <button onClick={()=>setLeaseOpen(true)}><Plus size={15}/>عقد جديد</button>
+          <button className="secondary" onClick={()=>{setEditing(tenant.id);setForm({name:tenant.name,phone:tenant.phone||'',national_id:tenant.national_id||'',email:tenant.email||'',notes:tenant.notes||''});setTenantOpen(true)}}><Edit size={15}/>تعديل</button>
+          {isAdmin&&<button className="danger secondary iconBtn" onClick={()=>removeTenant(tenant)}><Trash2 size={15}/></button>}
         </div>
       </div>
       <div className="tenantProfileStats">
@@ -817,14 +822,9 @@ if(selected){
         <div className="tenantProfileStatDiv"/>
         <div className="tenantProfileStat"><span className="tenantProfileStatVal" style={{color:'#15803d'}}>{activeLeases}</span><span className="tenantProfileStatLbl">عقد نشط</span></div>
         <div className="tenantProfileStatDiv"/>
-        <div className="tenantProfileStat"><span className="tenantProfileStatVal">{totalCollected.toLocaleString()}</span><span className="tenantProfileStatLbl">محصّل (AED)</span></div>
+        <div className="tenantProfileStat"><span className="tenantProfileStatVal" style={{color:'#15803d'}}>{totalCollected.toLocaleString()}</span><span className="tenantProfileStatLbl">محصّل (AED)</span></div>
         <div className="tenantProfileStatDiv"/>
         <div className="tenantProfileStat"><span className="tenantProfileStatVal" style={{color:(totalAmount-totalCollected)>0?'#dc2626':'#15803d'}}>{(totalAmount-totalCollected).toLocaleString()}</span><span className="tenantProfileStatLbl">متبقي (AED)</span></div>
-      </div>
-      <div className="tenantProfileActions">
-        <button onClick={()=>setLeaseOpen(true)}><Plus size={15}/>عقد جديد</button>
-        <button className="secondary" onClick={()=>{setEditing(tenant.id);setForm({name:tenant.name,phone:tenant.phone||'',national_id:tenant.national_id||'',email:tenant.email||'',notes:tenant.notes||''});setTenantOpen(true)}}><Edit size={15}/>تعديل</button>
-        {isAdmin&&<button className="danger secondary" onClick={()=>removeTenant(tenant)}><Trash2 size={15}/></button>}
       </div>
     </div>
   </div>
