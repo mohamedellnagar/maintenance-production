@@ -105,8 +105,13 @@ CREATE TABLE leases (
   start_date DATE NOT NULL,
   end_date DATE NOT NULL,
   total_amount DECIMAL(12,2) NOT NULL DEFAULT 0,
+  fees_amount DECIMAL(12,2) NOT NULL DEFAULT 0,
+  deposit_amount DECIMAL(12,2) NOT NULL DEFAULT 0,
+  deposit_type ENUM('cash','check') NULL,
+  deposit_notes VARCHAR(255) NULL,
   notes TEXT NULL,
   is_active BOOLEAN NOT NULL DEFAULT TRUE,
+  terminated_at DATE NULL DEFAULT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   CONSTRAINT fk_lease_apt FOREIGN KEY (apartment_id) REFERENCES apartments(id),
@@ -119,6 +124,7 @@ CREATE TABLE lease_installments (
   due_date DATE NOT NULL,
   amount DECIMAL(12,2) NOT NULL,
   notes TEXT NULL,
+  is_cancelled TINYINT(1) NOT NULL DEFAULT 0,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT fk_inst_lease FOREIGN KEY (lease_id) REFERENCES leases(id) ON DELETE CASCADE
 );

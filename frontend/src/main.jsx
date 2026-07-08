@@ -730,8 +730,8 @@ const FIELD_LABELS={record_date:'التاريخ',villa_name:'الفيلا',apart
 const ROLE_LABELS={ADMIN:'أدمن',SUPERVISOR:'مشرف'};
 const ISSUE_TYPES=[['electricity','كهرباء'],['plumbing','سباكة'],['ac','تكييف'],['general','عام']];
 const ISSUE_TYPE_LABELS=Object.fromEntries(ISSUE_TYPES);
-const INST_STATUS_LABELS={collected:'تم التحصيل',overdue:'متأخرة',partial:'جزئي',due_soon:'قيد التحصيل',upcoming:'قادمة'};
-const INST_STATUS_CSS={collected:'status-on',overdue:'status-danger',partial:'status-partial',due_soon:'status-warn',upcoming:'status-off'};
+const INST_STATUS_LABELS={collected:'تم التحصيل',overdue:'متأخرة',partial:'جزئي',due_soon:'قيد التحصيل',upcoming:'قادمة',cancelled:'مُلغاة',settled:'مُسوّاة'};
+const INST_STATUS_CSS={collected:'status-on',overdue:'status-danger',partial:'status-partial',due_soon:'status-warn',upcoming:'status-off',cancelled:'status-cancelled',settled:'status-settled'};
 function formatCell(c,v){if(c==='status'){if(INST_STATUS_LABELS[v])return <span className={'statusBadge '+INST_STATUS_CSS[v]}>{INST_STATUS_LABELS[v]}</span>;return <span className={'statusBadge '+(v==='مكتمل'?'status-on':'status-pending')}>{v}</span>}if(v===null||v===undefined||v==='')return'-';if(c==='record_date'||c==='start_date'||c==='end_date'||c==='due_date'||c==='payment_date'){const d=new Date(v);return`${d.getDate()} ${AR_MONTHS[d.getMonth()]} ${d.getFullYear()}`}if(c.endsWith('_time'))return String(v).slice(0,5);if(c==='spare_part_cost'||c==='total_amount'||c==='collected_amount'||c==='amount')return Number(v).toFixed(2)+' AED';if(c==='role')return <span className={'roleBadge role-'+v}>{ROLE_LABELS[v]||v}</span>;if(c==='is_active')return <span className={'statusBadge '+(v?'status-on':'status-off')}>{v?'فعّال':'موقوف'}</span>;if(c==='issue_type')return ISSUE_TYPE_LABELS[v]||v;return String(v)}
 const PAGE_SIZE=10;
 function Table({rows,cols,actions,searchable}){const[q,setQ]=useState('');const[page,setPage]=useState(0);const filtered=useMemo(()=>{if(!q)return rows;const s=q.trim().toLowerCase();return rows.filter(r=>cols.some(c=>String(r[c]??'').toLowerCase().includes(s)))},[rows,q,cols]);const pageCount=Math.max(1,Math.ceil(filtered.length/PAGE_SIZE));const pageRows=filtered.slice(page*PAGE_SIZE,page*PAGE_SIZE+PAGE_SIZE);useEffect(()=>{setPage(0)},[q,rows.length]);return <div>{searchable&&<input className="tableSearch" placeholder="بحث..." value={q} onChange={e=>setQ(e.target.value)}/>}<div className="table"><table><thead><tr>{cols.map(c=><th key={c}>{FIELD_LABELS[c]||c}</th>)}{actions&&<th></th>}</tr></thead><tbody>{pageRows.length===0&&<tr><td colSpan={cols.length+(actions?1:0)} className="empty">لا توجد بيانات</td></tr>}{pageRows.map(r=><tr key={r.id}>{cols.map(c=><td key={c} data-label={FIELD_LABELS[c]||c}>{formatCell(c,r[c])}</td>)}{actions&&<td data-label="" className="actionsCell">{actions(r)}</td>}</tr>)}</tbody></table></div>{pageCount>1&&<div className="pagination"><button type="button" disabled={page===0} onClick={()=>setPage(p=>p-1)}>السابق</button><span>{page+1} / {pageCount}</span><button type="button" disabled={page>=pageCount-1} onClick={()=>setPage(p=>p+1)}>التالي</button></div>}</div>}
@@ -956,6 +956,7 @@ const[instForm,setInstForm]=useState({due_date:'',amount:'',notes:''});const[ins
 const[paymentsInst,setPaymentsInst]=useState(null);const[payments,setPayments]=useState([]);
 const[payForm,setPayForm]=useState({amount:'',payment_date:new Date().toISOString().slice(0,10),notes:''});const[payOpen,setPayOpen]=useState(false);
 const[terminateOpen,setTerminateOpen]=useState(false);const[terminateDate,setTerminateDate]=useState('');
+const[extraDeductions,setExtraDeductions]=useState([]);const[extraDesc,setExtraDesc]=useState('');const[extraAmt,setExtraAmt]=useState('');
 
 const load=()=>api('/leases').then(setRows);
 const loadDetail=(id)=>api('/leases/'+id).then(d=>{setLeaseDetail(d);setSelectedLease(id)});
@@ -1016,8 +1017,10 @@ if(selectedLease&&leaseDetail){
         </div>
         <div className="ldCardActions">
           <button onClick={()=>{setInstOpen(true);setEditingInst(null);setInstForm({due_date:'',amount:'',notes:''})}}><Plus size={14}/>إضافة دفعة</button>
-          <button className="secondary" onClick={()=>{setEditing(lease.id);setForm({apartment_id:lease.apartment_id,tenant_id:lease.tenant_id,start_date:String(lease.start_date).slice(0,10),end_date:String(lease.end_date).slice(0,10),total_amount:lease.total_amount,notes:lease.notes||'',is_active:lease.is_active,_villa_id:''});setOpen(true)}}><Edit size={14}/>تعديل</button>
-          <button className="secondary ldTerminateBtn" onClick={()=>{setTerminateDate('');setTerminateOpen(true)}}><X size={14}/>إنهاء العقد</button>
+          <button className="secondary" onClick={()=>{setEditing(lease.id);setForm({apartment_id:lease.apartment_id,tenant_id:lease.tenant_id,start_date:String(lease.start_date).slice(0,10),end_date:String(lease.end_date).slice(0,10),total_amount:lease.total_amount,fees_amount:lease.fees_amount||'',deposit_amount:lease.deposit_amount||'',deposit_type:lease.deposit_type||'',deposit_notes:lease.deposit_notes||'',notes:lease.notes||'',is_active:lease.is_active,_villa_id:''});setOpen(true)}}><Edit size={14}/>تعديل</button>
+          {lease.terminated_at
+            ? <span className="ldTerminatedBadge"><X size={13}/>عقد منتهٍ في {String(lease.terminated_at).slice(0,10)}</span>
+            : isAdmin&&<button className="secondary ldTerminateBtn" onClick={()=>{setTerminateDate('');setTerminateOpen(true)}}><X size={14}/>إنهاء العقد</button>}
           {isAdmin&&<button className="iconBtn danger secondary" onClick={()=>removeLease(lease)}><Trash2 size={14}/></button>}
         </div>
       </div>
@@ -1076,22 +1079,29 @@ if(selectedLease&&leaseDetail){
     const usedDays=tDate?Math.max(0,Math.round((tDate-startDate)/(1000*60*60*24))):0;
     const totalAmt=Number(lease.total_amount);
     const amtForUsedDays=totalDays>0?Math.round((usedDays/totalDays)*totalAmt*100)/100:0;
-    const alreadyCollected=installments.reduce((s,i)=>s+Number(i.collected_amount),0);
-    const unpaidInsts=installments.filter(i=>i.status!=='collected');
-    const depositAmt=Number(lease.deposit_amount||0);
+    const activeInsts=installments.filter(i=>i.status!=='cancelled');
+    const alreadyCollected=activeInsts.reduce((s,i)=>s+Math.max(0,Number(i.collected_amount)),0);
+    const unpaidInsts=activeInsts.filter(i=>i.status!=='collected');
     const depositType=lease.deposit_type;
+    // only CASH deposits enter the settlement equation — checks are returned as-is
+    const isCashDeposit=depositType==='cash';
+    const depositAmt=isCashDeposit?Number(lease.deposit_amount||0):0;
+    const rawDepositAmt=Number(lease.deposit_amount||0);
     const balance=alreadyCollected-amtForUsedDays;
     const tenantOwes=balance<0;
-    return <Modal open={terminateOpen} onClose={()=>setTerminateOpen(false)} title="إنهاء العقد مبكراً">
+    const totalExtra=extraDeductions.reduce((s,d)=>s+Number(d.amt),0);
+    // deposit settlement (cash only)
+    const depositAfterRentBalance=depositAmt>0?(tenantOwes?depositAmt-Math.abs(balance):depositAmt+Math.abs(balance)):null;
+    const depositAfterAll=depositAmt>0?(depositAfterRentBalance-totalExtra):null;
+    const depositTypeLabel=depositType==='cash'?'كاش':depositType==='check'?'شيك':'';
+    return <Modal open={terminateOpen} onClose={()=>{setTerminateOpen(false);setExtraDeductions([]);setExtraDesc('');setExtraAmt('');}} title="إنهاء العقد مبكراً">
       <div className="terminateModal">
-        <div className="terminateDateRow">
-          <Field label="تاريخ الإنهاء" required>
-            <input type="date" value={terminateDate}
-              min={String(lease.start_date).slice(0,10)}
-              max={String(lease.end_date).slice(0,10)}
-              onChange={e=>setTerminateDate(e.target.value)}/>
-          </Field>
-        </div>
+        <Field label="تاريخ الإنهاء" required>
+          <input type="date" value={terminateDate}
+            min={String(lease.start_date).slice(0,10)}
+            max={String(lease.end_date).slice(0,10)}
+            onChange={e=>setTerminateDate(e.target.value)}/>
+        </Field>
         {tDate&&<>
           {/* Days calc */}
           <div className="terminateCalcBox">
@@ -1100,10 +1110,6 @@ if(selectedLease&&leaseDetail){
             <div className="terminateCalcRow"><span>الأيام المتبقية</span><strong>{Math.max(0,totalDays-usedDays)} يوم</strong></div>
             <div className="terminateCalcDivider"/>
             <div className="terminateCalcRow"><span>الإجمالي الأصلي</span><strong>{totalAmt.toLocaleString()} AED</strong></div>
-            {depositAmt>0&&<div className="terminateCalcRow terminateCalcDeposit">
-              <span>التأمين{depositType?` (${depositType==='cash'?'كاش':'شيك'})`:''}</span>
-              <strong>{depositAmt.toLocaleString()} AED</strong>
-            </div>}
             <div className="terminateCalcRow terminateCalcHighlight"><span>المستحق عن {usedDays} يوم</span><strong>{amtForUsedDays.toLocaleString()} AED</strong></div>
             <div className="terminateCalcRow"><span>تم تحصيله فعلاً</span><strong style={{color:'#15803d'}}>{alreadyCollected.toLocaleString()} AED</strong></div>
           </div>
@@ -1117,20 +1123,190 @@ if(selectedLease&&leaseDetail){
               <span style={{color:'#dc2626'}}>محصّل: {Number(i.collected_amount).toLocaleString()}</span>
             </div>)}
           </div>}
-          {/* Settlement result */}
+          {/* Rent balance result */}
           <div className={'terminateResult'+(tenantOwes?' terminateResultOwes':' terminateResultRefund')}>
             <div className="terminateResultIcon">{tenantOwes?'⚠️':'✅'}</div>
-            <div>
-              <div className="terminateResultTitle">{tenantOwes?'المستأجر مدين بـ':'مبلغ مسترد للمستأجر'}</div>
+            <div style={{flex:1}}>
+              <div className="terminateResultTitle">{tenantOwes?'فرق الإيجار — المستأجر مدين بـ':'فرق الإيجار — مبلغ مسترد للمستأجر'}</div>
               <div className="terminateResultAmt">{Math.abs(balance).toLocaleString()} AED</div>
-              <div className="terminateResultSub">{tenantOwes?`دفع ${alreadyCollected.toLocaleString()} ومستحق عليه ${amtForUsedDays.toLocaleString()}`:`دفع ${alreadyCollected.toLocaleString()} ومستحق له ${amtForUsedDays.toLocaleString()} فقط`}</div>
-              {depositAmt>0&&<div className="terminateDepositNote"><Shield size={11}/>{tenantOwes?`يُخصم من التأمين (${depositAmt.toLocaleString()} AED ${depositType==='cash'?'كاش':'شيك'})`:`يُرد التأمين (${depositAmt.toLocaleString()} AED ${depositType==='cash'?'كاش':'شيك'}) بشكل منفصل`}</div>}
+              <div className="terminateResultSub">{tenantOwes?`دفع ${alreadyCollected.toLocaleString()} والمستحق ${amtForUsedDays.toLocaleString()}`:`دفع ${alreadyCollected.toLocaleString()} والمستحق ${amtForUsedDays.toLocaleString()} فقط`}</div>
             </div>
           </div>
+          {/* Deposit section */}
+          {depositAmt>0&&<div className="terminateDepositSection">
+            <div className="terminateDepositHeader"><Shield size={14}/>التأمين ({depositTypeLabel}) — {depositAmt.toLocaleString()} AED</div>
+            {/* Rent balance deduction */}
+            <div className="terminateDepositLine">
+              <span>{tenantOwes?'خصم فرق الإيجار':'إضافة فرق الإيجار'}</span>
+              <span style={{color:tenantOwes?'#dc2626':'#15803d'}}>{tenantOwes?'−':'+‎'}{Math.abs(balance).toLocaleString()} AED</span>
+            </div>
+            {/* Extra deductions */}
+            {extraDeductions.map((d,i)=><div key={i} className="terminateDepositLine">
+              <span>{d.desc}</span>
+              <div style={{display:'flex',align:'center',gap:8}}>
+                <span style={{color:'#dc2626'}}>−{Number(d.amt).toLocaleString()} AED</span>
+                <button type="button" className="iconBtn danger" style={{padding:'2px 6px'}} onClick={()=>setExtraDeductions(p=>p.filter((_,j)=>j!==i))}><X size={11}/></button>
+              </div>
+            </div>)}
+            {/* Add deduction */}
+            <div className="terminateAddDeduction">
+              <input className="terminateAddDesc" placeholder="وصف الخصم (تلف، تنظيف...)" value={extraDesc} onChange={e=>setExtraDesc(e.target.value)}/>
+              <input className="terminateAddAmt" type="number" min="0" step="0.01" placeholder="المبلغ" value={extraAmt} onChange={e=>setExtraAmt(e.target.value)}/>
+              <button type="button" className="secondary" onClick={()=>{if(!extraDesc||!extraAmt)return;setExtraDeductions(p=>[...p,{desc:extraDesc,amt:extraAmt}]);setExtraDesc('');setExtraAmt('');}}><Plus size={13}/>إضافة</button>
+            </div>
+            {/* Final deposit result */}
+            <div className={'terminateDepositResult'+(depositAfterAll>=0?' terminateDepositResultPos':' terminateDepositResultNeg')}>
+              <span className="terminateDepositResultLbl">{depositAfterAll>=0?'صافي التأمين المُرد للمستأجر':'مبلغ إضافي على المستأجر بعد التأمين'}</span>
+              <span className="terminateDepositResultVal">{Math.abs(depositAfterAll).toLocaleString()} AED</span>
+            </div>
+          </div>}
+          {/* Check deposit — informational only, not part of settlement */}
+          {!isCashDeposit&&rawDepositAmt>0&&<div className="terminateCheckNote">
+            <Shield size={14}/>
+            <span>التأمين بشيك ({rawDepositAmt.toLocaleString()} AED) لا يدخل في التسوية — يُعاد الشيك للمستأجر بشكل منفصل.</span>
+          </div>}
+          {/* ── Preview of what will happen ── */}
+          {(()=>{
+            const collectedInsts=activeInsts.filter(i=>i.status==='collected');
+            const toCancel=unpaidInsts;
+            const finalOwes=depositAmt>0?depositAfterAll<0:tenantOwes;
+            const finalAmt=depositAmt>0?Math.abs(depositAfterAll??0):Math.abs(balance);
+            // compute cascade deductions newest→oldest
+            const cascadeDeductions=[];
+            if(!finalOwes&&finalAmt>0){
+              let rem=finalAmt;
+              const sorted=[...collectedInsts].sort((a,b)=>String(b.due_date).localeCompare(String(a.due_date)));
+              for(const inst of sorted){
+                if(rem<=0)break;
+                const paid=Number(inst.collected_amount);
+                const deduct=Math.min(rem,paid);
+                cascadeDeductions.push({inst,deduct,fullyCleared:deduct>=paid});
+                rem=Math.round((rem-deduct)*100)/100;
+              }
+            }
+            const affectedIds=new Set(cascadeDeductions.map(c=>c.inst.id));
+            // build unified sorted list
+            const allRows=[
+              ...collectedInsts.filter(i=>!affectedIds.has(i.id)).map(i=>({
+                key:'ok-'+i.id, date:String(i.due_date).slice(0,10), cls:'tpRowOk', icon:'✓',
+                label:'دفعة '+String(i.due_date).slice(0,10),
+                sub:'محصّل: '+Number(i.collected_amount).toLocaleString()+' AED من أصل '+Number(i.amount).toLocaleString(),
+                action:'بدون تغيير'
+              })),
+              ...cascadeDeductions.map(({inst,deduct,fullyCleared})=>({
+                key:'adj-'+inst.id, date:String(inst.due_date).slice(0,10), cls:'tpRowAdj', icon:'↩',
+                label:'دفعة '+String(inst.due_date).slice(0,10),
+                sub:'سيُخصم منها '+deduct.toLocaleString()+' AED '+(fullyCleared?'(تُصفَّر بالكامل)':'(جزء منها)')+' — كان محصّلاً '+Number(inst.collected_amount).toLocaleString(),
+                action:fullyCleared?'تُصفَّر كاملاً':'خصم جزئي'
+              })),
+              ...toCancel.map(i=>({
+                key:'cancel-'+i.id, date:String(i.due_date).slice(0,10), cls:'tpRowCancel', icon:'✕',
+                label:'دفعة '+String(i.due_date).slice(0,10),
+                sub:Number(i.amount).toLocaleString()+' AED'+(Number(i.collected_amount)>0?' — محصّل جزئياً: '+Number(i.collected_amount).toLocaleString():' — لم تُحصَّل'),
+                action:'ستُلغى'
+              })),
+              ...(finalOwes&&finalAmt>0?[{
+                key:'new', date:terminateDate, cls:'tpRowNew', icon:'+',
+                label:'دفعة تسوية — '+terminateDate,
+                sub:'مبلغ مستحق على المستأجر عند الإنهاء',
+                action:finalAmt.toLocaleString()+' AED'
+              }]:[])
+            ].sort((a,b)=>a.date.localeCompare(b.date));
+            return <div className="tpPreview">
+              <div className="tpPreviewTitle"><ListChecks size={14}/>ملخص ما سيتم تطبيقه عند التأكيد</div>
+              {allRows.map(r=><div key={r.key} className={'tpRow '+r.cls}>
+                <div className="tpRowIcon">{r.icon}</div>
+                <div className="tpRowBody">
+                  <span className="tpRowDate">{r.label}</span>
+                  <span className="tpRowSub">{r.sub}</span>
+                </div>
+                <div className="tpRowAction">{r.action}</div>
+              </div>)}
+            </div>;
+          })()}
         </>}
-        <div style={{display:'flex',gap:8,marginTop:8}}>
-          <button type="button" className="secondary" style={{flex:1}} onClick={()=>setTerminateOpen(false)}>إغلاق</button>
-        </div>
+        {tDate&&<button type="button" style={{width:'100%',marginTop:4,background:'#0369a1',color:'#fff',border:'none',borderRadius:9,padding:'10px 0',fontWeight:700,fontSize:13,display:'flex',alignItems:'center',justifyContent:'center',gap:7,cursor:'pointer'}} onClick={()=>{
+          const rows2=[
+            ['مدة العقد الكاملة',totalDays+' يوم'],
+            ['أيام الإقامة الفعلية',usedDays+' يوم'],
+            ['الأيام المتبقية',Math.max(0,totalDays-usedDays)+' يوم'],
+            ['إجمالي الإيجار الأصلي',totalAmt.toLocaleString()+' AED'],
+            ['المستحق عن '+usedDays+' يوم',amtForUsedDays.toLocaleString()+' AED'],
+            ['تم تحصيله فعلاً',alreadyCollected.toLocaleString()+' AED'],
+          ];
+          const balanceRow=tenantOwes
+            ?`<tr style="background:#fef2f2"><td>فرق الإيجار (مدين)</td><td style="color:#dc2626;font-weight:700">${Math.abs(balance).toLocaleString()} AED</td></tr>`
+            :`<tr style="background:#f0fdf4"><td>فرق الإيجار (مسترد)</td><td style="color:#15803d;font-weight:700">${Math.abs(balance).toLocaleString()} AED</td></tr>`;
+          const depRows=depositAmt>0?`
+            <tr style="background:#e0f2fe"><td colspan="2" style="font-weight:700;color:#0369a1;padding:10px 12px">التأمين (${depositTypeLabel}) — ${depositAmt.toLocaleString()} AED</td></tr>
+            <tr><td>${tenantOwes?'خصم فرق الإيجار':'إضافة فرق الإيجار'}</td><td style="color:${tenantOwes?'#dc2626':'#15803d'}">${tenantOwes?'−':'+'}${Math.abs(balance).toLocaleString()} AED</td></tr>
+            ${extraDeductions.map(d=>`<tr><td>${d.desc}</td><td style="color:#dc2626">−${Number(d.amt).toLocaleString()} AED</td></tr>`).join('')}
+            <tr style="background:${depositAfterAll>=0?'#dcfce7':'#fef2f2'}"><td style="font-weight:700">${depositAfterAll>=0?'صافي التأمين المُرد':'مبلغ إضافي على المستأجر'}</td><td style="font-weight:900;font-size:16px;color:${depositAfterAll>=0?'#15803d':'#dc2626'}">${Math.abs(depositAfterAll).toLocaleString()} AED</td></tr>
+          `:'';
+          const unpaidHtml=unpaidInsts.length>0?`
+            <h3 style="margin:18px 0 8px;font-size:13px;color:#1e3a5f">دفعات لم تُحصَّل (${unpaidInsts.length})</h3>
+            <table style="width:100%;border-collapse:collapse;font-size:12px">
+              <thead><tr style="background:#1e3a5f;color:#fff"><th style="padding:7px 10px">تاريخ الاستحقاق</th><th>المبلغ</th><th>محصّل</th><th>الحالة</th></tr></thead>
+              <tbody>${unpaidInsts.map(i=>`<tr style="border-bottom:1px solid #e5e7eb"><td style="padding:6px 10px">${String(i.due_date).slice(0,10)}</td><td>${Number(i.amount).toLocaleString()} AED</td><td style="color:#dc2626">${Number(i.collected_amount).toLocaleString()} AED</td><td>${INST_STATUS_LABELS[i.status]}</td></tr>`).join('')}</tbody>
+            </table>`:'';
+          const html=`<!doctype html><html dir="rtl" lang="ar"><head><meta charset="utf-8"><title>تسوية إنهاء عقد — ${lease.tenant_name}</title>
+          <style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Tahoma,Arial,sans-serif;padding:30px;color:#1a1a1a;direction:rtl}
+          h1{font-size:18px;color:#1e3a5f;margin-bottom:4px}
+          .sub{font-size:12px;color:#666;margin-bottom:18px}
+          table{width:100%;border-collapse:collapse;font-size:13px}
+          td,th{padding:8px 12px;border:1px solid #e5e7eb;text-align:right}
+          thead tr{background:#1e3a5f;color:#fff}
+          tr:nth-child(even){background:#f9fafb}
+          .print-btn{display:block;margin:20px auto;padding:10px 30px;background:#1e3a5f;color:#fff;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-family:Tahoma}
+          @media print{.print-btn{display:none}}
+          </style></head><body>
+          <h1>وثيقة تسوية إنهاء عقد إيجار</h1>
+          <div class="sub">المستأجر: <strong>${lease.tenant_name}</strong> &nbsp;|&nbsp; تاريخ الإنهاء: <strong>${terminateDate}</strong> &nbsp;|&nbsp; بداية العقد: ${String(lease.start_date).slice(0,10)} &nbsp;|&nbsp; نهاية العقد: ${String(lease.end_date).slice(0,10)}</div>
+          <table><thead><tr><th>البيان</th><th>القيمة</th></tr></thead><tbody>
+          ${rows2.map(([k,v])=>`<tr><td>${k}</td><td>${v}</td></tr>`).join('')}
+          ${balanceRow}${depRows}
+          </tbody></table>
+          ${unpaidHtml}
+          <button class="print-btn" onclick="window.print()">طباعة / حفظ PDF</button>
+          </body></html>`;
+          const blob=new Blob([html],{type:'text/html;charset=utf-8'});
+          const url=URL.createObjectURL(blob);
+          const w=window.open(url,'_blank');
+          if(w)w.onload=()=>{w.focus();w.print();URL.revokeObjectURL(url);};
+        }}><Printer size={14}/>طباعة / حفظ PDF</button>}
+        {tDate&&<button type="button" style={{width:'100%',marginTop:4,background:'#b91c1c',color:'#fff',border:'none',borderRadius:9,padding:'11px 0',fontWeight:700,fontSize:13,display:'flex',alignItems:'center',justifyContent:'center',gap:7,cursor:'pointer'}} onClick={async()=>{
+          if(!window.confirm(`تأكيد إنهاء العقد بتاريخ ${terminateDate}؟\nسيتم إلغاء الدفعات غير المحصّلة وتسجيل التسوية المالية.`))return;
+          // ── separate the two money channels ──
+          // rent channel: overpayment → cascade refund; shortfall → owed (minus cash deposit cover)
+          const rentDebt=tenantOwes?Math.abs(balance):0;          // rent under-paid
+          const cascadeRefund=!tenantOwes?Math.abs(balance):0;    // rent over-paid → reverse from installments
+          // deposit (cash only) absorbs rent debt + extra deductions; remainder owed becomes an installment
+          const depositObligations=rentDebt+totalExtra;
+          const newOwed=depositAmt>0?Math.max(0,depositObligations-depositAmt):rentDebt;
+          const depositReturned=depositAmt>0?Math.max(0,depositAmt-depositObligations):0;
+          // build settlement summary for lease notes
+          const L=[];
+          L.push(`المدة: ${usedDays} من ${totalDays} يوم | المستحق: ${amtForUsedDays.toLocaleString()} | المحصّل: ${alreadyCollected.toLocaleString()}`);
+          if(cascadeRefund>0)L.push(`استرداد إيجار زائد: ${cascadeRefund.toLocaleString()} AED (من الدفعات المحصّلة)`);
+          if(rentDebt>0)L.push(`عجز إيجار: ${rentDebt.toLocaleString()} AED`);
+          if(depositType==='cash'&&depositAmt>0){
+            L.push(`تأمين نقدي: ${depositAmt.toLocaleString()} AED`);
+            extraDeductions.forEach(d=>L.push(`  خصم (${d.desc}): ${Number(d.amt).toLocaleString()} AED`));
+            if(depositReturned>0)L.push(`صافي التأمين المُعاد للمستأجر: ${depositReturned.toLocaleString()} AED`);
+          }else if(depositType==='check'&&rawDepositAmt>0){
+            L.push(`تأمين بشيك: ${rawDepositAmt.toLocaleString()} AED — يُعاد الشيك للمستأجر منفصلاً`);
+          }
+          if(newOwed>0)L.push(`مبلغ مستحق على المستأجر بعد التسوية: ${newOwed.toLocaleString()} AED`);
+          const notesSummary=L.join('\n');
+          try{
+            await api(`/leases/${leaseDetail.lease.id}/terminate`,{method:'POST',body:JSON.stringify({terminate_date:terminateDate,cascade_refund_amount:cascadeRefund,new_owed_amount:newOwed,notes_summary:notesSummary})});
+            setTerminateOpen(false);setExtraDeductions([]);setExtraDesc('');setExtraAmt('');
+            setPaymentsInst(null);setPayments([]);
+            loadDetail(leaseDetail.lease.id);
+            showToast('تم إنهاء العقد وتطبيق التسوية','success');
+          }catch(e){showToast(e.message||'حدث خطأ أثناء الإنهاء','error');}
+        }}><Check size={15}/>تأكيد الإنهاء وتطبيق التسوية</button>}
+        <button type="button" className="secondary" style={{width:'100%',marginTop:4}} onClick={()=>{setTerminateOpen(false);setExtraDeductions([]);setExtraDesc('');setExtraAmt('');}}>إغلاق</button>
       </div>
     </Modal>;
   })()}
@@ -1189,7 +1365,7 @@ return <>
     <div className="leaseCardHeader">
       <span className={st==='active'?'leaseBlockBadge leaseBlockBadgeActive':'leaseBlockBadge leaseBlockBadgeExpired'}>{st==='active'?'نشط':'منتهي'}</span>
       <div className="leaseCardActions" onClick={e=>e.stopPropagation()}>
-        <button className="iconBtn secondary" onClick={()=>{setEditing(r.id);setForm({apartment_id:r.apartment_id,tenant_id:r.tenant_id,start_date:String(r.start_date).slice(0,10),end_date:String(r.end_date).slice(0,10),total_amount:r.total_amount,notes:r.notes||'',is_active:r.is_active,_villa_id:''});setOpen(true)}}><Edit size={14}/></button>
+        <button className="iconBtn secondary" onClick={()=>{setEditing(r.id);setForm({apartment_id:r.apartment_id,tenant_id:r.tenant_id,start_date:String(r.start_date).slice(0,10),end_date:String(r.end_date).slice(0,10),total_amount:r.total_amount,fees_amount:r.fees_amount||'',deposit_amount:r.deposit_amount||'',deposit_type:r.deposit_type||'',deposit_notes:r.deposit_notes||'',notes:r.notes||'',is_active:r.is_active,_villa_id:''});setOpen(true)}}><Edit size={14}/></button>
         {isAdmin&&<button className="iconBtn danger" onClick={()=>removeLease(r)}><Trash2 size={14}/></button>}
       </div>
     </div>

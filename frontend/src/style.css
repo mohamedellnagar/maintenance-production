@@ -39,6 +39,8 @@
 .statusBadge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;display:inline-flex}
 .statusBadge.status-on{background:#dcfce7;color:#15803d}
 .statusBadge.status-off{background:#f1f5f9;color:#64748b}
+.statusBadge.status-cancelled{background:#f1f5f9;color:#94a3b8;text-decoration:line-through}
+.statusBadge.status-settled{background:#ede9fe;color:#6d28d9}
 .statusBadge.status-pending{background:#fef3c7;color:#b45309}
 .emptyChart{height:260px;display:grid;place-items:center;color:var(--muted);font-size:13px;text-align:center;padding:0 20px}
 .formSection{grid-column:1/-1;display:flex;align-items:center;gap:10px;margin:4px 0 -2px}
@@ -388,6 +390,7 @@ button.danger{background:#fee2e2;color:var(--danger)}.actionsCell{display:flex;g
 .ldDepositNotes{font-weight:400;color:#3b82f6}
 .ldTerminateBtn{color:#b45309;border-color:#fde68a}
 .ldTerminateBtn:hover{background:#fef3c7;border-color:#f59e0b}
+.ldTerminatedBadge{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;background:#fef2f2;color:#b91c1c;border:1px solid #fca5a5;border-radius:9px;font-size:12px;font-weight:700}
 .terminateModal{display:flex;flex-direction:column;gap:14px}
 .terminateDateRow{}
 .terminateCalcBox{background:var(--hover);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
@@ -412,6 +415,50 @@ button.danger{background:#fee2e2;color:var(--danger)}.actionsCell{display:flex;g
 .terminateDepositNote{display:flex;align-items:center;gap:5px;margin-top:6px;font-size:11px;font-weight:600;color:#1d4ed8;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:5px 10px}
 .terminateCalcDeposit{background:#eff6ff;border-radius:8px;padding:5px 10px;margin:2px -4px;color:#1d4ed8}
 .terminateCalcDeposit strong{color:#1d4ed8}
+.terminateDepositSection{margin-top:14px;background:#f0f9ff;border:1.5px solid #bae6fd;border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.terminateDepositHeader{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:#0369a1;border-bottom:1px solid #bae6fd;padding-bottom:8px;margin-bottom:2px}
+.terminateDepositLine{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;padding:3px 0}
+.terminateDepositLine span:first-child{color:var(--muted)}
+.terminateAddDeduction{display:flex;gap:6px;margin-top:4px;border-top:1px dashed #bae6fd;padding-top:10px}
+.terminateAddDesc{flex:1;padding:6px 10px;border:1px solid var(--line);border-radius:8px;font-size:12px;background:var(--surface);color:var(--fg);font-family:inherit}
+.terminateAddAmt{width:90px;padding:6px 10px;border:1px solid var(--line);border-radius:8px;font-size:12px;background:var(--surface);color:var(--fg);font-family:inherit}
+.terminateDepositResult{display:flex;justify-content:space-between;align-items:center;border-radius:9px;padding:10px 14px;margin-top:4px;font-weight:700}
+.terminateDepositResultPos{background:#dcfce7;border:1.5px solid #86efac}
+.terminateDepositResultNeg{background:#fef2f2;border:1.5px solid #fca5a5}
+.terminateDepositResultLbl{font-size:12px}
+.terminateDepositResultPos .terminateDepositResultLbl{color:#15803d}
+.terminateDepositResultNeg .terminateDepositResultLbl{color:#b91c1c}
+.terminateDepositResultVal{font-size:18px}
+.terminateDepositResultPos .terminateDepositResultVal{color:#15803d}
+.terminateDepositResultNeg .terminateDepositResultVal{color:#dc2626}
+.terminateCheckNote{display:flex;align-items:center;gap:8px;margin-top:14px;padding:12px 14px;background:#f8fafc;border:1.5px dashed #cbd5e1;border-radius:12px;font-size:12px;color:#64748b;font-weight:600}
+.terminateCheckNote svg{flex-shrink:0;color:#94a3b8}
+/* terminate preview */
+.tpPreview{margin-top:14px;border-radius:12px;overflow:hidden;border:1.5px solid var(--line)}
+.tpPreviewTitle{display:flex;align-items:center;gap:7px;padding:11px 16px;font-size:12px;font-weight:700;color:var(--fg);background:var(--surface);border-bottom:1.5px solid var(--line)}
+/* each row is a card strip with a colored left border */
+.tpRow{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;padding:11px 16px;border-bottom:1px solid var(--line);border-right:4px solid transparent;background:var(--bg)}
+.tpRow:last-child{border-bottom:none}
+.tpRowOk  {border-right-color:#22c55e;background:#f0fdf4}
+.tpRowAdj {border-right-color:#f59e0b;background:#fffbeb}
+.tpRowCancel{border-right-color:#ef4444;background:#fff5f5}
+.tpRowNew {border-right-color:#22c55e;background:#f0fdf4}
+/* icon circle */
+.tpRowIcon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;flex-shrink:0}
+.tpRowOk   .tpRowIcon{background:#dcfce7;color:#16a34a}
+.tpRowAdj  .tpRowIcon{background:#fde68a;color:#b45309}
+.tpRowCancel .tpRowIcon{background:#fee2e2;color:#dc2626}
+.tpRowNew  .tpRowIcon{background:#dcfce7;color:#16a34a}
+/* body */
+.tpRowBody{display:flex;flex-direction:column;gap:3px;min-width:0}
+.tpRowDate{font-size:12px;font-weight:700;color:var(--fg)}
+.tpRowSub {font-size:11.5px;color:var(--muted)}
+/* action pill */
+.tpRowAction{font-size:11px;font-weight:700;white-space:nowrap;padding:4px 10px;border-radius:20px;letter-spacing:.2px}
+.tpRowOk    .tpRowAction{background:#dcfce7;color:#15803d;border:1px solid #bbf7d0}
+.tpRowAdj   .tpRowAction{background:#fef3c7;color:#92400e;border:1px solid #fde68a}
+.tpRowCancel .tpRowAction{background:#fee2e2;color:#b91c1c;border:1px solid #fca5a5}
+.tpRowNew   .tpRowAction{background:#dcfce7;color:#15803d;border:1px solid #bbf7d0}
 
 /* ── Villas page ───────────────────────────────────────────────── */
 .villasPageHeader{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:14px}

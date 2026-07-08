@@ -327,11 +327,16 @@ app.get('/api/leases/:id', auth, pageGuard('leases'), wrap(async (req, res) => {
     JOIN villas v ON v.id=a.villa_id
     WHERE l.id=?`, [req.params.id]);
   if (!lease) throw Object.assign(new Error('Not found'), { status: 404 });
+  const isTerminated = lease.terminated_at != null;
   const [installments] = await pool.query(`
     SELECT li.*,
       COALESCE(SUM(ip.amount),0) collected_amount,
       CASE
+        WHEN li.is_cancelled=1 THEN 'cancelled'
         WHEN COALESCE(SUM(ip.amount),0) >= li.amount THEN 'collected'
+        WHEN ? = 1 AND li.notes LIKE 'مستحق عند إنهاء%' THEN
+          CASE WHEN li.due_date < CURDATE() THEN 'overdue' ELSE 'due_soon' END
+        WHEN ? = 1 THEN 'settled'
         WHEN li.due_date < CURDATE() THEN 'overdue'
         WHEN COALESCE(SUM(ip.amount),0) > 0 THEN 'partial'
         WHEN li.due_date <= DATE_ADD(CURDATE(), INTERVAL 30 DAY) THEN 'due_soon'
@@ -341,7 +346,7 @@ app.get('/api/leases/:id', auth, pageGuard('leases'), wrap(async (req, res) => {
     LEFT JOIN installment_payments ip ON ip.installment_id=li.id
     WHERE li.lease_id=?
     GROUP BY li.id
-    ORDER BY li.due_date`, [req.params.id]);
+    ORDER BY li.due_date`, [isTerminated ? 1 : 0, isTerminated ? 1 : 0, req.params.id]);
   ok(res, { lease, installments });
 }));
 app.post('/api/leases', auth, wrap(async (req, res) => {
@@ -373,6 +378,87 @@ app.delete('/api/leases/:id', auth, adminOnly, wrap(async (req, res) => {
   ok(res, { deleted: true });
 }));
 
+app.post('/api/leases/:id/terminate', auth, adminOnly, wrap(async (req, res) => {
+  const { terminate_date, cascade_refund_amount, new_owed_amount, notes_summary } = req.body;
+  const leaseId = req.params.id;
+
+  // ── input validation ──────────────────────────────────────────────
+  if (!terminate_date) throw Object.assign(new Error('تاريخ الإنهاء مطلوب'), { status: 400 });
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(terminate_date)) throw Object.assign(new Error('صيغة تاريخ الإنهاء غير صحيحة (YYYY-MM-DD)'), { status: 400 });
+  const tDate = new Date(terminate_date);
+  if (isNaN(tDate.getTime())) throw Object.assign(new Error('تاريخ الإنهاء غير صالح'), { status: 400 });
+  const refundAmt = Number(cascade_refund_amount || 0);
+  const owedAmt = Number(new_owed_amount || 0);
+  if (isNaN(refundAmt) || refundAmt < 0) throw Object.assign(new Error('مبلغ الاسترداد غير صالح'), { status: 400 });
+  if (isNaN(owedAmt) || owedAmt < 0) throw Object.assign(new Error('المبلغ المستحق غير صالح'), { status: 400 });
+
+  // ── lease existence + range + double-termination guard ────────────
+  const [[lease]] = await pool.query(
+    `SELECT id, notes, DATE_FORMAT(start_date,'%Y-%m-%d') AS start_date,
+       DATE_FORMAT(end_date,'%Y-%m-%d') AS end_date,
+       DATE_FORMAT(terminated_at,'%Y-%m-%d') AS terminated_at
+     FROM leases WHERE id=?`, [leaseId]);
+  if (!lease) throw Object.assign(new Error('العقد غير موجود'), { status: 404 });
+  if (lease.terminated_at) throw Object.assign(new Error('تم إنهاء هذا العقد مسبقاً بتاريخ ' + lease.terminated_at), { status: 409 });
+  if (terminate_date < lease.start_date || terminate_date > lease.end_date)
+    throw Object.assign(new Error(`تاريخ الإنهاء يجب أن يكون بين ${lease.start_date} و ${lease.end_date}`), { status: 400 });
+
+  const conn = await pool.getConnection();
+  try {
+    await conn.beginTransaction();
+    // 1. cancel all unpaid installments (those with no full payment)
+    await conn.query(
+      `UPDATE lease_installments li
+       SET is_cancelled=1, notes=CONCAT(COALESCE(notes,''),' [مُلغاة بإنهاء العقد ${terminate_date}]')
+       WHERE li.lease_id=? AND li.is_cancelled=0
+         AND (SELECT COALESCE(SUM(ip.amount),0) FROM installment_payments ip WHERE ip.installment_id=li.id) < li.amount`,
+      [leaseId]
+    );
+    // 2a. rent overpayment → cascade refund across collected installments newest → oldest
+    if (refundAmt > 0) {
+      const [collectedInsts] = await conn.query(
+        `SELECT li.id, COALESCE(SUM(ip.amount),0) AS paid
+         FROM lease_installments li
+         LEFT JOIN installment_payments ip ON ip.installment_id=li.id
+         WHERE li.lease_id=? AND li.is_cancelled=0
+         GROUP BY li.id, li.amount
+         HAVING COALESCE(SUM(ip.amount),0) >= li.amount
+         ORDER BY li.due_date DESC`,
+        [leaseId]
+      );
+      let remaining = refundAmt;
+      for (const inst of collectedInsts) {
+        if (remaining <= 0) break;
+        const deduct = Math.min(remaining, Number(inst.paid));
+        await conn.query('INSERT INTO installment_payments SET ?',
+          { installment_id: inst.id, amount: -deduct, payment_date: terminate_date, notes: `استرداد إيجار عند إنهاء العقد ${terminate_date}` }
+        );
+        remaining = Math.round((remaining - deduct) * 100) / 100;
+      }
+    }
+    // 2b. tenant still owes (rent shortfall not covered by deposit) → add installment
+    if (owedAmt > 0) {
+      await conn.query('INSERT INTO lease_installments SET ?',
+        { lease_id: leaseId, due_date: terminate_date, amount: owedAmt, notes: `مستحق عند إنهاء العقد ${terminate_date}` }
+      );
+    }
+    // 2c. record settlement summary (incl. deposit disposition) in lease notes
+    if (notes_summary && String(notes_summary).trim()) {
+      const stamp = `\n\n──── تسوية إنهاء العقد (${terminate_date}) ────\n${String(notes_summary).trim()}`;
+      await conn.query('UPDATE leases SET notes=CONCAT(COALESCE(notes,\'\'), ?) WHERE id=?', [stamp, leaseId]);
+    }
+    // 3. mark lease terminated: shorten end_date, flag terminated_at, deactivate
+    await conn.query('UPDATE leases SET end_date=?, terminated_at=?, is_active=0 WHERE id=?', [terminate_date, terminate_date, leaseId]);
+    await conn.commit();
+    ok(res, { terminated: true });
+  } catch (e) {
+    await conn.rollback();
+    throw e;
+  } finally {
+    conn.release();
+  }
+}));
+
 // ─── Installments ─────────────────────────────────────────────────────────
 app.get('/api/installments/all', auth, wrap(async (req, res) => {
   const { status, from, to, villa_id } = req.query;
@@ -385,6 +471,7 @@ app.get('/api/installments/all', auth, wrap(async (req, res) => {
     SELECT li.id, li.lease_id, li.due_date, li.amount, li.notes,
       COALESCE(SUM(ip.amount),0) collected_amount,
       CASE
+        WHEN li.is_cancelled=1 THEN 'cancelled'
         WHEN COALESCE(SUM(ip.amount),0) >= li.amount THEN 'collected'
         WHEN li.due_date < CURDATE() THEN 'overdue'
         WHEN COALESCE(SUM(ip.amount),0) > 0 THEN 'partial'
