@@ -28,6 +28,7 @@ import '../data/repositories/timeline_repository.dart';
 import '../services/backup_service.dart';
 import '../services/calculation_engine.dart';
 import '../services/chat_command_service.dart';
+import '../services/notification_service.dart';
 import '../services/pin_service.dart';
 import '../services/report_service.dart';
 
@@ -43,6 +44,11 @@ final encryptionServiceProvider = Provider<EncryptionService>(
 );
 
 final appDatabaseProvider = Provider<AppDatabase>((ref) => AppDatabase.instance);
+
+/// يُستبدل في main بنسخة مُهيّأة (init()) قبل runApp.
+final notificationServiceProvider = Provider<NotificationService>(
+  (ref) => throw UnimplementedError('notificationServiceProvider must be overridden'),
+);
 
 /// عدّاد تحديث عام: أي تعديل يزيده فتُعاد جميع القراءات المرتبطة.
 final refreshProvider = StateProvider<int>((ref) => 0);

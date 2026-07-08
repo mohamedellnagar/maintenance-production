@@ -9,6 +9,7 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'app.dart';
 import 'core/security/encryption_service.dart';
 import 'providers/providers.dart';
+import 'services/notification_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,11 +27,17 @@ Future<void> main() async {
   final encryption = EncryptionService(storage);
   await encryption.init();
 
+  // تهيئة خدمة الإشعارات المحلية (بدون شبكة).
+  final notifications = NotificationService();
+  await notifications.init();
+  await notifications.requestPermissions();
+
   runApp(
     ProviderScope(
       overrides: [
         secureStorageProvider.overrideWithValue(storage),
         encryptionServiceProvider.overrideWithValue(encryption),
+        notificationServiceProvider.overrideWithValue(notifications),
       ],
       child: const WealthOSApp(),
     ),

@@ -129,16 +129,21 @@ class IncomeRepository {
     await db.delete('income_history', where: 'id = ?', whereArgs: [id]);
   }
 
-  /// قيمة الدخل الشهري الفعّال في تاريخ معيّن (بجمع كل الفترات المطابقة).
+  /// قيمة الدخل الشهري الفعّال في تاريخ معيّن.
+  ///
+  /// لكل مصدر فترةٌ واحدة فعّالة فقط (الأحدث بدايةً عند تداخل الفترات)، ثم
+  /// تُجمع المصادر معًا — تفاديًا لازدواج الحساب.
   Future<double> monthlyIncomeAt(DateTime date) async {
     final all = await allHistory();
-    double total = 0;
+    final bySource = <int, IncomeHistory>{};
     for (final h in all) {
-      if (DateRangeUtils.contains(date, h.fromDate, h.toDate)) {
-        total += h.amount;
+      if (!DateRangeUtils.contains(date, h.fromDate, h.toDate)) continue;
+      final current = bySource[h.sourceId];
+      if (current == null || h.fromDate.isAfter(current.fromDate)) {
+        bySource[h.sourceId] = h;
       }
     }
-    return total;
+    return bySource.values.fold<double>(0, (sum, h) => sum + h.amount);
   }
 
   /// الدخل الشهري الحالي.

@@ -37,7 +37,14 @@ class BackupService {
     'audit_logs',
   ];
 
+  /// الجداول التي تحتوي حقل `notes` مشفّرًا بمفتاح الجهاز.
+  static const _encryptedNoteTables = {'assets', 'liabilities'};
+
   /// تصدير نسخة احتياطية مشفّرة بكلمة مرور. يعيد مسار الملف المُنشأ.
+  ///
+  /// تُفكّ الحقول المشفّرة بمفتاح الجهاز إلى نص صريح داخل الحمولة (المحمية
+  /// أصلًا بكلمة مرور المستخدم)، حتى تكون النسخة قابلة للاستعادة على أي جهاز
+  /// آخر لا يملك نفس مفتاح الجهاز.
   Future<File> exportBackup(String password) async {
     final db = await _appDb.database;
     final data = <String, dynamic>{
@@ -47,7 +54,16 @@ class BackupService {
       'tables': <String, dynamic>{},
     };
     for (final table in _tables) {
-      data['tables'][table] = await db.query(table);
+      final rows = await db.query(table);
+      if (_encryptedNoteTables.contains(table)) {
+        data['tables'][table] = rows.map((row) {
+          final m = Map<String, dynamic>.from(row);
+          m['notes'] = _enc.decryptText(m['notes'] as String?);
+          return m;
+        }).toList();
+      } else {
+        data['tables'][table] = rows;
+      }
     }
     final payload = _enc.encryptWithPassword(jsonEncode(data), password);
 
@@ -71,12 +87,17 @@ class BackupService {
       for (final table in _tables.reversed) {
         await txn.delete(table);
       }
-      // إدراج البيانات المستعادة.
+      // إدراج البيانات المستعادة (مع إعادة تشفير الملاحظات بمفتاح هذا الجهاز).
       for (final table in _tables) {
         final rows = tables[table] as List<dynamic>?;
         if (rows == null) continue;
+        final reEncrypt = _encryptedNoteTables.contains(table);
         for (final row in rows) {
-          await txn.insert(table, Map<String, dynamic>.from(row as Map));
+          final m = Map<String, dynamic>.from(row as Map);
+          if (reEncrypt && m['notes'] != null) {
+            m['notes'] = _enc.encryptText(m['notes'] as String?);
+          }
+          await txn.insert(table, m);
         }
       }
     });

@@ -21,6 +21,10 @@ class LiabilityRepository {
 
   Liability _decrypt(Liability l) => l.copyWith(notes: _enc.decryptText(l.notes));
 
+  /// يُزيل الحقول الحساسة قبل تسجيلها في سجل التدقيق.
+  Map<String, dynamic> _redact(Map<String, dynamic> m) =>
+      {...m}..remove('notes');
+
   Future<List<Liability>> all() async {
     final db = await _db;
     final rows = await db.query(_table, orderBy: 'created_at DESC');
@@ -50,7 +54,7 @@ class LiabilityRepository {
       recordId: id,
       action: AuditAction.create,
       source: source,
-      newValue: l.toMap(),
+      newValue: _redact(l.toMap()),
       summary: 'إضافة التزام: ${l.name}',
     );
     await _timeline.record(
@@ -75,8 +79,8 @@ class LiabilityRepository {
       recordId: l.id,
       action: AuditAction.update,
       source: source,
-      oldValue: old?.toMap(),
-      newValue: l.toMap(),
+      oldValue: old == null ? null : _redact(old.toMap()),
+      newValue: _redact(l.toMap()),
       summary: 'تحديث التزام: ${l.name}',
     );
   }
@@ -91,7 +95,7 @@ class LiabilityRepository {
       recordId: id,
       action: AuditAction.delete,
       source: source,
-      oldValue: l?.toMap(),
+      oldValue: l == null ? null : _redact(l.toMap()),
       summary: 'حذف التزام: ${l?.name ?? id}',
     );
   }

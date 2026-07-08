@@ -191,11 +191,10 @@ class CalculationEngine {
     double total = 0;
     for (final s in sources) {
       final history = await _income.history(s.id!);
-      for (final h in history) {
-        if (DateRangeUtils.contains(now, h.fromDate, h.toDate)) {
-          total += fx.toBase(h.amount, s.currency);
-        }
-      }
+      // فترة واحدة فقط فعّالة لكل مصدر في تاريخ معيّن: الأحدث بداية.
+      final amount = _activePeriodAmount(
+          history.map((h) => (h.fromDate, h.toDate, h.amount)), now);
+      if (amount != null) total += fx.toBase(amount, s.currency);
     }
     return total;
   }
@@ -206,13 +205,28 @@ class CalculationEngine {
     double total = 0;
     for (final c in cats) {
       final history = await _expenses.history(c.id!);
-      for (final h in history) {
-        if (DateRangeUtils.contains(now, h.fromDate, h.toDate)) {
-          total += fx.toBase(h.amount, c.currency);
+      final amount = _activePeriodAmount(
+          history.map((h) => (h.fromDate, h.toDate, h.amount)), now);
+      if (amount != null) total += fx.toBase(amount, c.currency);
+    }
+    return total;
+  }
+
+  /// من بين فترات مصدر واحد، يعيد مبلغ الفترة الفعّالة في [date]
+  /// (الأحدث بدايةً عند التداخل)، أو null إن لم تطابق أي فترة.
+  double? _activePeriodAmount(
+      Iterable<(DateTime, DateTime?, double)> periods, DateTime date) {
+    DateTime? bestFrom;
+    double? bestAmount;
+    for (final (from, to, amount) in periods) {
+      if (DateRangeUtils.contains(date, from, to)) {
+        if (bestFrom == null || from.isAfter(bestFrom)) {
+          bestFrom = from;
+          bestAmount = amount;
         }
       }
     }
-    return total;
+    return bestAmount;
   }
 
   /// حساب Financial Health Score من 100 اعتمادًا على ستة عوامل.

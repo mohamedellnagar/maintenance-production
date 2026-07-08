@@ -21,6 +21,10 @@ class AssetRepository {
 
   Asset _decrypt(Asset a) => a.copyWith(notes: _enc.decryptText(a.notes));
 
+  /// يُزيل الحقول الحساسة قبل تسجيلها في سجل التدقيق (حتى لا تُخزَّن كنص صريح).
+  Map<String, dynamic> _redact(Map<String, dynamic> m) =>
+      {...m}..remove('notes');
+
   Future<List<Asset>> all({bool activeOnly = true}) async {
     final db = await _db;
     final rows = await db.query(
@@ -47,7 +51,7 @@ class AssetRepository {
       recordId: id,
       action: AuditAction.create,
       source: source,
-      newValue: asset.toMap(),
+      newValue: _redact(asset.toMap()),
       summary: 'إضافة أصل: ${asset.name}',
     );
     await _timeline.record(
@@ -72,8 +76,8 @@ class AssetRepository {
       recordId: asset.id,
       action: AuditAction.update,
       source: source,
-      oldValue: old?.toMap(),
-      newValue: asset.toMap(),
+      oldValue: old == null ? null : _redact(old.toMap()),
+      newValue: _redact(asset.toMap()),
       summary: 'تحديث أصل: ${asset.name}',
     );
     // إذا تغيّرت القيمة الحالية سجّل حدث تحديث تقييم.
@@ -104,7 +108,7 @@ class AssetRepository {
       recordId: id,
       action: AuditAction.update,
       source: source,
-      oldValue: asset.toMap(),
+      oldValue: _redact(asset.toMap()),
       summary: 'بيع أصل: ${asset.name} بمبلغ $soldValue',
     );
     await _timeline.record(
@@ -128,7 +132,7 @@ class AssetRepository {
       recordId: id,
       action: AuditAction.delete,
       source: source,
-      oldValue: asset?.toMap(),
+      oldValue: asset == null ? null : _redact(asset.toMap()),
       summary: 'حذف أصل: ${asset?.name ?? id}',
     );
   }

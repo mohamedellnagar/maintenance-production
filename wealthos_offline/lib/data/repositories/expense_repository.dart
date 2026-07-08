@@ -130,15 +130,20 @@ class ExpenseRepository {
   }
 
   /// إجمالي المصروف الشهري الفعّال في تاريخ معيّن.
+  ///
+  /// لكل فئة فترةٌ واحدة فعّالة فقط (الأحدث بدايةً عند التداخل)، ثم تُجمع
+  /// الفئات معًا — تفاديًا لازدواج الحساب.
   Future<double> monthlyExpenseAt(DateTime date) async {
     final all = await allHistory();
-    double total = 0;
+    final byCategory = <int, ExpenseHistory>{};
     for (final h in all) {
-      if (DateRangeUtils.contains(date, h.fromDate, h.toDate)) {
-        total += h.amount;
+      if (!DateRangeUtils.contains(date, h.fromDate, h.toDate)) continue;
+      final current = byCategory[h.categoryId];
+      if (current == null || h.fromDate.isAfter(current.fromDate)) {
+        byCategory[h.categoryId] = h;
       }
     }
-    return total;
+    return byCategory.values.fold<double>(0, (sum, h) => sum + h.amount);
   }
 
   Future<double> currentMonthlyExpense() => monthlyExpenseAt(DateTime.now());

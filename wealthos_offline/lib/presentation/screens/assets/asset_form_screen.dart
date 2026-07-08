@@ -157,16 +157,23 @@ class _AssetFormScreenState extends ConsumerState<AssetFormScreen> {
             child: liabilitiesAsync.when(
               loading: () => const LinearProgressIndicator(),
               error: (e, _) => Text('$e'),
-              data: (list) => DropdownButtonFormField<int?>(
-                value: _linkedLiabilityId,
-                isExpanded: true,
-                items: [
-                  const DropdownMenuItem<int?>(value: null, child: Text('بدون')),
-                  for (final l in list)
-                    DropdownMenuItem<int?>(value: l.id, child: Text(l.name)),
-                ],
-                onChanged: (v) => setState(() => _linkedLiabilityId = v),
-              ),
+              data: (list) {
+                // احترازًا من التزام مرتبط تم حذفه (قيمة غير موجودة في القائمة).
+                final ids = list.map((l) => l.id).toSet();
+                final safeValue =
+                    ids.contains(_linkedLiabilityId) ? _linkedLiabilityId : null;
+                return DropdownButtonFormField<int?>(
+                  value: safeValue,
+                  isExpanded: true,
+                  items: [
+                    const DropdownMenuItem<int?>(
+                        value: null, child: Text('بدون')),
+                    for (final l in list)
+                      DropdownMenuItem<int?>(value: l.id, child: Text(l.name)),
+                  ],
+                  onChanged: (v) => setState(() => _linkedLiabilityId = v),
+                );
+              },
             ),
           ),
           LabeledField(

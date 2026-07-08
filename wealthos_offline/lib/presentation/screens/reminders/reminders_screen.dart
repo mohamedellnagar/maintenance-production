@@ -41,9 +41,22 @@ class RemindersScreen extends ConsumerWidget {
                         value: r.isDone,
                         activeColor: AppColors.primary,
                         onChanged: (v) async {
+                          final done = v ?? false;
                           await ref
                               .read(reminderRepoProvider)
-                              .markDone(r.id!, v ?? false);
+                              .markDone(r.id!, done);
+                          final notifier =
+                              ref.read(notificationServiceProvider);
+                          if (done) {
+                            await notifier.cancel(r.id!);
+                          } else {
+                            await notifier.schedule(
+                              id: r.id!,
+                              title: r.title,
+                              body: r.body ?? r.type.label,
+                              when: r.dueDate,
+                            );
+                          }
                           bumpRefreshFromWidget(ref);
                         },
                         title: Text(r.title,
@@ -59,6 +72,9 @@ class RemindersScreen extends ConsumerWidget {
                             await ref
                                 .read(reminderRepoProvider)
                                 .delete(r.id!);
+                            await ref
+                                .read(notificationServiceProvider)
+                                .cancel(r.id!);
                             bumpRefreshFromWidget(ref);
                           },
                         ),
@@ -77,7 +93,13 @@ class RemindersScreen extends ConsumerWidget {
       builder: (_) => const _ReminderDialog(),
     );
     if (result != null) {
-      await ref.read(reminderRepoProvider).create(result);
+      final id = await ref.read(reminderRepoProvider).create(result);
+      await ref.read(notificationServiceProvider).schedule(
+            id: id,
+            title: result.title,
+            body: result.body ?? result.type.label,
+            when: result.dueDate,
+          );
       bumpRefreshFromWidget(ref);
     }
   }
