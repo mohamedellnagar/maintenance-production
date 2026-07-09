@@ -1360,15 +1360,15 @@ return <>
 {filtered.length===0&&<div className="tenantEmpty"><Banknote size={36} style={{opacity:.2}}/><p>{qs||statusFilter!=='all'?'لا توجد نتائج مطابقة':'لا يوجد عقود بعد'}</p></div>}
 
 {(()=>{
-  // group filtered leases by villa
+  // group filtered leases by villa (stable key: id falls back to name)
   const groups={};
-  filtered.forEach(r=>{const k=r.villa_id||r.villa_name;(groups[k]=groups[k]||{villa_id:r.villa_id,villa_name:r.villa_name,leases:[]}).leases.push(r);});
+  filtered.forEach(r=>{const k=String(r.villa_id||r.villa_name);(groups[k]=groups[k]||{key:k,villa_name:r.villa_name,leases:[]}).leases.push(r);});
   const list=Object.values(groups).sort((a,b)=>String(a.villa_name).localeCompare(String(b.villa_name),'ar'));
   return list.map(g=>{
     const activeInG=g.leases.filter(r=>r.is_active&&r.end_date>=today).length;
-    const isOpen=expandedVillas.has(g.villa_id)||!!qs;
-    return <div key={g.villa_id} className={'villaSection'+(isOpen?' villaSectionOpen':'')}>
-      <div className="villaSectionHeader villaSectionHeaderClickable" onClick={()=>toggleLeaseVilla(g.villa_id)}>
+    const isOpen=expandedVillas.has(g.key)||!!qs;
+    return <div key={g.key} className={'villaSection'+(isOpen?' villaSectionOpen':'')}>
+      <div className="villaSectionHeader villaSectionHeaderClickable" onClick={()=>toggleLeaseVilla(g.key)}>
         <div className="villaSectionTitle">
           <ChevronDown size={16} className={'villaChevron'+(isOpen?' villaChevronOpen':'')}/>
           <Building2 size={16}/>{g.villa_name}
