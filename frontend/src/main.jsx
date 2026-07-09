@@ -1,4 +1,4 @@
-import React,{useEffect,useMemo,useState,useCallback,useRef}from'react';import{createRoot}from'react-dom/client';import{Home,Users,Wrench,Building2,LayoutDashboard,FileText,Plus,Trash2,Edit,LogOut,Download,X,Mail,Lock,Eye,EyeOff,Loader2,ShieldCheck,Filter,RotateCcw,ClipboardList,Wallet,TrendingUp,Coins,Check,Settings as SettingsIcon,UserCheck,Banknote,ChevronRight,Calendar,DollarSign,ListChecks,AlertCircle,CheckCircle2,Clock,ChevronDown,RefreshCw,Activity,KeyRound,BarChart2,BedDouble,DoorOpen,ArrowUpRight,ArrowDownRight,Zap,Upload,FileSpreadsheet,CheckSquare,Printer,MapPin,Phone,CreditCard,ArrowRight,Shield,Droplet}from'lucide-react';import{BarChart,Bar,XAxis,YAxis,Tooltip,ResponsiveContainer,CartesianGrid,LabelList,AreaChart,Area}from'recharts';import'./style.css';
+import React,{useEffect,useMemo,useState,useCallback,useRef}from'react';import{createRoot}from'react-dom/client';import{Home,Users,Wrench,Building2,LayoutDashboard,FileText,Plus,Trash2,Edit,LogOut,Download,X,Mail,Lock,Eye,EyeOff,Loader2,ShieldCheck,Filter,RotateCcw,ClipboardList,Wallet,TrendingUp,Coins,Check,Settings as SettingsIcon,UserCheck,Banknote,ChevronRight,Calendar,DollarSign,ListChecks,AlertCircle,CheckCircle2,Clock,ChevronDown,RefreshCw,Activity,KeyRound,BarChart2,BedDouble,DoorOpen,ArrowUpRight,ArrowDownRight,Zap,Upload,FileSpreadsheet,CheckSquare,Printer,MapPin,Phone,CreditCard,ArrowRight,Shield,Droplet,PieChart as PieChartIcon}from'lucide-react';import{BarChart,Bar,XAxis,YAxis,Tooltip,ResponsiveContainer,CartesianGrid,LabelList,AreaChart,Area,PieChart,Pie,Cell,Legend}from'recharts';import'./style.css';
 const API=import.meta.env.VITE_API_URL||(location.hostname==='localhost'?'http://localhost:4000/api':'/api');
 const AR_MONTHS=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
 
@@ -179,12 +179,18 @@ return <div className="app" dir="rtl"><aside><div className="logo">Maintenance<s
 function monthStart(){const t=new Date();return new Date(t.getFullYear(),t.getMonth(),1).toISOString().slice(0,10)}
 function todayStr(){return new Date().toISOString().slice(0,10)}
 const DEFAULT_DASH_FILTERS={from:monthStart(),to:todayStr(),villa_id:'',technician_id:''};
+const DONUT_TIP={contentStyle:{borderRadius:10,border:'1px solid #e2e8f0',fontSize:12,fontFamily:'inherit'}};
 function Dashboard(){
 const api=useApi();
 const[d,setD]=useState(null);
 const[lastUpdated,setLastUpdated]=useState(null);
 const[refreshing,setRefreshing]=useState(false);
 const[tick,setTick]=useState(0);
+// quick-pay from overdue table
+const[payRow,setPayRow]=useState(null);
+const[payAmount,setPayAmount]=useState('');
+const[payDate,setPayDate]=useState(new Date().toISOString().slice(0,10));
+const[paySaving,setPaySaving]=useState(false);
 
 const load=useCallback(async(isAuto=false)=>{
   if(!isAuto)setRefreshing(true);
@@ -194,14 +200,20 @@ const load=useCallback(async(isAuto=false)=>{
 },[]);
 
 useEffect(()=>{load()},[]);
-// auto-refresh every 60s
 useEffect(()=>{const id=setInterval(()=>load(true),60000);return()=>clearInterval(id);},[load]);
-// countdown tick
 useEffect(()=>{const id=setInterval(()=>setTick(t=>(t+1)%60),1000);return()=>clearInterval(id);},[]);
+
+function openPay(r){const rem=Math.round((Number(r.amount)-Number(r.collected))*100)/100;setPayRow(r);setPayAmount(String(Math.max(0,rem)));setPayDate(new Date().toISOString().slice(0,10));}
+async function submitPay(e){e.preventDefault();if(!payRow)return;setPaySaving(true);
+  try{await api('/installments/'+payRow.id+'/payments',{method:'POST',body:JSON.stringify({amount:payAmount,payment_date:payDate})});
+    setPayRow(null);await load(false);showToast('تم تسجيل الدفعة','success');
+  }catch(err){showToast(err.message||'خطأ في تسجيل الدفعة','error');}finally{setPaySaving(false);}
+}
 
 if(!d)return <Loader/>;
 
-const trendData=(d.monthlyTrend||[]).map(r=>{const[y,m]=r.mo.split('-');return{label:AR_MONTHS[parseInt(m,10)-1],cnt:Number(r.cnt),cost:Number(r.cost)};});
+const trendData=(d.monthlyTrend||[]).map(r=>{const[,m]=r.mo.split('-');return{label:AR_MONTHS[parseInt(m,10)-1],cnt:Number(r.cnt),cost:Number(r.cost)};});
+const payTrend=(d.paymentTrend||[]).map(r=>{const[,m]=r.mo.split('-');return{label:AR_MONTHS[parseInt(m,10)-1],collected:Number(r.collected)};});
 
 const overdueAmt=Number(d.installmentKpi?.overdue_amount||0);
 const overdueCount=Number(d.installmentKpi?.overdue_count||0);
@@ -211,10 +223,25 @@ const totalRented=Number(d.aptKpi?.rented||0);
 const totalAvail=Number(d.aptKpi?.available||0);
 const totalApts=Number(d.aptKpi?.total||0);
 const occupancyPct=totalApts>0?Math.round(totalRented/totalApts*100):0;
+const totalBilled=Number(d.financeSummary?.total_billed||0);
+const totalPaid=Number(d.financeSummary?.total_paid||0);
+const collectionRate=totalBilled>0?Math.round(totalPaid/totalBilled*100):0;
+const otherRemaining=Math.max(0,totalBilled-totalPaid-overdueAmt);
+
+const finComposition=[
+  {name:'محصّل',value:Math.round(totalPaid),color:'#15803d'},
+  {name:'متأخر',value:Math.round(overdueAmt),color:'#dc2626'},
+  {name:'متبقّي',value:Math.round(otherRemaining),color:'#cbd5e1'},
+].filter(s=>s.value>0);
+const occComposition=[
+  {name:'مأجورة',value:totalRented,color:'#0f766e'},
+  {name:'متاحة',value:totalAvail,color:'#e2e8f0'},
+].filter(s=>s.value>0);
 
 const now=lastUpdated;
 const timeStr=now?`${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`:'--:--:--';
 const countdown=60-tick;
+const fmtDay=v=>{const p=String(v).slice(0,10).split('-');const AR_M=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];return `${parseInt(p[2])} ${AR_M[parseInt(p[1],10)-1]}`;};
 
 return <div className="dashRoot">
 
@@ -230,111 +257,149 @@ return <div className="dashRoot">
   </div>
 </div>
 
-{/* KPI Row 1 — Maintenance */}
-<div className="dashSectionLabel"><Activity size={13}/>الصيانة</div>
-<div className="dashKpiRow">
-  <div className="dashKpi dashKpi-teal">
-    <div className="dashKpiIcon"><ClipboardList size={20}/></div>
-    <div className="dashKpiBody">
-      <div className="dashKpiVal">{d.today.records}</div>
-      <div className="dashKpiLabel">أعمال اليوم</div>
-    </div>
-    <div className="dashKpiSub">الشهر: {d.month.records}</div>
-  </div>
-  <div className="dashKpi dashKpi-amber">
-    <div className="dashKpiIcon"><Wallet size={20}/></div>
-    <div className="dashKpiBody">
-      <div className="dashKpiVal">{Number(d.today.cost).toLocaleString()}</div>
-      <div className="dashKpiLabel">تكلفة اليوم AED</div>
-    </div>
-    <div className="dashKpiSub">الشهر: {Number(d.month.cost).toLocaleString()}</div>
-  </div>
-  <div className="dashKpi dashKpi-blue">
-    <div className="dashKpiIcon"><Users size={20}/></div>
-    <div className="dashKpiBody">
-      <div className="dashKpiVal">{(d.byTech||[]).filter(t=>t.total>0).length}</div>
-      <div className="dashKpiLabel">فنيين نشطون</div>
-    </div>
-    <div className="dashKpiSub">الإجمالي: {(d.byTech||[]).length}</div>
-  </div>
-  <div className="dashKpi dashKpi-purple">
-    <div className="dashKpiIcon"><Building2 size={20}/></div>
-    <div className="dashKpiBody">
-      <div className="dashKpiVal">{(d.byVilla||[]).filter(v=>v.total>0).length}</div>
-      <div className="dashKpiLabel">فلل بها أعمال</div>
-    </div>
-    <div className="dashKpiSub">الإجمالي: {(d.byVilla||[]).length}</div>
-  </div>
-</div>
-
-{/* KPI Row 2 — Financial */}
-<div className="dashSectionLabel"><DollarSign size={13}/>الإيجارات والمالية</div>
+{/* ── Financial section ── */}
+<div className="dashSectionLabel"><DollarSign size={13}/>الوضع المالي</div>
 <div className="dashKpiRow">
   <div className={'dashKpi'+(overdueAmt>0?' dashKpi-danger':' dashKpi-green')}>
     <div className="dashKpiIcon"><AlertCircle size={20}/></div>
-    <div className="dashKpiBody">
-      <div className="dashKpiVal">{overdueAmt.toLocaleString()}</div>
-      <div className="dashKpiLabel">متأخر AED</div>
-    </div>
+    <div className="dashKpiBody"><div className="dashKpiVal">{overdueAmt.toLocaleString()}</div><div className="dashKpiLabel">متأخر AED</div></div>
     <div className="dashKpiSub">{overdueCount} دفعة</div>
     {overdueAmt>0&&<div className="dashKpiAlert"/>}
   </div>
   <div className="dashKpi dashKpi-green">
     <div className="dashKpiIcon"><CheckCircle2 size={20}/></div>
-    <div className="dashKpiBody">
-      <div className="dashKpiVal">{collectedMonth.toLocaleString()}</div>
-      <div className="dashKpiLabel">محصّل هذا الشهر AED</div>
-    </div>
-    <div className="dashKpiSub">الإجمالي: {Number(d.installmentKpi?.collected_total||0).toLocaleString()}</div>
+    <div className="dashKpiBody"><div className="dashKpiVal">{collectedMonth.toLocaleString()}</div><div className="dashKpiLabel">محصّل هذا الشهر AED</div></div>
+    <div className="dashKpiSub">الكلي: {totalPaid.toLocaleString()}</div>
   </div>
   <div className="dashKpi dashKpi-amber">
     <div className="dashKpiIcon"><Clock size={20}/></div>
-    <div className="dashKpiBody">
-      <div className="dashKpiVal">{dueSoonAmt.toLocaleString()}</div>
-      <div className="dashKpiLabel">قيد التحصيل AED</div>
-    </div>
+    <div className="dashKpiBody"><div className="dashKpiVal">{dueSoonAmt.toLocaleString()}</div><div className="dashKpiLabel">قيد التحصيل AED</div></div>
     <div className="dashKpiSub">خلال 30 يوم</div>
   </div>
   <div className="dashKpi dashKpi-blue">
     <div className="dashKpiIcon"><Banknote size={20}/></div>
-    <div className="dashKpiBody">
-      <div className="dashKpiVal">{d.leaseKpi?.active_leases||0}</div>
-      <div className="dashKpiLabel">عقود نشطة</div>
-    </div>
+    <div className="dashKpiBody"><div className="dashKpiVal">{d.leaseKpi?.active_leases||0}</div><div className="dashKpiLabel">عقود نشطة</div></div>
     <div className="dashKpiSub">الإجمالي: {d.leaseKpi?.total_leases||0}</div>
   </div>
 </div>
 
-{/* KPI Row 3 — Occupancy */}
-<div className="dashSectionLabel"><BedDouble size={13}/>إشغال الوحدات</div>
-<div className="dashOccupancy">
-  <div className="dashOccCard dashOccRented">
-    <div className="dashOccNum">{totalRented}</div>
-    <div className="dashOccLabel">مأجورة</div>
+{/* Financial charts: collection trend + composition donut */}
+<div className="dashChartsRow">
+  <div className="dashChart">
+    <div className="dashChartTitle"><TrendingUp size={14}/>التحصيل الشهري — آخر 6 أشهر</div>
+    {payTrend.length===0?<EmptyChart/>:<div dir="ltr"><ResponsiveContainer height={210}>
+      <AreaChart data={payTrend} margin={{top:8,right:8,left:0,bottom:0}}>
+        <defs><linearGradient id="greenGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#15803d" stopOpacity={0.28}/><stop offset="95%" stopColor="#15803d" stopOpacity={0}/></linearGradient></defs>
+        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#eef2f7"/>
+        <XAxis dataKey="label" tick={{fontSize:11}}/>
+        <YAxis width={44} tick={{fontSize:10}} domain={[0,'auto']} tickFormatter={v=>v>=1000?(v/1000)+'k':v}/>
+        <Tooltip {...DONUT_TIP} formatter={v=>[Number(v).toLocaleString()+' AED','محصّل']}/>
+        <Area type="linear" dataKey="collected" stroke="#15803d" strokeWidth={2.5} fill="url(#greenGrad)" isAnimationActive={false}/>
+      </AreaChart>
+    </ResponsiveContainer></div>}
   </div>
-  <div className="dashOccBarWrap">
-    <div className="dashOccBarTrack">
-      <div className="dashOccBarFill" style={{width:occupancyPct+'%'}}/>
-    </div>
-    <div className="dashOccPct">{occupancyPct}% إشغال</div>
-  </div>
-  <div className="dashOccCard dashOccAvail">
-    <div className="dashOccNum">{totalAvail}</div>
-    <div className="dashOccLabel">متاحة</div>
+  <div className="dashChart">
+    <div className="dashChartTitle"><PieChartIcon size={14}/>معدل التحصيل الكلي</div>
+    {totalBilled===0?<EmptyChart/>:<div className="dashDonutWrap" dir="ltr">
+      <ResponsiveContainer height={210} width="60%">
+        <PieChart>
+          <Pie data={finComposition} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={54} outerRadius={80} paddingAngle={2} isAnimationActive={false}>
+            {finComposition.map((s,i)=><Cell key={i} fill={s.color}/>)}
+          </Pie>
+          <Tooltip {...DONUT_TIP} formatter={v=>Number(v).toLocaleString()+' AED'}/>
+        </PieChart>
+      </ResponsiveContainer>
+      <div className="dashDonutCenter">
+        <span className="dashDonutBig">{collectionRate}%</span>
+        <span className="dashDonutLbl">محصّل من إجمالي {(totalBilled/1000).toFixed(0)}k</span>
+        <div className="dashDonutLegend">
+          {finComposition.map((s,i)=><span key={i} className="dashLegendItem"><span className="dashLegendDot" style={{background:s.color}}/>{s.name}: {s.value.toLocaleString()}</span>)}
+        </div>
+      </div>
+    </div>}
   </div>
 </div>
 
-{/* Charts Row */}
+{/* Overdue table with pay action */}
+<div className="dashPanel dashPanelWide">
+  <div className="dashPanelTitle"><AlertCircle size={14} color="#dc2626"/>دفعات متأخرة تحتاج تحصيل {overdueCount>0&&<span className="dashPanelCount">{overdueCount}</span>}</div>
+  {(d.overdueList||[]).length===0
+    ?<div className="dashNoOverdue"><CheckCircle2 size={32} color="#15803d"/><span>لا توجد دفعات متأخرة — كل التحصيلات في موعدها 👏</span></div>
+    :<div className="dashTableWrap"><table className="dashTable">
+      <thead><tr><th>المستأجر</th><th>الوحدة</th><th>الاستحقاق</th><th>التأخير</th><th>المتبقّي</th><th></th></tr></thead>
+      <tbody>{(d.overdueList||[]).map(r=>{
+        const remaining=Math.round((Number(r.amount)-Number(r.collected))*100)/100;
+        const days=Math.floor((new Date()-new Date(r.due_date))/(1000*60*60*24));
+        return <tr key={r.id}>
+          <td><div className="dashTdTenant">{r.tenant_name}</div>{r.tenant_phone&&<div className="dashTdSub">{r.tenant_phone}</div>}</td>
+          <td><span className="dashTdUnit"><Building2 size={12}/>{r.villa_name} · {r.apartment_no}</span></td>
+          <td className="dashTdDate">{fmtDay(r.due_date)}</td>
+          <td><span className={'dashDaysBadge'+(days>30?' dashDaysBadgeHi':'')}>{days} يوم</span></td>
+          <td className="dashTdAmt">{remaining.toLocaleString()} <small>AED</small></td>
+          <td className="dashTdAction"><button className="dashPayBtn" onClick={()=>openPay(r)}><Coins size={13}/>تحصيل</button></td>
+        </tr>;
+      })}</tbody>
+    </table></div>}
+</div>
+
+{/* ── Occupancy section ── */}
+<div className="dashSectionLabel"><BedDouble size={13}/>إشغال الوحدات</div>
+<div className="dashChart dashChartOcc">
+  {occComposition.length===0?<EmptyChart/>:<div className="dashDonutWrap dashDonutWrapWide" dir="ltr">
+    <ResponsiveContainer height={200} width="40%">
+      <PieChart>
+        <Pie data={occComposition} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={54} outerRadius={82} paddingAngle={2} isAnimationActive={false}>
+          {occComposition.map((s,i)=><Cell key={i} fill={s.color}/>)}
+        </Pie>
+        <Tooltip {...DONUT_TIP} formatter={v=>v+' وحدة'}/>
+      </PieChart>
+    </ResponsiveContainer>
+    <div className="dashDonutCenter">
+      <span className="dashDonutBig">{occupancyPct}%</span>
+      <span className="dashDonutLbl">نسبة الإشغال — {totalApts} وحدة إجمالاً</span>
+      <div className="dashOccStats">
+        <div className="dashOccStat dashOccStatR"><span className="dashOccStatNum">{totalRented}</span><span className="dashOccStatLbl">مأجورة</span></div>
+        <div className="dashOccStat dashOccStatA"><span className="dashOccStatNum">{totalAvail}</span><span className="dashOccStatLbl">متاحة</span></div>
+      </div>
+    </div>
+  </div>}
+</div>
+
+{/* ── Maintenance section ── */}
+<div className="dashSectionLabel"><Activity size={13}/>الصيانة</div>
+<div className="dashKpiRow">
+  <div className="dashKpi dashKpi-teal">
+    <div className="dashKpiIcon"><ClipboardList size={20}/></div>
+    <div className="dashKpiBody"><div className="dashKpiVal">{d.today.records}</div><div className="dashKpiLabel">أعمال اليوم</div></div>
+    <div className="dashKpiSub">الشهر: {d.month.records}</div>
+  </div>
+  <div className="dashKpi dashKpi-amber">
+    <div className="dashKpiIcon"><Wallet size={20}/></div>
+    <div className="dashKpiBody"><div className="dashKpiVal">{Number(d.today.cost).toLocaleString()}</div><div className="dashKpiLabel">تكلفة اليوم AED</div></div>
+    <div className="dashKpiSub">الشهر: {Number(d.month.cost).toLocaleString()}</div>
+  </div>
+  <div className="dashKpi dashKpi-blue">
+    <div className="dashKpiIcon"><Users size={20}/></div>
+    <div className="dashKpiBody"><div className="dashKpiVal">{(d.byTech||[]).filter(t=>t.total>0).length}</div><div className="dashKpiLabel">فنيين نشطون</div></div>
+    <div className="dashKpiSub">الإجمالي: {(d.byTech||[]).length}</div>
+  </div>
+  <div className="dashKpi dashKpi-purple">
+    <div className="dashKpiIcon"><Building2 size={20}/></div>
+    <div className="dashKpiBody"><div className="dashKpiVal">{(d.byVilla||[]).filter(v=>v.total>0).length}</div><div className="dashKpiLabel">فلل بها أعمال</div></div>
+    <div className="dashKpiSub">الإجمالي: {(d.byVilla||[]).length}</div>
+  </div>
+</div>
+
 <div className="dashChartsRow">
   <div className="dashChart">
     <div className="dashChartTitle"><BarChart2 size={14}/>نشاط الصيانة — آخر 6 أشهر</div>
     {trendData.length===0?<EmptyChart/>:<div dir="ltr"><ResponsiveContainer height={200}>
       <AreaChart data={trendData} margin={{top:8,right:8,left:0,bottom:0}}>
         <defs><linearGradient id="tealGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#0f766e" stopOpacity={0.3}/><stop offset="95%" stopColor="#0f766e" stopOpacity={0}/></linearGradient></defs>
-        <CartesianGrid strokeDasharray="3 3" vertical={false}/>
+        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#eef2f7"/>
         <XAxis dataKey="label" tick={{fontSize:11}}/>
         <YAxis allowDecimals={false} width={28} tick={{fontSize:11}}/>
-        <Tooltip formatter={v=>[v+' عمل','الأعمال']}/>
+        <Tooltip {...DONUT_TIP} formatter={v=>[v+' عمل','الأعمال']}/>
         <Area type="monotone" dataKey="cnt" stroke="#0f766e" strokeWidth={2} fill="url(#tealGrad)" isAnimationActive={false}/>
       </AreaChart>
     </ResponsiveContainer></div>}
@@ -343,10 +408,10 @@ return <div className="dashRoot">
     <div className="dashChartTitle"><Activity size={14}/>الأعمال حسب الفني</div>
     {(d.byTech||[]).every(x=>x.total===0)?<EmptyChart/>:<div dir="ltr"><ResponsiveContainer height={200}>
       <BarChart data={(d.byTech||[]).slice(0,6)} margin={{top:8,right:8,left:0,bottom:40}}>
-        <CartesianGrid strokeDasharray="3 3" vertical={false}/>
+        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#eef2f7"/>
         <XAxis dataKey="name" tick={{fontSize:10}} interval={0} angle={-30} textAnchor="end" height={50}/>
         <YAxis allowDecimals={false} width={24} tick={{fontSize:11}}/>
-        <Tooltip formatter={v=>[v+' عمل','الإجمالي']}/>
+        <Tooltip {...DONUT_TIP} formatter={v=>[v+' عمل','الإجمالي']}/>
         <Bar dataKey="total" fill="#0e7490" radius={[6,6,0,0]} maxBarSize={40} isAnimationActive={false}>
           <LabelList dataKey="total" position="top" style={{fontSize:11,fontWeight:700,fill:'#0e7490'}}/>
         </Bar>
@@ -355,40 +420,36 @@ return <div className="dashRoot">
   </div>
 </div>
 
-{/* Bottom Row: Recent + Overdue */}
-<div className="dashBottomRow">
-  <div className="dashPanel">
-    <div className="dashPanelTitle"><ClipboardList size={14}/>آخر أعمال الصيانة</div>
-    {(d.recent||[]).length===0?<div className="empty">لا توجد أعمال</div>:(d.recent||[]).map(r=>(
-    <div key={r.id} className="dashActivityRow">
-      <div className="dashActivityDot dashActivityDot-maint"/>
-      <div className="dashActivityBody">
-        <div className="dashActivityMain">{r.villa_name}{r.apartment_no&&<span className="dashActivityChip">شقة {r.apartment_no}</span>}</div>
-        <div className="dashActivitySub">{r.technician_name} · {r.description?.slice(0,40)}{r.description?.length>40?'...':''}</div>
-      </div>
-      <div className="dashActivityMeta">
-        {r.spare_part_cost>0&&<span className="dashActivityCost">{Number(r.spare_part_cost).toLocaleString()} AED</span>}
-        <span className="dashActivityDate">{(()=>{const p=String(r.record_date).slice(0,10).split('-');const AR_M=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];return `${parseInt(p[2])} ${AR_M[parseInt(p[1],10)-1]}`;})()}</span>
-      </div>
-    </div>))}
-  </div>
-  <div className="dashPanel">
-    <div className="dashPanelTitle"><AlertCircle size={14}/>دفعات متأخرة</div>
-    {(d.overdueList||[]).length===0
-      ?<div className="dashNoOverdue"><CheckCircle2 size={32} color="#15803d"/><span>لا توجد دفعات متأخرة</span></div>
-      :(d.overdueList||[]).map(r=>{
-        const remaining=Number(r.amount)-Number(r.collected);
-        const days=Math.floor((new Date()-new Date(r.due_date))/(1000*60*60*24));
-        return <div key={r.id} className="dashOverdueRow">
-          <div className="dashOverdueDays">{days}ي</div>
-          <div className="dashActivityBody">
-            <div className="dashActivityMain">{r.tenant_name}</div>
-            <div className="dashActivitySub">{r.villa_name} · شقة {r.apartment_no}</div>
-          </div>
-          <div className="dashOverdueAmt">{remaining.toLocaleString()} <span>AED</span></div>
-        </div>;})}
-  </div>
+<div className="dashPanel dashPanelWide">
+  <div className="dashPanelTitle"><ClipboardList size={14}/>آخر أعمال الصيانة</div>
+  {(d.recent||[]).length===0?<div className="empty">لا توجد أعمال</div>:(d.recent||[]).map(r=>(
+  <div key={r.id} className="dashActivityRow">
+    <div className="dashActivityDot dashActivityDot-maint"/>
+    <div className="dashActivityBody">
+      <div className="dashActivityMain">{r.villa_name}{r.apartment_no&&<span className="dashActivityChip">شقة {r.apartment_no}</span>}</div>
+      <div className="dashActivitySub">{r.technician_name} · {r.description?.slice(0,50)}{r.description?.length>50?'...':''}</div>
+    </div>
+    <div className="dashActivityMeta">
+      {r.spare_part_cost>0&&<span className="dashActivityCost">{Number(r.spare_part_cost).toLocaleString()} AED</span>}
+      <span className="dashActivityDate">{fmtDay(r.record_date)}</span>
+    </div>
+  </div>))}
 </div>
+
+{/* Quick-pay modal */}
+<Modal open={!!payRow} onClose={()=>setPayRow(null)} title="تحصيل دفعة متأخرة">
+  {payRow&&<form className="form compact" onSubmit={submitPay}>
+    <div className="dashPayInfo">
+      <div><span className="dashPayInfoLbl">المستأجر</span><span className="dashPayInfoVal">{payRow.tenant_name}</span></div>
+      <div><span className="dashPayInfoLbl">الوحدة</span><span className="dashPayInfoVal">{payRow.villa_name} · شقة {payRow.apartment_no}</span></div>
+      <div><span className="dashPayInfoLbl">المتبقّي</span><span className="dashPayInfoVal" style={{color:'#dc2626'}}>{(Number(payRow.amount)-Number(payRow.collected)).toLocaleString()} AED</span></div>
+    </div>
+    <Field label="المبلغ المدفوع (AED)" required><div className="payAmountRow"><input required type="number" min="0.01" step="0.01" value={payAmount} onChange={e=>setPayAmount(e.target.value)}/><button type="button" className="payAllBtn" onClick={()=>setPayAmount(String(Math.max(0,Math.round((Number(payRow.amount)-Number(payRow.collected))*100)/100)))}><Coins size={14}/>كامل</button></div></Field>
+    <Field label="تاريخ الدفع" required><input required type="date" value={payDate} onChange={e=>setPayDate(e.target.value)}/></Field>
+    <button disabled={paySaving}><Plus size={14}/>{paySaving?'جارٍ التسجيل...':'تسجيل التحصيل'}</button>
+    <button type="button" className="secondary" onClick={()=>setPayRow(null)}>إلغاء</button>
+  </form>}
+</Modal>
 
 </div>;
 }

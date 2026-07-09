@@ -63,6 +63,14 @@ app.get('/api/dashboard', auth, wrap(async (req, res) => {
     FROM maintenance_records WHERE record_date >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
     GROUP BY mo ORDER BY mo ASC`);
 
+  // Last 6 months collection trend (positive installment payments only — excludes refunds)
+  const [paymentTrend] = await pool.query(`
+    SELECT DATE_FORMAT(payment_date,'%Y-%m') mo,
+      COALESCE(SUM(CASE WHEN amount>0 THEN amount ELSE 0 END),0) collected,
+      COUNT(*) cnt
+    FROM installment_payments WHERE payment_date >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
+    GROUP BY mo ORDER BY mo ASC`);
+
   // Lease / financial KPIs
   const [[leaseKpi]] = await pool.query(`
     SELECT
@@ -85,7 +93,7 @@ app.get('/api/dashboard', auth, wrap(async (req, res) => {
           AND COALESCE(ip_sum.collected,0)<li.amount THEN li.amount-COALESCE(ip_sum.collected,0)
         ELSE 0 END),0) due_soon_amount,
       COALESCE(SUM(CASE
-        WHEN YEAR(ip_pmt.payment_date)=YEAR(CURDATE()) AND MONTH(ip_pmt.payment_date)=MONTH(CURDATE())
+        WHEN YEAR(ip_pmt.payment_date)=YEAR(CURDATE()) AND MONTH(ip_pmt.payment_date)=MONTH(CURDATE()) AND ip_pmt.amount>0
         THEN ip_pmt.amount ELSE 0 END),0) collected_this_month
     FROM lease_installments li
     LEFT JOIN (SELECT installment_id, SUM(amount) collected FROM installment_payments GROUP BY installment_id) ip_sum ON ip_sum.installment_id=li.id
@@ -99,22 +107,30 @@ app.get('/api/dashboard', auth, wrap(async (req, res) => {
       SUM(NOT EXISTS(SELECT 1 FROM leases l WHERE l.apartment_id=a.id AND l.is_active=1)) available
     FROM apartments a WHERE a.is_active=1`);
 
-  // Overdue installments list (top 5)
+  // Overdue installments list (top 12) — excludes cancelled/terminated
   const [overdueList] = await pool.query(`
     SELECT li.id, li.due_date, li.amount, COALESCE(SUM(ip.amount),0) collected,
-      t.name tenant_name, v.name villa_name, a.apartment_no
+      t.name tenant_name, t.phone tenant_phone, v.name villa_name, a.apartment_no
     FROM lease_installments li
     JOIN leases l ON l.id=li.lease_id
     JOIN apartments a ON a.id=l.apartment_id
     JOIN villas v ON v.id=a.villa_id
     JOIN tenants t ON t.id=l.tenant_id
     LEFT JOIN installment_payments ip ON ip.installment_id=li.id
-    WHERE li.due_date<CURDATE()
+    WHERE li.due_date<CURDATE() AND li.is_cancelled=0
     GROUP BY li.id
     HAVING collected<li.amount
-    ORDER BY li.due_date ASC LIMIT 5`);
+    ORDER BY li.due_date ASC LIMIT 12`);
 
-  ok(res, { today, month, filtered, byTech, byVilla, recent, monthlyTrend, leaseKpi, installmentKpi, aptKpi, overdueList });
+  // Overall collection rate (all non-cancelled installments)
+  const [[financeSummary]] = await pool.query(`
+    SELECT
+      COALESCE(SUM(li.amount),0) total_billed,
+      COALESCE((SELECT SUM(ip.amount) FROM installment_payments ip
+        JOIN lease_installments li2 ON li2.id=ip.installment_id WHERE li2.is_cancelled=0),0) total_paid
+    FROM lease_installments li WHERE li.is_cancelled=0`);
+
+  ok(res, { today, month, filtered, byTech, byVilla, recent, monthlyTrend, paymentTrend, leaseKpi, installmentKpi, aptKpi, overdueList, financeSummary });
 }));
 
 function pageGuard(pageId) {

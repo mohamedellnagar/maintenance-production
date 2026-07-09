@@ -722,6 +722,49 @@ button.danger{background:#fee2e2;color:var(--danger)}.actionsCell{display:flex;g
 /* Bottom panels */
 .dashBottomRow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 @media(max-width:800px){.dashBottomRow{grid-template-columns:1fr}}
+/* donut with center label */
+.dashDonutWrap{display:flex;align-items:center;gap:8px}
+.dashDonutCenter{flex:1;display:flex;flex-direction:column;gap:3px;text-align:right}
+.dashDonutBig{font-size:32px;font-weight:900;color:var(--text);line-height:1}
+.dashDonutLbl{font-size:12px;color:var(--muted)}
+.dashDonutLegend{display:flex;flex-direction:column;gap:5px;margin-top:8px}
+.dashLegendItem{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text)}
+.dashLegendDot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.dashChartOcc{display:flex;align-items:center}
+.dashDonutWrapWide{width:100%;justify-content:center;gap:24px}
+.dashOccStats{display:flex;gap:12px;margin-top:12px}
+.dashOccStat{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 18px;border-radius:12px;border:1px solid var(--line)}
+.dashOccStatNum{font-size:22px;font-weight:900;line-height:1}
+.dashOccStatLbl{font-size:11px;color:var(--muted);font-weight:600}
+.dashOccStatR{background:#f0fdf4}.dashOccStatR .dashOccStatNum{color:#0f766e}
+.dashOccStatA{background:#f8fafc}.dashOccStatA .dashOccStatNum{color:#64748b}
+/* wide panel */
+.dashPanelWide{max-height:none}
+.dashPanelCount{background:#fee2e2;color:#dc2626;font-size:11px;font-weight:800;padding:1px 9px;border-radius:20px;margin-inline-start:6px}
+/* dashboard table */
+.dashTableWrap{overflow-x:auto}
+.dashTable{width:100%;border-collapse:collapse;font-size:13px}
+.dashTable thead th{text-align:right;font-size:11px;font-weight:700;color:var(--muted);padding:8px 12px;border-bottom:1.5px solid var(--line);white-space:nowrap}
+.dashTable tbody td{padding:11px 12px;border-bottom:1px solid #f1f5f9;vertical-align:middle}
+.dashTable tbody tr:last-child td{border-bottom:none}
+.dashTable tbody tr:hover{background:#fafbfc}
+.dashTdTenant{font-weight:700;color:var(--text)}
+.dashTdSub{font-size:11px;color:var(--muted);margin-top:2px}
+.dashTdUnit{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--muted)}
+.dashTdDate{font-size:12px;color:var(--muted);white-space:nowrap}
+.dashDaysBadge{font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;background:#fef3c7;color:#b45309;white-space:nowrap}
+.dashDaysBadgeHi{background:#fee2e2;color:#dc2626}
+.dashTdAmt{font-weight:800;color:#dc2626;white-space:nowrap}
+.dashTdAmt small{font-size:10px;font-weight:500;color:var(--muted)}
+.dashTdAction{text-align:left}
+.dashPayBtn{display:inline-flex;align-items:center;gap:5px;background:var(--brand);color:#fff;border:none;border-radius:9px;padding:7px 14px;font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap;transition:filter .15s}
+.dashPayBtn:hover{filter:brightness(1.08)}
+.dashPayBtn:active{transform:scale(.97)}
+/* pay modal info */
+.dashPayInfo{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:10px;background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:4px}
+.dashPayInfo>div{display:flex;flex-direction:column;gap:2px;min-width:90px}
+.dashPayInfoLbl{font-size:10.5px;color:var(--muted);font-weight:600}
+.dashPayInfoVal{font-size:13px;font-weight:700;color:var(--text)}
 .dashPanel{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px 18px;max-height:340px;overflow-y:auto}
 .dashPanelTitle{font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:6px}
 
