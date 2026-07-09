@@ -960,8 +960,8 @@ const[paymentsInst,setPaymentsInst]=useState(null);const[payments,setPayments]=u
 const[payForm,setPayForm]=useState({amount:'',payment_date:new Date().toISOString().slice(0,10),notes:''});const[payOpen,setPayOpen]=useState(false);
 const[terminateOpen,setTerminateOpen]=useState(false);const[terminateDate,setTerminateDate]=useState('');
 const[extraDeductions,setExtraDeductions]=useState([]);const[extraDesc,setExtraDesc]=useState('');const[extraAmt,setExtraAmt]=useState('');
-const[expandedVillas,setExpandedVillas]=useState(()=>new Set());
-const toggleLeaseVilla=id=>setExpandedVillas(prev=>{const n=new Set(prev);n.has(id)?n.delete(id):n.add(id);return n});
+const[openVilla,setOpenVilla]=useState(null);
+const toggleLeaseVilla=id=>setOpenVilla(prev=>prev===id?null:id);
 
 const load=()=>api('/leases').then(setRows);
 const loadDetail=(id)=>api('/leases/'+id).then(d=>{setLeaseDetail(d);setSelectedLease(id)});
@@ -1366,7 +1366,7 @@ return <>
   const list=Object.values(groups).sort((a,b)=>String(a.villa_name).localeCompare(String(b.villa_name),'ar'));
   return list.map(g=>{
     const activeInG=g.leases.filter(r=>r.is_active&&r.end_date>=today).length;
-    const isOpen=expandedVillas.has(g.villa_id)||!!qs;
+    const isOpen=openVilla===g.villa_id||!!qs;
     return <div key={g.villa_id} className={'villaSection'+(isOpen?' villaSectionOpen':'')}>
       <div className="villaSectionHeader villaSectionHeaderClickable" onClick={()=>toggleLeaseVilla(g.villa_id)}>
         <div className="villaSectionTitle">
