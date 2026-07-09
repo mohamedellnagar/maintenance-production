@@ -43,7 +43,7 @@ return <div className="login">
   </div>
 </div>}
 
-const ALL_PAGES=[['dashboard','لوحة التحكم',LayoutDashboard],['records','كشف الصيانة',FileText],['villas','الفلل',Building2],['apartments','الشقق',Home],['technicians','الفنيين',Wrench],['tenants_mgmt','المستأجرين',UserCheck],['leases','الإيجارات',Banknote],['payments_tracker','الدفعات',ListChecks]];
+const ALL_PAGES=[['dashboard','لوحة التحكم',LayoutDashboard],['live_board','العرض الحي',Activity],['records','كشف الصيانة',FileText],['villas','الفلل',Building2],['apartments','الشقق',Home],['technicians','الفنيين',Wrench],['tenants_mgmt','المستأجرين',UserCheck],['leases','الإيجارات',Banknote],['payments_tracker','الدفعات',ListChecks]];
 function PermissionsSettings(){const api=useApi();const[perms,setPerms]=useState(null);const[saving,setSaving]=useState(false);useEffect(()=>{api('/permissions').then(setPerms)},[]);
 function toggle(pageId){if(pageId==='dashboard')return;setPerms({...perms,SUPERVISOR:perms.SUPERVISOR.includes(pageId)?perms.SUPERVISOR.filter(p=>p!==pageId):[...perms.SUPERVISOR,pageId]})}
 async function save(){setSaving(true);await runAction(async()=>{await api('/permissions/SUPERVISOR',{method:'PUT',body:JSON.stringify({allowed_pages:perms.SUPERVISOR})})},'تم حفظ الصلاحيات');setSaving(false)}
@@ -174,6 +174,7 @@ const logout=()=>{localStorage.clear();setUser(null)};
 const allowedIds=isAdmin?ALL_PAGES.map(p=>p[0]):(perms?.SUPERVISOR||['dashboard']);
 const items=ALL_PAGES.filter(p=>allowedIds.includes(p[0])).concat(isAdmin?[['users','المستخدمين',Users],['import','استيراد البيانات',Upload],['settings','الصلاحيات',SettingsIcon]]:[]);
 const activePage=items.some(i=>i[0]===page)?page:'dashboard';
+if(activePage==='live_board')return <><LiveBoard onExit={()=>setPage('dashboard')}/><Toaster/></>;
 return <div className="app" dir="rtl"><aside><div className="logo">Maintenance<span>Pro</span></div>{items.map(([id,t,I])=><button key={id} className={activePage===id?'active':''} onClick={()=>setPage(id)}><I size={18}/>{t}</button>)}<button onClick={logout}><LogOut size={18}/>خروج</button></aside><main><header><div><h2>{items.find(i=>i[0]===activePage)?.[1]}</h2><p>نظام إدارة كشف الصيانة اليومي للفلل والشقق</p></div><div className="headerRight"><div className="user"><div className="userAvatar">{user.name?.[0]}</div><div className="userMeta"><span className="userName">{user.name}</span><span className={'roleBadge role-'+user.role}>{ROLE_LABELS[user.role]||user.role}</span></div></div><button className="mobileLogout" onClick={logout}><LogOut size={18}/></button></div></header>{activePage==='dashboard'&&<Dashboard/>}{activePage==='records'&&<Records/>}{activePage==='villas'&&<Villas user={user}/>}{activePage==='apartments'&&<Apartments user={user}/>}{activePage==='technicians'&&<Technicians user={user}/>}{activePage==='users'&&<UsersPage user={user}/>}{activePage==='tenants_mgmt'&&<TenantsMgmt user={user}/>}{activePage==='leases'&&<Leases user={user}/>}{activePage==='payments_tracker'&&<PaymentsTracker user={user}/>}{activePage==='settings'&&<PermissionsSettings/>}{activePage==='import'&&<ImportData/>}</main><nav className="mobileTabs">{items.map(([id,t,I])=><button key={id} className={activePage===id?'active':''} onClick={()=>setPage(id)}><I size={20}/><span>{t}</span></button>)}</nav><Toaster/></div>}
 
 function monthStart(){const t=new Date();return new Date(t.getFullYear(),t.getMonth(),1).toISOString().slice(0,10)}
@@ -454,6 +455,106 @@ return <div className="dashRoot">
 </div>;
 }
 
+
+// ─── Live Board (big-screen wall display) ─────────────────────────────
+const LB_AXIS={fontSize:12,fill:'#94a3b8'};
+function LiveBoard({onExit}){
+const api=useApi();
+const[d,setD]=useState(null);
+const[now,setNow]=useState(new Date());
+const[pulse,setPulse]=useState(false);
+const load=useCallback(async()=>{const data=await api('/dashboard');setD(data);setPulse(true);setTimeout(()=>setPulse(false),800);},[]);
+useEffect(()=>{load()},[]);
+useEffect(()=>{const id=setInterval(load,30000);return()=>clearInterval(id);},[load]);
+useEffect(()=>{const id=setInterval(()=>setNow(new Date()),1000);return()=>clearInterval(id);},[]);
+useEffect(()=>{const onKey=e=>{if(e.key==='Escape')onExit()};document.addEventListener('keydown',onKey);return()=>document.removeEventListener('keydown',onKey)},[onExit]);
+
+if(!d)return <div className="lbRoot lbLoading"><Loader2 size={40} className="lbSpin"/><span>جارٍ تحميل العرض الحي...</span></div>;
+
+const overdueAmt=Number(d.installmentKpi?.overdue_amount||0);
+const overdueCount=Number(d.installmentKpi?.overdue_count||0);
+const collectedMonth=Number(d.installmentKpi?.collected_this_month||0);
+const dueSoonAmt=Number(d.installmentKpi?.due_soon_amount||0);
+const totalRented=Number(d.aptKpi?.rented||0),totalAvail=Number(d.aptKpi?.available||0),totalApts=Number(d.aptKpi?.total||0);
+const occupancyPct=totalApts>0?Math.round(totalRented/totalApts*100):0;
+const totalBilled=Number(d.financeSummary?.total_billed||0),totalPaid=Number(d.financeSummary?.total_paid||0);
+const collectionRate=totalBilled>0?Math.round(totalPaid/totalBilled*100):0;
+const otherRemaining=Math.max(0,totalBilled-totalPaid-overdueAmt);
+const payTrend=(d.paymentTrend||[]).map(r=>{const[,m]=r.mo.split('-');return{label:AR_MONTHS[parseInt(m,10)-1],collected:Number(r.collected)};});
+const finComp=[{name:'محصّل',value:Math.round(totalPaid),color:'#22c55e'},{name:'متأخر',value:Math.round(overdueAmt),color:'#ef4444'},{name:'متبقّي',value:Math.round(otherRemaining),color:'#334155'}].filter(s=>s.value>0);
+const occComp=[{name:'مأجورة',value:totalRented,color:'#14b8a6'},{name:'متاحة',value:totalAvail,color:'#334155'}].filter(s=>s.value>0);
+const fmt=n=>Number(n).toLocaleString();
+const t2=x=>String(x).padStart(2,'0');
+const clock=`${t2(now.getHours())}:${t2(now.getMinutes())}:${t2(now.getSeconds())}`;
+const dateStr=now.toLocaleDateString('ar-AE',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+return <div className="lbRoot">
+  <div className="lbHeader">
+    <div className="lbBrand"><Activity size={26} className="lbBrandIcon"/><span>MaintenancePro</span><span className={'lbLive'+(pulse?' lbLivePulse':'')}><span className="lbLiveDot"/>مباشر</span></div>
+    <div className="lbClock"><span className="lbTime">{clock}</span><span className="lbDate">{dateStr}</span></div>
+    <button className="lbExit" onClick={onExit}><X size={18}/>خروج</button>
+  </div>
+
+  <div className="lbKpis">
+    <div className="lbKpi lbKpiDanger"><div className="lbKpiTop"><AlertCircle size={22}/><span>متأخرات</span></div><div className="lbKpiVal">{fmt(overdueAmt)}</div><div className="lbKpiSub">{overdueCount} دفعة · AED</div></div>
+    <div className="lbKpi lbKpiGreen"><div className="lbKpiTop"><CheckCircle2 size={22}/><span>محصّل الشهر</span></div><div className="lbKpiVal">{fmt(collectedMonth)}</div><div className="lbKpiSub">الكلي {fmt(totalPaid)} · AED</div></div>
+    <div className="lbKpi lbKpiAmber"><div className="lbKpiTop"><Clock size={22}/><span>قيد التحصيل</span></div><div className="lbKpiVal">{fmt(dueSoonAmt)}</div><div className="lbKpiSub">خلال 30 يوم · AED</div></div>
+    <div className="lbKpi lbKpiTeal"><div className="lbKpiTop"><Banknote size={22}/><span>عقود نشطة</span></div><div className="lbKpiVal">{d.leaseKpi?.active_leases||0}</div><div className="lbKpiSub">من {d.leaseKpi?.total_leases||0} عقد</div></div>
+    <div className="lbKpi lbKpiBlue"><div className="lbKpiTop"><BedDouble size={22}/><span>الإشغال</span></div><div className="lbKpiVal">{occupancyPct}%</div><div className="lbKpiSub">{totalRented}/{totalApts} وحدة</div></div>
+  </div>
+
+  <div className="lbMain">
+    <div className="lbCard lbCardWide">
+      <div className="lbCardTitle"><TrendingUp size={16}/>التحصيل الشهري — آخر 6 أشهر</div>
+      <div className="lbChartBox" dir="ltr">{payTrend.length===0?<div className="lbEmpty">لا توجد بيانات</div>:<ResponsiveContainer width="100%" height="100%">
+        <AreaChart data={payTrend} margin={{top:10,right:10,left:0,bottom:0}}>
+          <defs><linearGradient id="lbGreen" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#22c55e" stopOpacity={0.4}/><stop offset="95%" stopColor="#22c55e" stopOpacity={0}/></linearGradient></defs>
+          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#1e293b"/>
+          <XAxis dataKey="label" tick={LB_AXIS} axisLine={{stroke:'#334155'}}/>
+          <YAxis width={48} domain={[0,'auto']} tick={LB_AXIS} axisLine={false} tickFormatter={v=>v>=1000?(v/1000)+'k':v}/>
+          <Tooltip contentStyle={{background:'#0f172a',border:'1px solid #334155',borderRadius:10,color:'#fff',fontFamily:'inherit'}} formatter={v=>[fmt(v)+' AED','محصّل']}/>
+          <Area type="linear" dataKey="collected" stroke="#22c55e" strokeWidth={3} fill="url(#lbGreen)" isAnimationActive={false} dot={{r:4,fill:'#22c55e'}}/>
+        </AreaChart>
+      </ResponsiveContainer>}</div>
+    </div>
+    <div className="lbCard lbCardDonut">
+      <div className="lbCardTitle"><PieChartIcon size={16}/>معدل التحصيل</div>
+      <div className="lbDonutBox" dir="ltr">
+        <ResponsiveContainer width="100%" height="100%"><PieChart>
+          <Pie data={finComp} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius="62%" outerRadius="88%" paddingAngle={2} isAnimationActive={false}>{finComp.map((s,i)=><Cell key={i} fill={s.color}/>)}</Pie>
+          <Tooltip contentStyle={{background:'#0f172a',border:'1px solid #334155',borderRadius:10,color:'#fff',fontFamily:'inherit'}} formatter={v=>fmt(v)+' AED'}/>
+        </PieChart></ResponsiveContainer>
+        <div className="lbDonutCenter"><span className="lbDonutPct">{collectionRate}%</span><span className="lbDonutTxt">محصّل</span></div>
+      </div>
+      <div className="lbLegend">{finComp.map((s,i)=><span key={i} className="lbLegendItem"><span className="lbLegendDot" style={{background:s.color}}/>{s.name}</span>)}</div>
+    </div>
+
+    <div className="lbCard lbCardOverdue">
+      <div className="lbCardTitle"><AlertCircle size={16} color="#f87171"/>أعلى المتأخرات</div>
+      <div className="lbOverdueList">
+        {(d.overdueList||[]).slice(0,6).map(r=>{const rem=Number(r.amount)-Number(r.collected);const days=Math.floor((new Date()-new Date(r.due_date))/(1000*60*60*24));return(
+          <div key={r.id} className="lbOverdueRow">
+            <span className="lbOverdueDays">{days}ي</span>
+            <div className="lbOverdueInfo"><span className="lbOverdueName">{r.tenant_name}</span><span className="lbOverdueUnit">{r.villa_name} · {r.apartment_no}</span></div>
+            <span className="lbOverdueAmt">{fmt(Math.round(rem))}</span>
+          </div>);})}
+        {(!d.overdueList||d.overdueList.length===0)&&<div className="lbEmpty" style={{color:'#22c55e'}}>لا توجد متأخرات 👏</div>}
+      </div>
+    </div>
+    <div className="lbCard lbCardDonut">
+      <div className="lbCardTitle"><BedDouble size={16}/>الإشغال</div>
+      <div className="lbDonutBox" dir="ltr">
+        <ResponsiveContainer width="100%" height="100%"><PieChart>
+          <Pie data={occComp} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius="62%" outerRadius="88%" paddingAngle={2} isAnimationActive={false}>{occComp.map((s,i)=><Cell key={i} fill={s.color}/>)}</Pie>
+          <Tooltip contentStyle={{background:'#0f172a',border:'1px solid #334155',borderRadius:10,color:'#fff',fontFamily:'inherit'}} formatter={v=>v+' وحدة'}/>
+        </PieChart></ResponsiveContainer>
+        <div className="lbDonutCenter"><span className="lbDonutPct">{occupancyPct}%</span><span className="lbDonutTxt">إشغال</span></div>
+      </div>
+      <div className="lbLegend"><span className="lbLegendItem"><span className="lbLegendDot" style={{background:'#14b8a6'}}/>مأجورة {totalRented}</span><span className="lbLegendItem"><span className="lbLegendDot" style={{background:'#334155'}}/>متاحة {totalAvail}</span></div>
+    </div>
+  </div>
+</div>;
+}
 
 function Card({t,v,icon:Icon,tone='teal'}){return <div className="card"><div className={'cardIcon tone-'+tone}>{Icon&&<Icon size={18}/>}</div><div className="cardBody"><p>{t}</p><h3>{v}</h3></div></div>}
 function EmptyChart(){return <div className="emptyChart">لا توجد بيانات كافية لعرض الرسم البياني لهذه الفترة</div>}
