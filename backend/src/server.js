@@ -26,6 +26,19 @@ function requireFields(body, fields) {
   if (missing.length) throw Object.assign(new Error(`Missing required field(s): ${missing.join(', ')}`), { status: 400 });
 }
 
+const LOCK_MS = 24 * 60 * 60 * 1000;
+// a fully-collected installment locks (no edit/delete/pay) 1 day after it was collected
+async function assertInstallmentUnlocked(installmentId) {
+  const [[row]] = await pool.query(
+    `SELECT li.amount, COALESCE(SUM(ip.amount),0) paid, MAX(ip.created_at) collected_at
+     FROM lease_installments li LEFT JOIN installment_payments ip ON ip.installment_id=li.id
+     WHERE li.id=? GROUP BY li.id`, [installmentId]);
+  if (!row) return;
+  const collected = Number(row.paid) >= Number(row.amount);
+  if (collected && row.collected_at && (Date.now() - new Date(row.collected_at).getTime()) > LOCK_MS)
+    throw Object.assign(new Error('هذه الدفعة مُحصّلة ومقفلة — لا يمكن تعديلها أو حذفها (متاح السجل فقط)'), { status: 423 });
+}
+
 app.get('/api/health', (_, res) => res.json({ status: 'ok' }));
 
 app.post('/api/auth/login', wrap(async (req, res) => {
@@ -311,7 +324,7 @@ app.delete('/api/records/:id', auth, adminOnly, wrap(async (req, res) => {
 }));
 
 // ─── Tenants ──────────────────────────────────────────────────────────────
-crud('tenants', 'tenants', ['name', 'phone', 'national_id', 'email', 'notes'], ['name'], 'tenants_mgmt');
+crud('tenants', 'tenants', ['name', 'phone', 'national_id', 'car_number', 'email', 'notes'], ['name'], 'tenants_mgmt');
 
 // ─── Leases ───────────────────────────────────────────────────────────────
 app.get('/api/leases', auth, pageGuard('leases'), wrap(async (req, res) => {
@@ -324,7 +337,10 @@ app.get('/api/leases', auth, pageGuard('leases'), wrap(async (req, res) => {
     SELECT l.*, t.name tenant_name, t.phone tenant_phone,
       a.apartment_no, v.name villa_name, v.id villa_id,
       (SELECT COUNT(*) FROM lease_installments li WHERE li.lease_id=l.id) installments_count,
-      (SELECT COALESCE(SUM(ip.amount),0) FROM lease_installments li JOIN installment_payments ip ON ip.installment_id=li.id WHERE li.lease_id=l.id) collected_amount
+      (SELECT COALESCE(SUM(ip.amount),0) FROM lease_installments li JOIN installment_payments ip ON ip.installment_id=li.id WHERE li.lease_id=l.id) collected_amount,
+      (SELECT COUNT(*) FROM lease_installments li
+        LEFT JOIN (SELECT installment_id, SUM(amount) paid FROM installment_payments GROUP BY installment_id) pp ON pp.installment_id=li.id
+        WHERE li.lease_id=l.id AND li.is_cancelled=0 AND li.due_date < CURDATE() AND COALESCE(pp.paid,0) < li.amount) overdue_count
     FROM leases l
     JOIN tenants t ON t.id=l.tenant_id
     JOIN apartments a ON a.id=l.apartment_id
@@ -347,11 +363,11 @@ app.get('/api/leases/:id', auth, pageGuard('leases'), wrap(async (req, res) => {
   const [installments] = await pool.query(`
     SELECT li.*,
       COALESCE(SUM(ip.amount),0) collected_amount,
+      MAX(ip.created_at) collected_at,
       CASE
         WHEN li.is_cancelled=1 THEN 'cancelled'
         WHEN COALESCE(SUM(ip.amount),0) >= li.amount THEN 'collected'
-        WHEN ? = 1 AND li.notes LIKE 'مستحق عند إنهاء%' THEN
-          CASE WHEN li.due_date < CURDATE() THEN 'overdue' ELSE 'due_soon' END
+        WHEN ? = 1 AND li.notes LIKE 'مستحق عند إنهاء%' THEN 'settlement'
         WHEN ? = 1 THEN 'settled'
         WHEN li.due_date < CURDATE() THEN 'overdue'
         WHEN COALESCE(SUM(ip.amount),0) > 0 THEN 'partial'
@@ -363,6 +379,11 @@ app.get('/api/leases/:id', auth, pageGuard('leases'), wrap(async (req, res) => {
     WHERE li.lease_id=?
     GROUP BY li.id
     ORDER BY li.due_date`, [isTerminated ? 1 : 0, isTerminated ? 1 : 0, req.params.id]);
+  // lock a collected installment 1 day after it was fully collected (edit/delete/pay disabled → history only)
+  const DAY = 24 * 60 * 60 * 1000;
+  for (const i of installments) {
+    i.locked = i.status === 'collected' && i.collected_at != null && (Date.now() - new Date(i.collected_at).getTime()) > DAY;
+  }
   ok(res, { lease, installments });
 }));
 app.post('/api/leases', auth, wrap(async (req, res) => {
@@ -515,7 +536,75 @@ app.post('/api/leases/:leaseId/installments', auth, wrap(async (req, res) => {
   const [r] = await pool.query('INSERT INTO lease_installments SET ?', { lease_id: req.params.leaseId, due_date, amount, notes });
   ok(res, { id: r.insertId });
 }));
+
+// add n calendar months to YYYY-MM-DD (clamps day to end of month)
+function addMonths(dateStr, n) {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const totalM = (m - 1) + n;
+  const ny = y + Math.floor(totalM / 12);
+  const nm = ((totalM % 12) + 12) % 12; // 0-11
+  const lastDay = new Date(Date.UTC(ny, nm + 1, 0)).getUTCDate();
+  const nd = Math.min(d, lastDay);
+  return `${ny}-${String(nm + 1).padStart(2, '0')}-${String(nd).padStart(2, '0')}`;
+}
+
+// auto-generate installments across the lease term by frequency
+app.post('/api/leases/:id/generate-installments', auth, wrap(async (req, res) => {
+  const { frequency, replace } = req.body;
+  const INTERVALS = { monthly: 1, quarterly: 3, semiannual: 6, annual: 12 };
+  const interval = INTERVALS[frequency];
+  if (!interval) throw Object.assign(new Error('التكرار غير صالح (شهري/ربع سنوي/نصف سنوي/سنوي)'), { status: 400 });
+
+  const [[lease]] = await pool.query(
+    `SELECT id, total_amount, DATE_FORMAT(start_date,'%Y-%m-%d') start_date, DATE_FORMAT(end_date,'%Y-%m-%d') end_date
+     FROM leases WHERE id=?`, [req.params.id]);
+  if (!lease) throw Object.assign(new Error('العقد غير موجود'), { status: 404 });
+  const total = Number(lease.total_amount);
+  if (!(total > 0)) throw Object.assign(new Error('قيمة العقد غير صالحة'), { status: 400 });
+
+  // build due dates from start while strictly before end
+  const dueDates = [];
+  for (let k = 0; k < 600; k++) {
+    const due = addMonths(lease.start_date, k * interval);
+    if (due >= lease.end_date) break;
+    dueDates.push(due);
+  }
+  if (dueDates.length === 0) dueDates.push(lease.start_date);
+  const periods = dueDates.length;
+  const base = Math.floor((total / periods) * 100) / 100;
+
+  const conn = await pool.getConnection();
+  try {
+    await conn.beginTransaction();
+    // guard: refuse if any existing installment is locked (collected > 1 day)
+    if (replace) {
+      const [locked] = await conn.query(
+        `SELECT li.id FROM lease_installments li
+         LEFT JOIN installment_payments ip ON ip.installment_id=li.id
+         WHERE li.lease_id=? GROUP BY li.id, li.amount
+         HAVING COALESCE(SUM(ip.amount),0) >= li.amount AND MAX(ip.created_at) < NOW() - INTERVAL 1 DAY`, [req.params.id]);
+      if (locked.length) throw Object.assign(new Error('لا يمكن الاستبدال — يوجد دفعات محصّلة ومقفلة'), { status: 423 });
+      await conn.query('DELETE FROM lease_installments WHERE lease_id=?', [req.params.id]);
+    }
+    const FREQ_AR = { monthly: 'شهري', quarterly: 'ربع سنوي', semiannual: 'نصف سنوي', annual: 'سنوي' };
+    for (let i = 0; i < periods; i++) {
+      const amt = i === periods - 1
+        ? Math.round((total - base * (periods - 1)) * 100) / 100
+        : base;
+      await conn.query('INSERT INTO lease_installments SET ?',
+        { lease_id: req.params.id, due_date: dueDates[i], amount: amt, notes: `مُولّدة تلقائياً (${FREQ_AR[frequency]})` });
+    }
+    await conn.commit();
+    ok(res, { generated: periods, per_installment: base, frequency });
+  } catch (e) {
+    await conn.rollback();
+    throw e;
+  } finally {
+    conn.release();
+  }
+}));
 app.put('/api/installments/:id', auth, wrap(async (req, res) => {
+  await assertInstallmentUnlocked(req.params.id);
   const { due_date, amount, notes } = req.body;
   const data = {};
   if (due_date !== undefined) data.due_date = due_date;
@@ -526,22 +615,30 @@ app.put('/api/installments/:id', auth, wrap(async (req, res) => {
   ok(res, { id: req.params.id });
 }));
 app.delete('/api/installments/:id', auth, adminOnly, wrap(async (req, res) => {
+  await assertInstallmentUnlocked(req.params.id);
   await pool.query('DELETE FROM lease_installments WHERE id=?', [req.params.id]);
   ok(res, { deleted: true });
 }));
 
 // ─── Payments ─────────────────────────────────────────────────────────────
 app.get('/api/installments/:installmentId/payments', auth, wrap(async (req, res) => {
-  const [rows] = await pool.query('SELECT * FROM installment_payments WHERE installment_id=? ORDER BY payment_date', [req.params.installmentId]);
+  const [rows] = await pool.query(
+    `SELECT ip.*, u.name AS created_by_name
+     FROM installment_payments ip
+     LEFT JOIN users u ON u.id = ip.created_by
+     WHERE ip.installment_id=? ORDER BY ip.created_at, ip.id`, [req.params.installmentId]);
   ok(res, rows);
 }));
 app.post('/api/installments/:installmentId/payments', auth, wrap(async (req, res) => {
+  await assertInstallmentUnlocked(req.params.installmentId);
   requireFields(req.body, ['amount', 'payment_date']);
   const { amount, payment_date, notes } = req.body;
-  const [r] = await pool.query('INSERT INTO installment_payments SET ?', { installment_id: req.params.installmentId, amount, payment_date, notes });
+  const [r] = await pool.query('INSERT INTO installment_payments SET ?', { installment_id: req.params.installmentId, amount, payment_date, notes, created_by: req.user.id });
   ok(res, { id: r.insertId });
 }));
 app.delete('/api/payments/:id', auth, adminOnly, wrap(async (req, res) => {
+  const [[pay]] = await pool.query('SELECT installment_id FROM installment_payments WHERE id=?', [req.params.id]);
+  if (pay) await assertInstallmentUnlocked(pay.installment_id);
   await pool.query('DELETE FROM installment_payments WHERE id=?', [req.params.id]);
   ok(res, { deleted: true });
 }));
@@ -552,13 +649,284 @@ app.get('/api/reports/summary', auth, wrap(async (req, res) => {
   ok(res, rows);
 }));
 
+// ═══ Inventory / Warehouse (المخزن) ════════════════════════════════════════
+crud('suppliers', 'suppliers', ['name', 'phone', 'notes', 'is_active'], ['name'], 'inventory');
+
+// on-hand stock expression: purchases add, consumption subtracts, adjustments are signed
+const STOCK_EXPR = `COALESCE(SUM(CASE m.type WHEN 'purchase' THEN m.quantity WHEN 'consume' THEN -m.quantity ELSE m.quantity END),0)`;
+
+function decorateItem(i) {
+  const stock = Number(i.stock || 0);
+  const pQty = Number(i.purchased_qty || 0);
+  const pVal = Number(i.purchased_value || 0);
+  const avgCost = pQty > 0 ? Math.round((pVal / pQty) * 100) / 100 : 0;
+  return {
+    ...i,
+    stock,
+    avg_cost: avgCost,
+    stock_value: Math.round(stock * avgCost * 100) / 100,
+    status: stock <= 0 ? 'out' : (stock <= Number(i.reorder_level || 0) ? 'low' : 'ok'),
+  };
+}
+
+app.get('/api/inventory/items', auth, pageGuard('inventory'), wrap(async (req, res) => {
+  const [rows] = await pool.query(`
+    SELECT i.*,
+      ${STOCK_EXPR} AS stock,
+      COALESCE(SUM(CASE WHEN m.type='purchase' THEN m.quantity ELSE 0 END),0) AS purchased_qty,
+      COALESCE(SUM(CASE WHEN m.type='purchase' THEN m.total_amount ELSE 0 END),0) AS purchased_value
+    FROM inventory_items i
+    LEFT JOIN stock_movements m ON m.item_id=i.id
+    GROUP BY i.id ORDER BY i.name`);
+  ok(res, rows.map(decorateItem));
+}));
+
+app.get('/api/inventory/items/:id', auth, pageGuard('inventory'), wrap(async (req, res) => {
+  const [[item]] = await pool.query(`
+    SELECT i.*,
+      ${STOCK_EXPR} AS stock,
+      COALESCE(SUM(CASE WHEN m.type='purchase' THEN m.quantity ELSE 0 END),0) AS purchased_qty,
+      COALESCE(SUM(CASE WHEN m.type='purchase' THEN m.total_amount ELSE 0 END),0) AS purchased_value
+    FROM inventory_items i LEFT JOIN stock_movements m ON m.item_id=i.id
+    WHERE i.id=? GROUP BY i.id`, [req.params.id]);
+  if (!item) throw Object.assign(new Error('الصنف غير موجود'), { status: 404 });
+  const [movements] = await pool.query(`
+    SELECT m.*, s.name supplier_name, v.name villa_name, u.name created_by_name
+    FROM stock_movements m
+    LEFT JOIN suppliers s ON s.id=m.supplier_id
+    LEFT JOIN villas v ON v.id=m.villa_id
+    LEFT JOIN users u ON u.id=m.created_by
+    WHERE m.item_id=? ORDER BY m.movement_date DESC, m.id DESC`, [req.params.id]);
+  ok(res, { item: decorateItem(item), movements });
+}));
+
+app.post('/api/inventory/items', auth, wrap(async (req, res) => {
+  requireFields(req.body, ['name']);
+  const { name, unit, category, reorder_level, notes, is_active } = req.body;
+  const [r] = await pool.query('INSERT INTO inventory_items SET ?',
+    { name, unit: unit || 'قطعة', category: category || null, reorder_level: reorder_level || 0, notes: notes || null, is_active: is_active ?? 1 });
+  ok(res, { id: r.insertId });
+}));
+app.put('/api/inventory/items/:id', auth, wrap(async (req, res) => {
+  const data = {};
+  ['name', 'unit', 'category', 'reorder_level', 'notes', 'is_active'].forEach(f => { if (req.body[f] !== undefined) data[f] = req.body[f]; });
+  if (!Object.keys(data).length) throw Object.assign(new Error('No fields'), { status: 400 });
+  await pool.query('UPDATE inventory_items SET ? WHERE id=?', [data, req.params.id]);
+  ok(res, { id: req.params.id });
+}));
+app.delete('/api/inventory/items/:id', auth, adminOnly, wrap(async (req, res) => {
+  await pool.query('DELETE FROM inventory_items WHERE id=?', [req.params.id]);
+  ok(res, { deleted: true });
+}));
+
+// all movements (filterable)
+app.get('/api/inventory/movements', auth, pageGuard('inventory'), wrap(async (req, res) => {
+  const where = ['1=1']; const p = [];
+  if (req.query.type) { where.push('m.type=?'); p.push(req.query.type); }
+  if (req.query.item_id) { where.push('m.item_id=?'); p.push(req.query.item_id); }
+  if (req.query.from) { where.push('m.movement_date>=?'); p.push(req.query.from); }
+  if (req.query.to) { where.push('m.movement_date<=?'); p.push(req.query.to); }
+  const [rows] = await pool.query(`
+    SELECT m.*, i.name item_name, i.unit item_unit, s.name supplier_name, v.name villa_name, u.name created_by_name
+    FROM stock_movements m
+    JOIN inventory_items i ON i.id=m.item_id
+    LEFT JOIN suppliers s ON s.id=m.supplier_id
+    LEFT JOIN villas v ON v.id=m.villa_id
+    LEFT JOIN users u ON u.id=m.created_by
+    WHERE ${where.join(' AND ')} ORDER BY m.movement_date DESC, m.id DESC LIMIT 500`, p);
+  ok(res, rows);
+}));
+
+// record a movement (purchase / consume / adjust)
+app.post('/api/inventory/movements', auth, wrap(async (req, res) => {
+  const { item_id, type, quantity, unit_price, movement_date, supplier_id, villa_id, record_id, notes } = req.body;
+  requireFields(req.body, ['item_id', 'type', 'quantity', 'movement_date']);
+  if (!['purchase', 'consume', 'adjust'].includes(type)) throw Object.assign(new Error('نوع الحركة غير صالح'), { status: 400 });
+  const qty = Number(quantity);
+  if (isNaN(qty) || qty === 0) throw Object.assign(new Error('الكمية غير صالحة'), { status: 400 });
+  if ((type === 'purchase' || type === 'consume') && qty <= 0) throw Object.assign(new Error('الكمية يجب أن تكون أكبر من صفر'), { status: 400 });
+
+  // current stock + avg cost
+  const [[cur]] = await pool.query(`
+    SELECT ${STOCK_EXPR} AS stock,
+      COALESCE(SUM(CASE WHEN m.type='purchase' THEN m.quantity ELSE 0 END),0) AS pq,
+      COALESCE(SUM(CASE WHEN m.type='purchase' THEN m.total_amount ELSE 0 END),0) AS pv
+    FROM inventory_items i LEFT JOIN stock_movements m ON m.item_id=i.id WHERE i.id=?`, [item_id]);
+  if (!cur) throw Object.assign(new Error('الصنف غير موجود'), { status: 404 });
+  const stock = Number(cur.stock);
+  const avgCost = Number(cur.pq) > 0 ? Number(cur.pv) / Number(cur.pq) : 0;
+
+  if (type === 'consume' && qty > stock)
+    throw Object.assign(new Error(`الكمية المتاحة ${stock} فقط — لا يمكن صرف ${qty}`), { status: 400 });
+
+  const up = type === 'purchase' ? Number(unit_price || 0) : (type === 'consume' ? Math.round(avgCost * 100) / 100 : 0);
+  const total = Math.round(Math.abs(qty) * up * 100) / 100;
+  const [r] = await pool.query('INSERT INTO stock_movements SET ?', {
+    item_id, type, quantity: qty, unit_price: up, total_amount: total, movement_date,
+    supplier_id: type === 'purchase' ? (supplier_id || null) : null,
+    villa_id: type === 'consume' ? (villa_id || null) : null,
+    record_id: type === 'consume' ? (record_id || null) : null,
+    notes: notes || null, created_by: req.user.id,
+  });
+  ok(res, { id: r.insertId });
+}));
+app.delete('/api/inventory/movements/:id', auth, adminOnly, wrap(async (req, res) => {
+  await pool.query('DELETE FROM stock_movements WHERE id=?', [req.params.id]);
+  ok(res, { deleted: true });
+}));
+
+// summary / KPIs / reports
+app.get('/api/inventory/summary', auth, pageGuard('inventory'), wrap(async (req, res) => {
+  const [items] = await pool.query(`
+    SELECT i.id, i.name, i.unit, i.reorder_level,
+      ${STOCK_EXPR} AS stock,
+      COALESCE(SUM(CASE WHEN m.type='purchase' THEN m.quantity ELSE 0 END),0) AS purchased_qty,
+      COALESCE(SUM(CASE WHEN m.type='purchase' THEN m.total_amount ELSE 0 END),0) AS purchased_value
+    FROM inventory_items i LEFT JOIN stock_movements m ON m.item_id=i.id
+    GROUP BY i.id`);
+  const decorated = items.map(decorateItem);
+  const totalValue = Math.round(decorated.reduce((s, i) => s + i.stock_value, 0) * 100) / 100;
+  const lowStock = decorated.filter(i => i.status === 'low');
+  const outStock = decorated.filter(i => i.status === 'out');
+
+  const [[mp]] = await pool.query(`SELECT COALESCE(SUM(total_amount),0) v, COUNT(*) c FROM stock_movements WHERE type='purchase' AND YEAR(movement_date)=YEAR(CURDATE()) AND MONTH(movement_date)=MONTH(CURDATE())`);
+  const [[mc]] = await pool.query(`SELECT COALESCE(SUM(total_amount),0) v, COALESCE(SUM(quantity),0) q, COUNT(*) c FROM stock_movements WHERE type='consume' AND YEAR(movement_date)=YEAR(CURDATE()) AND MONTH(movement_date)=MONTH(CURDATE())`);
+  const [topConsumed] = await pool.query(`
+    SELECT i.name, i.unit, SUM(m.quantity) qty, COALESCE(SUM(m.total_amount),0) value
+    FROM stock_movements m JOIN inventory_items i ON i.id=m.item_id
+    WHERE m.type='consume' GROUP BY m.item_id ORDER BY qty DESC LIMIT 8`);
+  const [byVilla] = await pool.query(`
+    SELECT v.name villa_name, COALESCE(SUM(m.total_amount),0) value, SUM(m.quantity) qty
+    FROM stock_movements m JOIN villas v ON v.id=m.villa_id
+    WHERE m.type='consume' AND m.villa_id IS NOT NULL GROUP BY m.villa_id ORDER BY value DESC LIMIT 8`);
+
+  ok(res, {
+    total_items: decorated.length,
+    total_value: totalValue,
+    low_count: lowStock.length,
+    out_count: outStock.length,
+    low_items: lowStock.map(i => ({ id: i.id, name: i.name, unit: i.unit, stock: i.stock, reorder_level: Number(i.reorder_level) })),
+    month_purchases: { value: Number(mp.v), count: mp.c },
+    month_consumption: { value: Number(mc.v), qty: Number(mc.q), count: mc.c },
+    top_consumed: topConsumed,
+    by_villa: byVilla,
+  });
+}));
+
+// ── Inventory Import (استيراد المخزن) ───────────────────────────────────────
+function invSheets() {
+  return [
+    { name: 'الأصناف', headers: ['اسم الصنف *', 'الوحدة', 'الفئة', 'حد إعادة الطلب', 'الرصيد الافتتاحي', 'سعر الوحدة', 'ملاحظات'],
+      rows: [['مواسير PVC 2 بوصة', 'متر', 'سباكة', 20, 100, 8, ''], ['كابل كهرباء 2.5مم', 'لفة', 'كهرباء', 5, 10, 120, '']] },
+    { name: 'الموردون', headers: ['الاسم *', 'الهاتف', 'ملاحظات'],
+      rows: [['مؤسسة النور للأدوات', '0501112222', ''], ['شركة الإمداد', '0509998888', 'مورد رئيسي']] },
+    { name: 'المشتريات', headers: ['اسم الصنف *', 'الكمية *', 'سعر الوحدة *', 'التاريخ', 'المورّد', 'ملاحظات'],
+      rows: [['مواسير PVC 2 بوصة', 50, 8, '2026-01-15', 'مؤسسة النور للأدوات', 'فاتورة 1023']] },
+  ];
+}
+app.get('/api/inventory/import/template', auth, adminOnly, (req, res) => {
+  const wb = XLSX.utils.book_new();
+  for (const s of invSheets()) {
+    const ws = XLSX.utils.aoa_to_sheet([s.headers, ...s.rows]);
+    ws['!cols'] = s.headers.map(() => ({ wch: 20 }));
+    XLSX.utils.book_append_sheet(wb, ws, s.name);
+  }
+  const buf = Buffer.from(XLSX.write(wb, { type: 'array', bookType: 'xlsx' }));
+  res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+  res.setHeader('Content-Disposition', "attachment; filename*=UTF-8''%D9%86%D9%85%D9%88%D8%B0%D8%AC_%D8%A7%D9%84%D9%85%D8%AE%D8%B2%D9%86.xlsx");
+  res.send(buf);
+});
+
+app.post('/api/inventory/import/preview', auth, adminOnly, upload.single('file'), wrap(async (req, res) => {
+  if (!req.file) return res.status(400).json({ message: 'لم يتم رفع ملف' });
+  const wb = XLSX.read(req.file.buffer, { type: 'buffer', cellDates: true });
+  const items = parseSheet(wb, 'الأصناف');
+  const suppliers = parseSheet(wb, 'الموردون');
+  const purchases = parseSheet(wb, 'المشتريات');
+  const errors = [];
+  items.forEach((r, i) => { if (!r['اسم الصنف *']) errors.push(`الأصناف - صف ${i + 2}: اسم الصنف مطلوب`); });
+  suppliers.forEach((r, i) => { if (!r['الاسم *']) errors.push(`الموردون - صف ${i + 2}: الاسم مطلوب`); });
+  purchases.forEach((r, i) => {
+    if (!r['اسم الصنف *']) errors.push(`المشتريات - صف ${i + 2}: اسم الصنف مطلوب`);
+    if (!r['الكمية *']) errors.push(`المشتريات - صف ${i + 2}: الكمية مطلوبة`);
+    if (r['سعر الوحدة *'] === '' || r['سعر الوحدة *'] == null) errors.push(`المشتريات - صف ${i + 2}: سعر الوحدة مطلوب`);
+  });
+  ok(res, { items, suppliers, purchases, errors,
+    counts: { items: items.length, suppliers: suppliers.length, purchases: purchases.length } });
+}));
+
+app.post('/api/inventory/import/confirm', auth, adminOnly, upload.single('file'), wrap(async (req, res) => {
+  if (!req.file) return res.status(400).json({ message: 'لم يتم رفع ملف' });
+  const wb = XLSX.read(req.file.buffer, { type: 'buffer', cellDates: true });
+  const itemRows = parseSheet(wb, 'الأصناف').filter(r => r['اسم الصنف *']);
+  const supRows = parseSheet(wb, 'الموردون').filter(r => r['الاسم *']);
+  const purRows = parseSheet(wb, 'المشتريات').filter(r => r['اسم الصنف *'] && r['الكمية *']);
+  const today = new Date().toISOString().slice(0, 10);
+  const conn = await pool.getConnection();
+  const report = { items: 0, suppliers: 0, purchases: 0, opening: 0, skipped: [] };
+  try {
+    await conn.beginTransaction();
+    // suppliers
+    const supMap = {};
+    const [existingSup] = await conn.query('SELECT id, name FROM suppliers');
+    existingSup.forEach(s => { supMap[s.name] = s.id; });
+    for (const r of supRows) {
+      const name = String(r['الاسم *']).trim();
+      if (supMap[name]) { report.skipped.push(`مورّد "${name}" موجود بالفعل`); continue; }
+      const [ins] = await conn.query('INSERT INTO suppliers (name,phone,notes) VALUES (?,?,?)', [name, r['الهاتف'] || null, r['ملاحظات'] || null]);
+      supMap[name] = ins.insertId; report.suppliers++;
+    }
+    // items (+ optional opening balance as a purchase movement)
+    const itemMap = {};
+    const [existingItems] = await conn.query('SELECT id, name FROM inventory_items');
+    existingItems.forEach(i => { itemMap[i.name] = i.id; });
+    for (const r of itemRows) {
+      const name = String(r['اسم الصنف *']).trim();
+      let itemId = itemMap[name];
+      if (!itemId) {
+        const [ins] = await conn.query('INSERT INTO inventory_items SET ?',
+          { name, unit: r['الوحدة'] || 'قطعة', category: r['الفئة'] || null, reorder_level: Number(r['حد إعادة الطلب']) || 0, notes: r['ملاحظات'] || null });
+        itemId = ins.insertId; itemMap[name] = itemId; report.items++;
+      } else { report.skipped.push(`صنف "${name}" موجود بالفعل`); }
+      const openQty = Number(r['الرصيد الافتتاحي']) || 0;
+      if (openQty > 0) {
+        const up = Number(r['سعر الوحدة']) || 0;
+        await conn.query('INSERT INTO stock_movements SET ?',
+          { item_id: itemId, type: 'purchase', quantity: openQty, unit_price: up, total_amount: Math.round(openQty * up * 100) / 100, movement_date: today, notes: 'رصيد افتتاحي (استيراد)', created_by: req.user.id });
+        report.opening++;
+      }
+    }
+    // purchases
+    for (const r of purRows) {
+      const name = String(r['اسم الصنف *']).trim();
+      const itemId = itemMap[name];
+      if (!itemId) { report.skipped.push(`مشتريات: صنف "${name}" غير موجود`); continue; }
+      const qty = Number(r['الكمية *']) || 0;
+      const up = Number(r['سعر الوحدة *']) || 0;
+      if (qty <= 0) { report.skipped.push(`مشتريات "${name}": كمية غير صالحة`); continue; }
+      const supName = r['المورّد'] ? String(r['المورّد']).trim() : null;
+      await conn.query('INSERT INTO stock_movements SET ?',
+        { item_id: itemId, type: 'purchase', quantity: qty, unit_price: up, total_amount: Math.round(qty * up * 100) / 100,
+          movement_date: toDate(r['التاريخ']) || today, supplier_id: (supName && supMap[supName]) || null, notes: r['ملاحظات'] || null, created_by: req.user.id });
+      report.purchases++;
+    }
+    await conn.commit();
+    ok(res, report);
+  } catch (e) {
+    await conn.rollback();
+    throw e;
+  } finally {
+    conn.release();
+  }
+}));
+
 // ── Import Template ────────────────────────────────────────────────────────
 app.get('/api/import/template', auth, adminOnly, (req, res) => {
   const wb = XLSX.utils.book_new();
   const sheets = [
     { name:'الفلل', headers:['اسم الفيلا *','المنطقة','ملاحظات'], rows:[['فيلا الأحمدي','دبي - الجميرا',''],['فيلا النخيل','أبوظبي - الخالدية','فيلا مجددة 2024']] },
     { name:'الشقق', headers:['اسم الفيلا *','رقم الشقة *','نوع الشقة','عدد الحمامات','بلكونة (نعم/لا)','الدور','ملاحظات'], rows:[['فيلا الأحمدي','101','غرفتان وصالة',2,'نعم','أول',''],['فيلا الأحمدي','102','استوديو',1,'لا','أرضي','مدخل خاص'],['فيلا النخيل','201','ثلاث غرف وصالة',3,'نعم','ثاني','']] },
-    { name:'المستأجرين', headers:['الاسم *','الهاتف','رقم الهوية','الإيميل','ملاحظات'], rows:[['أحمد محمد الكندي','0501234567','784-1990-1234567-1','ahmed@email.com',''],['سارة علي المنصوري','0559876543','784-1985-7654321-2','','مستأجرة قديمة']] },
+    { name:'المستأجرين', headers:['الاسم *','الهاتف','رقم الهوية','رقم السيارة','الإيميل','ملاحظات'], rows:[['أحمد محمد الكندي','0501234567','784-1990-1234567-1','أ ب ج 12345','ahmed@email.com',''],['سارة علي المنصوري','0559876543','784-1985-7654321-2','','','مستأجرة قديمة']] },
     { name:'العقود', headers:['اسم الفيلا *','رقم الشقة *','اسم المستأجر *','تاريخ البداية *','تاريخ النهاية *','إجمالي الإيجار *','ملاحظات'], rows:[['فيلا الأحمدي','101','أحمد محمد الكندي','2025-01-01','2026-01-01',60000,''],['فيلا النخيل','201','سارة علي المنصوري','2024-06-01','2025-06-01',90000,'عقد منتهي']] },
     { name:'الدفعات', headers:['اسم الفيلا *','رقم الشقة *','اسم المستأجر *','تاريخ الاستحقاق *','المبلغ *','تاريخ الدفع (فارغ = لم يُدفع)','ملاحظات'], rows:[['فيلا الأحمدي','101','أحمد محمد الكندي','2025-01-01',15000,'2025-01-05','ربع سنوي'],['فيلا الأحمدي','101','أحمد محمد الكندي','2025-04-01',15000,'','لم يُدفع بعد']] },
   ];
@@ -669,8 +1037,8 @@ app.post('/api/import/confirm', auth, adminOnly, upload.single('file'), wrap(asy
       const name = String(r['الاسم *']).trim();
       const [[ex]] = await conn.query('SELECT id FROM tenants WHERE name=?', [name]);
       if (ex) { tenMap[name] = ex.id; report.skipped.push(`مستأجر "${name}" موجود بالفعل`); continue; }
-      const [ins] = await conn.query('INSERT INTO tenants (name,phone,national_id,email,notes) VALUES (?,?,?,?,?)',
-        [name, r['الهاتف']||null, r['رقم الهوية']||null, r['الإيميل']||null, r['ملاحظات']||null]);
+      const [ins] = await conn.query('INSERT INTO tenants (name,phone,national_id,car_number,email,notes) VALUES (?,?,?,?,?,?)',
+        [name, r['الهاتف']||null, r['رقم الهوية']||null, r['رقم السيارة']||null, r['الإيميل']||null, r['ملاحظات']||null]);
       tenMap[name] = ins.insertId; report.tenants++;
     }
     const [existingTens] = await conn.query('SELECT id, name FROM tenants');

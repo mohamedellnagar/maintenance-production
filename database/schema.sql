@@ -93,6 +93,7 @@ CREATE TABLE tenants (
   name VARCHAR(150) NOT NULL,
   phone VARCHAR(30) NULL,
   national_id VARCHAR(50) NULL,
+  car_number VARCHAR(50) NULL,
   email VARCHAR(150) NULL,
   notes TEXT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -135,6 +136,7 @@ CREATE TABLE installment_payments (
   amount DECIMAL(12,2) NOT NULL,
   payment_date DATE NOT NULL,
   notes TEXT NULL,
+  created_by BIGINT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT fk_pay_inst FOREIGN KEY (installment_id) REFERENCES lease_installments(id) ON DELETE CASCADE
 );
@@ -147,3 +149,43 @@ INSERT INTO villas(name, area) VALUES ('فيلا التميمي','دبي'),('ف�
 INSERT INTO apartments(villa_id, apartment_no, floor) VALUES (1,'1','أرضي'),(1,'2','أول'),(2,'1','أرضي'),(3,'4','ثاني');
 INSERT INTO technicians(name, specialty) VALUES ('غزال','تكييف'),('سند','تكييف'),('فريد','سباكة'),('معاذ','كهرباء'),('عبد الرافع','عام');
 
+
+-- ═══ Inventory / Warehouse (المخزن) ═══
+CREATE TABLE suppliers (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  name VARCHAR(150) NOT NULL,
+  phone VARCHAR(50) NULL,
+  notes TEXT NULL,
+  is_active BOOLEAN NOT NULL DEFAULT TRUE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE inventory_items (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  name VARCHAR(150) NOT NULL,
+  unit VARCHAR(30) NOT NULL DEFAULT 'قطعة',
+  category VARCHAR(80) NULL,
+  reorder_level DECIMAL(12,2) NOT NULL DEFAULT 0,
+  notes TEXT NULL,
+  is_active BOOLEAN NOT NULL DEFAULT TRUE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE stock_movements (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  item_id BIGINT NOT NULL,
+  type ENUM('purchase','consume','adjust') NOT NULL,
+  quantity DECIMAL(12,2) NOT NULL,
+  unit_price DECIMAL(12,2) NOT NULL DEFAULT 0,
+  total_amount DECIMAL(12,2) NOT NULL DEFAULT 0,
+  movement_date DATE NOT NULL,
+  supplier_id BIGINT NULL,
+  villa_id BIGINT NULL,
+  record_id BIGINT NULL,
+  notes TEXT NULL,
+  created_by BIGINT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_mov_item FOREIGN KEY (item_id) REFERENCES inventory_items(id) ON DELETE CASCADE,
+  CONSTRAINT fk_mov_supplier FOREIGN KEY (supplier_id) REFERENCES suppliers(id) ON DELETE SET NULL,
+  CONSTRAINT fk_mov_villa FOREIGN KEY (villa_id) REFERENCES villas(id) ON DELETE SET NULL
+);
