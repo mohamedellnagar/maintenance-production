@@ -1,7 +1,39 @@
 # Database
 
-Local storage is **SQLite** via [Drift]. Schema version **2**. Foreign keys are
+Local storage is **SQLite** via [Drift]. Schema version **3**. Foreign keys are
 enabled (`PRAGMA foreign_keys = ON`). All money is stored as integer minor units.
+
+## Recurring tables (v3)
+
+- **`recurring_rules`** — `id`, `name`, `recurring_type`
+  (`income|expense|transfer|liabilityPayment`), `account_id?→accounts`,
+  `destination_account_id?→accounts`, `category_id?→categories`,
+  `amount_minor`, `currency_code`, `recurrence_frequency`
+  (`daily|weekly|monthly|yearly|customInterval`), `interval_value`,
+  `monthly_day?`, `monthly_week_ordinal?`, `monthly_weekday?`, `yearly_month?`,
+  `yearly_day?`, `start_date`, `end_date?`, `max_occurrences?`,
+  `auto_create_transaction`, `reminder_days_before`, `notes?`, `is_active`,
+  `last_generated_through?`, timestamps. Dates are stored as **epoch-day
+  integers** (`LocalDate`).
+- **`recurring_rule_weekdays`** — join table for weekly rules with multiple
+  weekdays: `recurring_rule_id→recurring_rules`, `weekday` (1..7), PK
+  `{recurring_rule_id, weekday}`.
+- **`recurring_occurrences`** — `id`, `recurring_rule_id→recurring_rules`,
+  `due_date`, `original_due_date`, `expected_amount_minor`, `status`
+  (`scheduled|paid|skipped|cancelled`), `generated_transaction_id?→transactions`,
+  `completed_at?`, `skipped_at?`, `skip_reason?`, `snoozed_until?`, timestamps.
+  **`UNIQUE(recurring_rule_id, original_due_date)`** makes generation
+  idempotent; a CHECK guards `status`.
+
+`app_settings` also gains **`auto_create_recurring_enabled`** (default false).
+
+`schemaVersion` is **3**; `onUpgrade` adds the settings column and creates the
+three recurring tables when upgrading from < 3 (the budget tables are still
+created when upgrading from < 2). Migration tests cover **v2→v3** and
+**v1→latest** (`test/database/recurring_test.dart`,
+`test/database/budget_test.dart`). Repository-enforced rules — idempotent
+generation, atomic posting with a double-post guard, archived-reference
+rejection, delete-blocked-when-posted — sit alongside these constraints.
 
 ## Budget tables (v2)
 

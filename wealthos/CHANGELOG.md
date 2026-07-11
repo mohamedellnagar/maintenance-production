@@ -3,6 +3,47 @@
 All notable changes to WealthOS are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.3.0] — Recurring Transactions & Bills Engine V1
+
+### Added
+- **Three-layer model** — `RecurringRule` (schedule/template), `Occurrence`
+  (a planned due date that never affects balances), and `Transaction` (the real
+  record). Unpaid occurrences are excluded from actual spending, income,
+  balance and net worth.
+- **Recurring types**: `income`, `expense`, `transfer`, and `liabilityPayment`
+  (posted as an asset→liability transfer, never as income/expense).
+- **`RecurrenceCalculator`** (pure, exhaustively tested): daily, weekly
+  (interval + multiple weekdays), monthly (day-of-month **or** ordinal weekday
+  like "last Friday"), yearly, and every-N-days. Day-of-month clamps to the
+  month's last day (no spill); 29 Feb yearly falls back to 28 Feb in
+  non-leap years. Dates use a UTC-based `LocalDate` and an injected `Clock`.
+- **`RecurrenceGenerationService`**: idempotent, atomic, on-demand window
+  generation (today → +90d, ~60d backfill) with no background timer.
+- **Atomic posting** with a double-post guard; deleting the linked transaction
+  reactively reopens the occurrence (status is largely derived, not stored).
+- **Auto-create** (per-rule + global toggle, both off by default): posts
+  due/overdue occurrences once on app open, never future, never when a
+  referenced account/category is archived.
+- **Snooze / Skip / Pause / Resume / End / Edit** with future-only schedule
+  regeneration that leaves posted history untouched.
+- **Screens**: bottom-nav **Recurring** tab (overdue / due today / upcoming
+  7 & 30, planned totals labelled as *planned*, active rules), add/edit rule
+  form, rule details, occurrence details (mark paid, edit-before-posting,
+  snooze, skip).
+- **Dashboard** reactive **Upcoming Bills** card; **Budget** screen & item
+  details show **"Upcoming recurring"** separately (the `BudgetCalculator` is
+  unchanged).
+- **In-app insights** only (overdue, multiple due today, income upcoming,
+  auto-create failed, archived reference, many unpaid) — no device
+  notifications.
+- **Database**: schema **v3** with `recurring_rules`,
+  `recurring_rule_weekdays`, `recurring_occurrences`
+  (`UNIQUE(recurring_rule_id, original_due_date)`, CHECKs, FKs) and an
+  `auto_create_recurring_enabled` settings column, with real v2→v3 and
+  v1→latest migrations + tests.
+- Full ar/en localization; ~69 new unit/database/integration/widget tests
+  (125 → 194); docs `recurring-model.md` + `recurring-implementation-plan.md`.
+
 ## [1.2.0] — Budgeting Engine V1
 
 ### Added

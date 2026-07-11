@@ -12,11 +12,14 @@ import 'package:wealthos/features/budgets/domain/budget_item.dart';
 import 'package:wealthos/features/budgets/domain/budget_item_input.dart';
 
 void main() {
-  group('migration v1 → v2', () {
-    test('upgrading a v1 database creates the budget tables', () async {
-      final raw = sqlite3.openInMemory();
-      // Minimal v1 schema needed for seeding + budget FKs, marked as version 1.
-      raw.execute('''
+  group('migration v1 → latest', () {
+    test(
+      'upgrading a v1 database creates budget and recurring tables',
+      () async {
+        final raw = sqlite3.openInMemory();
+        // Minimal v1 schema needed for seeding + FKs, marked as version 1. The
+        // app_settings table must exist so the v3 addColumn migration can run.
+        raw.execute('''
         CREATE TABLE categories (
           id TEXT NOT NULL PRIMARY KEY,
           name_ar TEXT NOT NULL,
@@ -30,26 +33,57 @@ void main() {
           updated_at INTEGER NOT NULL
         );
       ''');
-      raw.execute('CREATE TABLE accounts (id TEXT NOT NULL PRIMARY KEY);');
-      raw.execute('PRAGMA user_version = 1;');
+        raw.execute('CREATE TABLE accounts (id TEXT NOT NULL PRIMARY KEY);');
+        raw.execute('''
+        CREATE TABLE app_settings (
+          id INTEGER NOT NULL PRIMARY KEY DEFAULT 1,
+          base_currency TEXT NOT NULL,
+          language_code TEXT NOT NULL,
+          theme_mode TEXT NOT NULL DEFAULT 'system',
+          biometric_enabled INTEGER NOT NULL DEFAULT 0,
+          onboarding_completed INTEGER NOT NULL DEFAULT 0,
+          created_at INTEGER NOT NULL,
+          updated_at INTEGER NOT NULL
+        );
+      ''');
+        raw.execute('PRAGMA user_version = 1;');
 
-      final db = AppDatabase.forTesting(NativeDatabase.opened(raw));
-      addTearDown(db.close);
-      // Trigger open + migration.
-      await db.customSelect('SELECT 1').get();
+        final db = AppDatabase.forTesting(NativeDatabase.opened(raw));
+        addTearDown(db.close);
+        // Trigger open + migration.
+        await db.customSelect('SELECT 1').get();
 
-      final tables = await db
-          .customSelect("SELECT name FROM sqlite_master WHERE type='table'")
-          .get();
-      final names = tables.map((r) => r.read<String>('name')).toSet();
-      expect(
-        names,
-        containsAll(['budgets', 'budget_items', 'budget_rollovers']),
-      );
+        final tables = await db
+            .customSelect("SELECT name FROM sqlite_master WHERE type='table'")
+            .get();
+        final names = tables.map((r) => r.read<String>('name')).toSet();
+        expect(
+          names,
+          containsAll([
+            'budgets',
+            'budget_items',
+            'budget_rollovers',
+            'recurring_rules',
+            'recurring_rule_weekdays',
+            'recurring_occurrences',
+          ]),
+        );
 
-      final version = await db.customSelect('PRAGMA user_version').getSingle();
-      expect(version.read<int>('user_version'), 2);
-    });
+        // The auto-create column was added to app_settings.
+        final settingsCols = await db
+            .customSelect('PRAGMA table_info(app_settings)')
+            .get();
+        final colNames = settingsCols
+            .map((r) => r.read<String>('name'))
+            .toSet();
+        expect(colNames, contains('auto_create_recurring_enabled'));
+
+        final version = await db
+            .customSelect('PRAGMA user_version')
+            .getSingle();
+        expect(version.read<int>('user_version'), 3);
+      },
+    );
   });
 
   group('budget repository', () {

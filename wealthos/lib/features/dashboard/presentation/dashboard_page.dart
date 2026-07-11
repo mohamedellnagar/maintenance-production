@@ -9,6 +9,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/money_text.dart';
 import '../../budgets/presentation/widgets/budget_summary_card.dart';
+import '../../recurring/presentation/widgets/upcoming_bills_card.dart';
 import '../../transactions/application/transactions_providers.dart';
 import '../../transactions/presentation/widgets/transaction_tile.dart';
 import '../application/dashboard_providers.dart';
@@ -99,6 +100,8 @@ class _DashboardBody extends ConsumerWidget {
         ),
         const SizedBox(height: AppSpacing.lg),
         const BudgetSummaryCard(),
+        const SizedBox(height: AppSpacing.md),
+        const UpcomingBillsCard(),
         const SizedBox(height: AppSpacing.xl),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

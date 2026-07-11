@@ -47,6 +47,7 @@ class SettingsRepository {
     AppThemeMode? themeMode,
     bool? biometricEnabled,
     bool? onboardingCompleted,
+    bool? autoCreateRecurringEnabled,
   }) async {
     await getOrCreate();
     await (_db.update(
@@ -68,6 +69,9 @@ class SettingsRepository {
         onboardingCompleted: onboardingCompleted == null
             ? const Value.absent()
             : Value(onboardingCompleted),
+        autoCreateRecurringEnabled: autoCreateRecurringEnabled == null
+            ? const Value.absent()
+            : Value(autoCreateRecurringEnabled),
         updatedAt: Value(_now()),
       ),
     );
@@ -83,5 +87,6 @@ class SettingsRepository {
     themeMode: AppThemeMode.fromName(row.themeMode),
     biometricEnabled: row.biometricEnabled,
     onboardingCompleted: row.onboardingCompleted,
+    autoCreateRecurringEnabled: row.autoCreateRecurringEnabled,
   );
 }

@@ -37,6 +37,10 @@ class SettingsController {
   Future<void> setBiometricEnabled({required bool enabled}) =>
       _ref.read(settingsRepositoryProvider).update(biometricEnabled: enabled);
 
+  Future<void> setAutoCreateRecurringEnabled({required bool enabled}) => _ref
+      .read(settingsRepositoryProvider)
+      .update(autoCreateRecurringEnabled: enabled);
+
   Future<void> completeOnboarding() =>
       _ref.read(settingsRepositoryProvider).update(onboardingCompleted: true);
 }

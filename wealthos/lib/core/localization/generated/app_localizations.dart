@@ -776,6 +776,12 @@ abstract class AppLocalizations {
   /// **'Budget'**
   String get navBudget;
 
+  /// No description provided for @navRecurring.
+  ///
+  /// In en, this message translates to:
+  /// **'Recurring'**
+  String get navRecurring;
+
   /// No description provided for @navAccounts.
   ///
   /// In en, this message translates to:
@@ -787,6 +793,660 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Settings'**
   String get navSettings;
+
+  /// No description provided for @recurringTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recurring'**
+  String get recurringTitle;
+
+  /// No description provided for @recurringDueToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Due today'**
+  String get recurringDueToday;
+
+  /// No description provided for @recurringOverdue.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue'**
+  String get recurringOverdue;
+
+  /// No description provided for @recurringUpcoming7.
+  ///
+  /// In en, this message translates to:
+  /// **'Next 7 days'**
+  String get recurringUpcoming7;
+
+  /// No description provided for @recurringUpcoming30.
+  ///
+  /// In en, this message translates to:
+  /// **'Next 30 days'**
+  String get recurringUpcoming30;
+
+  /// No description provided for @recurringActiveRules.
+  ///
+  /// In en, this message translates to:
+  /// **'Active rules'**
+  String get recurringActiveRules;
+
+  /// No description provided for @recurringPlannedIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned income (upcoming)'**
+  String get recurringPlannedIncome;
+
+  /// No description provided for @recurringPlannedExpenses.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned expenses & payments (upcoming)'**
+  String get recurringPlannedExpenses;
+
+  /// No description provided for @recurringPlannedNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled — not actual cash flow.'**
+  String get recurringPlannedNote;
+
+  /// No description provided for @recurringEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No recurring items yet'**
+  String get recurringEmptyTitle;
+
+  /// No description provided for @recurringEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a rule for salaries, rent, subscriptions or loan payments.'**
+  String get recurringEmptyMessage;
+
+  /// No description provided for @recurringAddRule.
+  ///
+  /// In en, this message translates to:
+  /// **'Add recurring'**
+  String get recurringAddRule;
+
+  /// No description provided for @recurringNoOccurrences.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing scheduled here.'**
+  String get recurringNoOccurrences;
+
+  /// No description provided for @recurringTypeIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Income'**
+  String get recurringTypeIncome;
+
+  /// No description provided for @recurringTypeExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense'**
+  String get recurringTypeExpense;
+
+  /// No description provided for @recurringTypeTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer'**
+  String get recurringTypeTransfer;
+
+  /// No description provided for @recurringTypeLiabilityPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Debt payment'**
+  String get recurringTypeLiabilityPayment;
+
+  /// No description provided for @recurringFreqDaily.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily'**
+  String get recurringFreqDaily;
+
+  /// No description provided for @recurringFreqWeekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly'**
+  String get recurringFreqWeekly;
+
+  /// No description provided for @recurringFreqMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get recurringFreqMonthly;
+
+  /// No description provided for @recurringFreqYearly.
+  ///
+  /// In en, this message translates to:
+  /// **'Yearly'**
+  String get recurringFreqYearly;
+
+  /// No description provided for @recurringFreqCustomInterval.
+  ///
+  /// In en, this message translates to:
+  /// **'Every N days'**
+  String get recurringFreqCustomInterval;
+
+  /// No description provided for @occStatusScheduled.
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled'**
+  String get occStatusScheduled;
+
+  /// No description provided for @occStatusDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Due'**
+  String get occStatusDue;
+
+  /// No description provided for @occStatusOverdue.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue'**
+  String get occStatusOverdue;
+
+  /// No description provided for @occStatusPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get occStatusPaid;
+
+  /// No description provided for @occStatusSkipped.
+  ///
+  /// In en, this message translates to:
+  /// **'Skipped'**
+  String get occStatusSkipped;
+
+  /// No description provided for @occStatusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get occStatusCancelled;
+
+  /// No description provided for @recurringName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get recurringName;
+
+  /// No description provided for @recurringAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get recurringAmount;
+
+  /// No description provided for @recurringType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get recurringType;
+
+  /// No description provided for @recurringSourceAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'From account'**
+  String get recurringSourceAccount;
+
+  /// No description provided for @recurringDestinationAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'To account'**
+  String get recurringDestinationAccount;
+
+  /// No description provided for @recurringCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get recurringCategory;
+
+  /// No description provided for @recurringFrequency.
+  ///
+  /// In en, this message translates to:
+  /// **'Frequency'**
+  String get recurringFrequency;
+
+  /// No description provided for @recurringInterval.
+  ///
+  /// In en, this message translates to:
+  /// **'Interval'**
+  String get recurringInterval;
+
+  /// No description provided for @recurringWeekdays.
+  ///
+  /// In en, this message translates to:
+  /// **'Days of the week'**
+  String get recurringWeekdays;
+
+  /// No description provided for @recurringMonthlyMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly on'**
+  String get recurringMonthlyMode;
+
+  /// No description provided for @recurringMonthlyByDay.
+  ///
+  /// In en, this message translates to:
+  /// **'A day of the month'**
+  String get recurringMonthlyByDay;
+
+  /// No description provided for @recurringMonthlyByWeekday.
+  ///
+  /// In en, this message translates to:
+  /// **'A weekday'**
+  String get recurringMonthlyByWeekday;
+
+  /// No description provided for @recurringMonthlyDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Day of month'**
+  String get recurringMonthlyDay;
+
+  /// No description provided for @recurringOrdinal.
+  ///
+  /// In en, this message translates to:
+  /// **'Which'**
+  String get recurringOrdinal;
+
+  /// No description provided for @recurringWeekday.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekday'**
+  String get recurringWeekday;
+
+  /// No description provided for @recurringYearlyMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Month'**
+  String get recurringYearlyMonth;
+
+  /// No description provided for @recurringYearlyDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Day'**
+  String get recurringYearlyDay;
+
+  /// No description provided for @recurringStartDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Start date'**
+  String get recurringStartDate;
+
+  /// No description provided for @recurringEndDate.
+  ///
+  /// In en, this message translates to:
+  /// **'End date'**
+  String get recurringEndDate;
+
+  /// No description provided for @recurringMaxOccurrences.
+  ///
+  /// In en, this message translates to:
+  /// **'Max occurrences'**
+  String get recurringMaxOccurrences;
+
+  /// No description provided for @recurringReminderDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Remind days before'**
+  String get recurringReminderDays;
+
+  /// No description provided for @recurringAutoCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create automatically when due'**
+  String get recurringAutoCreate;
+
+  /// No description provided for @recurringNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get recurringNotes;
+
+  /// No description provided for @recurringSelectAsset.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose an asset account'**
+  String get recurringSelectAsset;
+
+  /// No description provided for @recurringSelectLiability.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a liability account'**
+  String get recurringSelectLiability;
+
+  /// No description provided for @recurringSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Recurring rule saved'**
+  String get recurringSaved;
+
+  /// No description provided for @recurringRuleDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Recurring rule'**
+  String get recurringRuleDetails;
+
+  /// No description provided for @recurringNextDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Next due'**
+  String get recurringNextDue;
+
+  /// No description provided for @recurringCompletedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Posted'**
+  String get recurringCompletedCount;
+
+  /// No description provided for @recurringOverdueCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue'**
+  String get recurringOverdueCount;
+
+  /// No description provided for @recurringRecentTransactions.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent transactions'**
+  String get recurringRecentTransactions;
+
+  /// No description provided for @recurringPause.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get recurringPause;
+
+  /// No description provided for @recurringResume.
+  ///
+  /// In en, this message translates to:
+  /// **'Resume'**
+  String get recurringResume;
+
+  /// No description provided for @recurringEnd.
+  ///
+  /// In en, this message translates to:
+  /// **'End rule'**
+  String get recurringEnd;
+
+  /// No description provided for @recurringEndConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'End this rule? Future occurrences stop; history is kept.'**
+  String get recurringEndConfirm;
+
+  /// No description provided for @recurringDeleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this rule? Only possible when nothing has been posted.'**
+  String get recurringDeleteConfirm;
+
+  /// No description provided for @recurringPaused.
+  ///
+  /// In en, this message translates to:
+  /// **'Paused'**
+  String get recurringPaused;
+
+  /// No description provided for @recurringActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get recurringActive;
+
+  /// No description provided for @recurringEnded.
+  ///
+  /// In en, this message translates to:
+  /// **'Ended'**
+  String get recurringEnded;
+
+  /// No description provided for @recurringArchivedWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'This rule uses an archived account or category.'**
+  String get recurringArchivedWarning;
+
+  /// No description provided for @ordinalFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'First'**
+  String get ordinalFirst;
+
+  /// No description provided for @ordinalSecond.
+  ///
+  /// In en, this message translates to:
+  /// **'Second'**
+  String get ordinalSecond;
+
+  /// No description provided for @ordinalThird.
+  ///
+  /// In en, this message translates to:
+  /// **'Third'**
+  String get ordinalThird;
+
+  /// No description provided for @ordinalFourth.
+  ///
+  /// In en, this message translates to:
+  /// **'Fourth'**
+  String get ordinalFourth;
+
+  /// No description provided for @ordinalLast.
+  ///
+  /// In en, this message translates to:
+  /// **'Last'**
+  String get ordinalLast;
+
+  /// No description provided for @occurrenceDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Occurrence'**
+  String get occurrenceDetails;
+
+  /// No description provided for @occExpectedAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected amount'**
+  String get occExpectedAmount;
+
+  /// No description provided for @occOriginalDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Original date'**
+  String get occOriginalDate;
+
+  /// No description provided for @occSnoozedDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Snoozed to'**
+  String get occSnoozedDate;
+
+  /// No description provided for @occMarkPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as paid'**
+  String get occMarkPaid;
+
+  /// No description provided for @occMarkReceived.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as received'**
+  String get occMarkReceived;
+
+  /// No description provided for @occSnooze.
+  ///
+  /// In en, this message translates to:
+  /// **'Snooze'**
+  String get occSnooze;
+
+  /// No description provided for @occSnooze1Week.
+  ///
+  /// In en, this message translates to:
+  /// **'Snooze 1 week'**
+  String get occSnooze1Week;
+
+  /// No description provided for @occSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get occSkip;
+
+  /// No description provided for @occSkipConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip only this occurrence? The schedule continues.'**
+  String get occSkipConfirm;
+
+  /// No description provided for @occSkipReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason (optional)'**
+  String get occSkipReason;
+
+  /// No description provided for @occLinkedTransaction.
+  ///
+  /// In en, this message translates to:
+  /// **'Linked transaction'**
+  String get occLinkedTransaction;
+
+  /// No description provided for @occPosted.
+  ///
+  /// In en, this message translates to:
+  /// **'Posted to a transaction'**
+  String get occPosted;
+
+  /// No description provided for @occSnoozed.
+  ///
+  /// In en, this message translates to:
+  /// **'Occurrence snoozed'**
+  String get occSnoozed;
+
+  /// No description provided for @occSkippedMsg.
+  ///
+  /// In en, this message translates to:
+  /// **'Occurrence skipped'**
+  String get occSkippedMsg;
+
+  /// No description provided for @occEditBeforePosting.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit before posting'**
+  String get occEditBeforePosting;
+
+  /// No description provided for @recurrenceDaily.
+  ///
+  /// In en, this message translates to:
+  /// **'Every day'**
+  String get recurrenceDaily;
+
+  /// No description provided for @recurrenceEveryNDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Every {count} days'**
+  String recurrenceEveryNDays(int count);
+
+  /// No description provided for @recurrenceWeeklyOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly on {days}'**
+  String recurrenceWeeklyOn(String days);
+
+  /// No description provided for @recurrenceEveryNWeeksOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Every {count} weeks on {days}'**
+  String recurrenceEveryNWeeksOn(int count, String days);
+
+  /// No description provided for @recurrenceMonthlyDayText.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly on day {day}'**
+  String recurrenceMonthlyDayText(int day);
+
+  /// No description provided for @recurrenceMonthlyOrdinalText.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly on the {ordinal} {weekday}'**
+  String recurrenceMonthlyOrdinalText(String ordinal, String weekday);
+
+  /// No description provided for @recurrenceYearlyText.
+  ///
+  /// In en, this message translates to:
+  /// **'Yearly on {date}'**
+  String recurrenceYearlyText(String date);
+
+  /// No description provided for @dashboardUpcomingBills.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming bills'**
+  String get dashboardUpcomingBills;
+
+  /// No description provided for @recurringViewAll.
+  ///
+  /// In en, this message translates to:
+  /// **'View all'**
+  String get recurringViewAll;
+
+  /// No description provided for @recurringNoUpcoming.
+  ///
+  /// In en, this message translates to:
+  /// **'No upcoming bills.'**
+  String get recurringNoUpcoming;
+
+  /// No description provided for @budgetUpcomingRecurring.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming recurring'**
+  String get budgetUpcomingRecurring;
+
+  /// No description provided for @budgetUpcomingRecurringNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned, not yet posted. Does not affect actual spending or balances.'**
+  String get budgetUpcomingRecurringNote;
+
+  /// No description provided for @settingsAutoCreateRecurring.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-create recurring transactions'**
+  String get settingsAutoCreateRecurring;
+
+  /// No description provided for @settingsAutoCreateRecurringSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'When a rule is due, post it automatically. Off by default.'**
+  String get settingsAutoCreateRecurringSubtitle;
+
+  /// No description provided for @insightBillOverdue.
+  ///
+  /// In en, this message translates to:
+  /// **'You have an overdue bill.'**
+  String get insightBillOverdue;
+
+  /// No description provided for @insightMultipleDueToday.
+  ///
+  /// In en, this message translates to:
+  /// **'More than one bill is due today.'**
+  String get insightMultipleDueToday;
+
+  /// No description provided for @insightIncomeUpcoming.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected income is due soon.'**
+  String get insightIncomeUpcoming;
+
+  /// No description provided for @insightAutoCreateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'A recurring auto-post could not be created.'**
+  String get insightAutoCreateFailed;
+
+  /// No description provided for @insightRecurringArchived.
+  ///
+  /// In en, this message translates to:
+  /// **'A recurring rule uses an archived account or category.'**
+  String get insightRecurringArchived;
+
+  /// No description provided for @insightManyUnpaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Several recurring occurrences are unpaid.'**
+  String get insightManyUnpaid;
 
   /// No description provided for @budgetTitle.
   ///
@@ -1405,6 +2065,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Budget item not found.'**
   String get errorBudgetItemNotFound;
+
+  /// No description provided for @errorRecurringWeekdayRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick at least one weekday.'**
+  String get errorRecurringWeekdayRequired;
+
+  /// No description provided for @errorRecurringInvalidSchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'The schedule is incomplete or invalid.'**
+  String get errorRecurringInvalidSchedule;
+
+  /// No description provided for @errorRecurringEndBeforeStart.
+  ///
+  /// In en, this message translates to:
+  /// **'The end date cannot be before the start date.'**
+  String get errorRecurringEndBeforeStart;
+
+  /// No description provided for @errorRecurringMaxInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Max occurrences must be greater than zero.'**
+  String get errorRecurringMaxInvalid;
+
+  /// No description provided for @errorRecurringReminderInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder days cannot be negative.'**
+  String get errorRecurringReminderInvalid;
+
+  /// No description provided for @errorRecurringIntervalInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'The interval must be at least 1.'**
+  String get errorRecurringIntervalInvalid;
+
+  /// No description provided for @errorRecurringNotLiability.
+  ///
+  /// In en, this message translates to:
+  /// **'A debt payment must go from an asset to a liability account.'**
+  String get errorRecurringNotLiability;
+
+  /// No description provided for @errorOccurrenceAlreadyPosted.
+  ///
+  /// In en, this message translates to:
+  /// **'This occurrence is already posted.'**
+  String get errorOccurrenceAlreadyPosted;
+
+  /// No description provided for @errorOccurrenceNotOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'This occurrence cannot be posted.'**
+  String get errorOccurrenceNotOpen;
+
+  /// No description provided for @errorRuleNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Recurring rule not found.'**
+  String get errorRuleNotFound;
+
+  /// No description provided for @errorOccurrenceNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Occurrence not found.'**
+  String get errorOccurrenceNotFound;
 
   /// No description provided for @errorDatabase.
   ///

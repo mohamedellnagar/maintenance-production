@@ -13,6 +13,10 @@ import '../../features/budgets/presentation/budget_month_page.dart';
 import '../../features/budgets/presentation/close_month_page.dart';
 import '../../features/dashboard/presentation/dashboard_page.dart';
 import '../../features/onboarding/presentation/onboarding_page.dart';
+import '../../features/recurring/presentation/occurrence_details_page.dart';
+import '../../features/recurring/presentation/recurring_home_page.dart';
+import '../../features/recurring/presentation/recurring_rule_details_page.dart';
+import '../../features/recurring/presentation/recurring_rule_form_page.dart';
 import '../../features/settings/application/settings_providers.dart';
 import '../../features/settings/presentation/settings_page.dart';
 import '../../features/transactions/presentation/transaction_details_page.dart';
@@ -22,6 +26,7 @@ abstract final class AppRoutes {
   static const String onboarding = '/onboarding';
   static const String dashboard = '/';
   static const String budget = '/budget';
+  static const String recurring = '/recurring';
   static const String accounts = '/accounts';
   static const String settings = '/settings';
 
@@ -37,11 +42,19 @@ abstract final class AppRoutes {
   static const String budgetItemDetail = '/budget/items/:id';
   static const String budgetItemEdit = '/budget/items/:id/edit';
 
+  static const String recurringAdd = '/recurring/add';
+  static const String recurringRuleDetail = '/recurring/rules/:id';
+  static const String recurringRuleEdit = '/recurring/rules/:id/edit';
+  static const String occurrenceDetail = '/recurring/occurrences/:id';
+
   static String accountDetailPath(String id) => '/accounts/$id';
   static String transactionDetailPath(String id) => '/transactions/$id';
   static String editTransactionPath(String id) => '/transactions/$id/edit';
   static String budgetItemDetailPath(String id) => '/budget/items/$id';
   static String budgetItemEditPath(String id) => '/budget/items/$id/edit';
+  static String recurringRuleDetailPath(String id) => '/recurring/rules/$id';
+  static String recurringRuleEditPath(String id) => '/recurring/rules/$id/edit';
+  static String occurrenceDetailPath(String id) => '/recurring/occurrences/$id';
 }
 
 final _rootKey = GlobalKey<NavigatorState>();
@@ -124,6 +137,34 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     'items/:id',
                     (s) =>
                         BudgetItemDetailsPage(itemId: s.pathParameters['id']!),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.recurring,
+                builder: (_, _) => const RecurringHomePage(),
+                routes: [
+                  pushRoute('add', (_) => const RecurringRuleFormPage()),
+                  pushRoute(
+                    'rules/:id/edit',
+                    (s) =>
+                        RecurringRuleFormPage(ruleId: s.pathParameters['id']),
+                  ),
+                  pushRoute(
+                    'rules/:id',
+                    (s) => RecurringRuleDetailsPage(
+                      ruleId: s.pathParameters['id']!,
+                    ),
+                  ),
+                  pushRoute(
+                    'occurrences/:id',
+                    (s) => OccurrenceDetailsPage(
+                      occurrenceId: s.pathParameters['id']!,
+                    ),
                   ),
                 ],
               ),

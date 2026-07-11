@@ -113,6 +113,44 @@ test/
 - empty budget state, add-item validation, overspent tile status, dashboard
   budget-card CTA, closed-month banner + reopen + read-only (no add FAB).
 
+## Recurring tests (V1)
+
+`test/unit/recurrence_calculator_test.dart`
+- daily, every-N-days, weekly (multi-weekday + N-week interval), monthly by day
+  (with day-31 clamping and Feb-29 leap clamping), monthly by ordinal (last
+  Friday / first Monday, missing 5th skipped), yearly, **29 Feb** leap/non-leap
+  fallback, `endDate` and `maxOccurrences` (counted from the first occurrence),
+  and `nextOccurrence`.
+
+`test/unit/recurring_status_test.dart`
+- derived display status (scheduled/due/overdue/paid), paid-but-deleted reopens,
+  snooze pushes the effective date, skipped/cancelled sticky; the insight
+  builder for overdue / multiple-due-today / income-upcoming / auto-create-failed
+  / archived-reference / many-unpaid.
+
+`test/unit/recurring_validator_test.dart`
+- name/amount/interval/reminder/max/end-before-start; type-specific
+  account/category presence; weekly-needs-weekdays; monthly day-vs-ordinal
+  exclusivity; yearly month/day; transfer/liability rules (no category, distinct
+  accounts, destination required).
+
+`test/database/recurring_test.dart`
+- **v2→v3 migration** (tables + settings column); idempotent generation;
+  unpaid ⇒ no transaction; posting an expense/liability-payment creates the
+  correct transaction type; double-post rejection; delete-then-repost; skip;
+  snooze; pause/resume; schedule-edit drops future unposted occurrences;
+  posted-occurrence blocks rule deletion; archived-account and
+  non-liability-destination rejection. (`test/database/budget_test.dart` also
+  covers **v1→latest**.)
+
+`test/integration/recurring_generation_test.dart`
+- generation idempotency across runs; long-absence backfill surfaces overdue;
+  auto-create posts only when enabled, exactly once, and never in the future.
+
+`test/widget/recurring_test.dart`
+- recurring empty state + add CTA; rule-form validation on empty submit;
+  Upcoming Bills card hidden when there is no recurring data.
+
 ## Quality gate
 
 ```bash

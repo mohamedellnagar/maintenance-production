@@ -48,12 +48,15 @@ void main() {
   }
 
   group('migrations & schema', () {
-    test('schema version is 1 and all tables are queryable', () async {
-      expect(db.schemaVersion, 2);
+    test('schema version is 3 and all tables are queryable', () async {
+      expect(db.schemaVersion, 3);
       await db.select(db.accountsTable).get();
       await db.select(db.transactionsTable).get();
       await db.select(db.categoriesTable).get();
       await db.select(db.appSettingsTable).get();
+      await db.select(db.recurringRulesTable).get();
+      await db.select(db.recurringRuleWeekdaysTable).get();
+      await db.select(db.recurringOccurrencesTable).get();
     });
   });
 

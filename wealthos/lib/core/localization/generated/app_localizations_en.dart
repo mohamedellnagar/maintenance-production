@@ -357,10 +357,363 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navBudget => 'Budget';
 
   @override
+  String get navRecurring => 'Recurring';
+
+  @override
   String get navAccounts => 'Accounts';
 
   @override
   String get navSettings => 'Settings';
+
+  @override
+  String get recurringTitle => 'Recurring';
+
+  @override
+  String get recurringDueToday => 'Due today';
+
+  @override
+  String get recurringOverdue => 'Overdue';
+
+  @override
+  String get recurringUpcoming7 => 'Next 7 days';
+
+  @override
+  String get recurringUpcoming30 => 'Next 30 days';
+
+  @override
+  String get recurringActiveRules => 'Active rules';
+
+  @override
+  String get recurringPlannedIncome => 'Planned income (upcoming)';
+
+  @override
+  String get recurringPlannedExpenses =>
+      'Planned expenses & payments (upcoming)';
+
+  @override
+  String get recurringPlannedNote => 'Scheduled — not actual cash flow.';
+
+  @override
+  String get recurringEmptyTitle => 'No recurring items yet';
+
+  @override
+  String get recurringEmptyMessage =>
+      'Add a rule for salaries, rent, subscriptions or loan payments.';
+
+  @override
+  String get recurringAddRule => 'Add recurring';
+
+  @override
+  String get recurringNoOccurrences => 'Nothing scheduled here.';
+
+  @override
+  String get recurringTypeIncome => 'Income';
+
+  @override
+  String get recurringTypeExpense => 'Expense';
+
+  @override
+  String get recurringTypeTransfer => 'Transfer';
+
+  @override
+  String get recurringTypeLiabilityPayment => 'Debt payment';
+
+  @override
+  String get recurringFreqDaily => 'Daily';
+
+  @override
+  String get recurringFreqWeekly => 'Weekly';
+
+  @override
+  String get recurringFreqMonthly => 'Monthly';
+
+  @override
+  String get recurringFreqYearly => 'Yearly';
+
+  @override
+  String get recurringFreqCustomInterval => 'Every N days';
+
+  @override
+  String get occStatusScheduled => 'Scheduled';
+
+  @override
+  String get occStatusDue => 'Due';
+
+  @override
+  String get occStatusOverdue => 'Overdue';
+
+  @override
+  String get occStatusPaid => 'Paid';
+
+  @override
+  String get occStatusSkipped => 'Skipped';
+
+  @override
+  String get occStatusCancelled => 'Cancelled';
+
+  @override
+  String get recurringName => 'Name';
+
+  @override
+  String get recurringAmount => 'Amount';
+
+  @override
+  String get recurringType => 'Type';
+
+  @override
+  String get recurringSourceAccount => 'From account';
+
+  @override
+  String get recurringDestinationAccount => 'To account';
+
+  @override
+  String get recurringCategory => 'Category';
+
+  @override
+  String get recurringFrequency => 'Frequency';
+
+  @override
+  String get recurringInterval => 'Interval';
+
+  @override
+  String get recurringWeekdays => 'Days of the week';
+
+  @override
+  String get recurringMonthlyMode => 'Monthly on';
+
+  @override
+  String get recurringMonthlyByDay => 'A day of the month';
+
+  @override
+  String get recurringMonthlyByWeekday => 'A weekday';
+
+  @override
+  String get recurringMonthlyDay => 'Day of month';
+
+  @override
+  String get recurringOrdinal => 'Which';
+
+  @override
+  String get recurringWeekday => 'Weekday';
+
+  @override
+  String get recurringYearlyMonth => 'Month';
+
+  @override
+  String get recurringYearlyDay => 'Day';
+
+  @override
+  String get recurringStartDate => 'Start date';
+
+  @override
+  String get recurringEndDate => 'End date';
+
+  @override
+  String get recurringMaxOccurrences => 'Max occurrences';
+
+  @override
+  String get recurringReminderDays => 'Remind days before';
+
+  @override
+  String get recurringAutoCreate => 'Create automatically when due';
+
+  @override
+  String get recurringNotes => 'Notes';
+
+  @override
+  String get recurringSelectAsset => 'Choose an asset account';
+
+  @override
+  String get recurringSelectLiability => 'Choose a liability account';
+
+  @override
+  String get recurringSaved => 'Recurring rule saved';
+
+  @override
+  String get recurringRuleDetails => 'Recurring rule';
+
+  @override
+  String get recurringNextDue => 'Next due';
+
+  @override
+  String get recurringCompletedCount => 'Posted';
+
+  @override
+  String get recurringOverdueCount => 'Overdue';
+
+  @override
+  String get recurringRecentTransactions => 'Recent transactions';
+
+  @override
+  String get recurringPause => 'Pause';
+
+  @override
+  String get recurringResume => 'Resume';
+
+  @override
+  String get recurringEnd => 'End rule';
+
+  @override
+  String get recurringEndConfirm =>
+      'End this rule? Future occurrences stop; history is kept.';
+
+  @override
+  String get recurringDeleteConfirm =>
+      'Delete this rule? Only possible when nothing has been posted.';
+
+  @override
+  String get recurringPaused => 'Paused';
+
+  @override
+  String get recurringActive => 'Active';
+
+  @override
+  String get recurringEnded => 'Ended';
+
+  @override
+  String get recurringArchivedWarning =>
+      'This rule uses an archived account or category.';
+
+  @override
+  String get ordinalFirst => 'First';
+
+  @override
+  String get ordinalSecond => 'Second';
+
+  @override
+  String get ordinalThird => 'Third';
+
+  @override
+  String get ordinalFourth => 'Fourth';
+
+  @override
+  String get ordinalLast => 'Last';
+
+  @override
+  String get occurrenceDetails => 'Occurrence';
+
+  @override
+  String get occExpectedAmount => 'Expected amount';
+
+  @override
+  String get occOriginalDate => 'Original date';
+
+  @override
+  String get occSnoozedDate => 'Snoozed to';
+
+  @override
+  String get occMarkPaid => 'Mark as paid';
+
+  @override
+  String get occMarkReceived => 'Mark as received';
+
+  @override
+  String get occSnooze => 'Snooze';
+
+  @override
+  String get occSnooze1Week => 'Snooze 1 week';
+
+  @override
+  String get occSkip => 'Skip';
+
+  @override
+  String get occSkipConfirm =>
+      'Skip only this occurrence? The schedule continues.';
+
+  @override
+  String get occSkipReason => 'Reason (optional)';
+
+  @override
+  String get occLinkedTransaction => 'Linked transaction';
+
+  @override
+  String get occPosted => 'Posted to a transaction';
+
+  @override
+  String get occSnoozed => 'Occurrence snoozed';
+
+  @override
+  String get occSkippedMsg => 'Occurrence skipped';
+
+  @override
+  String get occEditBeforePosting => 'Edit before posting';
+
+  @override
+  String get recurrenceDaily => 'Every day';
+
+  @override
+  String recurrenceEveryNDays(int count) {
+    return 'Every $count days';
+  }
+
+  @override
+  String recurrenceWeeklyOn(String days) {
+    return 'Weekly on $days';
+  }
+
+  @override
+  String recurrenceEveryNWeeksOn(int count, String days) {
+    return 'Every $count weeks on $days';
+  }
+
+  @override
+  String recurrenceMonthlyDayText(int day) {
+    return 'Monthly on day $day';
+  }
+
+  @override
+  String recurrenceMonthlyOrdinalText(String ordinal, String weekday) {
+    return 'Monthly on the $ordinal $weekday';
+  }
+
+  @override
+  String recurrenceYearlyText(String date) {
+    return 'Yearly on $date';
+  }
+
+  @override
+  String get dashboardUpcomingBills => 'Upcoming bills';
+
+  @override
+  String get recurringViewAll => 'View all';
+
+  @override
+  String get recurringNoUpcoming => 'No upcoming bills.';
+
+  @override
+  String get budgetUpcomingRecurring => 'Upcoming recurring';
+
+  @override
+  String get budgetUpcomingRecurringNote =>
+      'Planned, not yet posted. Does not affect actual spending or balances.';
+
+  @override
+  String get settingsAutoCreateRecurring =>
+      'Auto-create recurring transactions';
+
+  @override
+  String get settingsAutoCreateRecurringSubtitle =>
+      'When a rule is due, post it automatically. Off by default.';
+
+  @override
+  String get insightBillOverdue => 'You have an overdue bill.';
+
+  @override
+  String get insightMultipleDueToday => 'More than one bill is due today.';
+
+  @override
+  String get insightIncomeUpcoming => 'Expected income is due soon.';
+
+  @override
+  String get insightAutoCreateFailed =>
+      'A recurring auto-post could not be created.';
+
+  @override
+  String get insightRecurringArchived =>
+      'A recurring rule uses an archived account or category.';
+
+  @override
+  String get insightManyUnpaid => 'Several recurring occurrences are unpaid.';
 
   @override
   String get budgetTitle => 'Budget';
@@ -701,6 +1054,46 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errorBudgetItemNotFound => 'Budget item not found.';
+
+  @override
+  String get errorRecurringWeekdayRequired => 'Pick at least one weekday.';
+
+  @override
+  String get errorRecurringInvalidSchedule =>
+      'The schedule is incomplete or invalid.';
+
+  @override
+  String get errorRecurringEndBeforeStart =>
+      'The end date cannot be before the start date.';
+
+  @override
+  String get errorRecurringMaxInvalid =>
+      'Max occurrences must be greater than zero.';
+
+  @override
+  String get errorRecurringReminderInvalid =>
+      'Reminder days cannot be negative.';
+
+  @override
+  String get errorRecurringIntervalInvalid =>
+      'The interval must be at least 1.';
+
+  @override
+  String get errorRecurringNotLiability =>
+      'A debt payment must go from an asset to a liability account.';
+
+  @override
+  String get errorOccurrenceAlreadyPosted =>
+      'This occurrence is already posted.';
+
+  @override
+  String get errorOccurrenceNotOpen => 'This occurrence cannot be posted.';
+
+  @override
+  String get errorRuleNotFound => 'Recurring rule not found.';
+
+  @override
+  String get errorOccurrenceNotFound => 'Occurrence not found.';
 
   @override
   String get errorDatabase => 'A database error occurred.';

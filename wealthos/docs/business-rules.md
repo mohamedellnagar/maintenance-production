@@ -165,3 +165,31 @@ it. Full rules and worked examples are in `budgeting-model.md`; in brief:
   through an atomic **close-month** flow with traceable records; deficits are
   shown but not auto-carried. Closed months are read-only until **reopen**;
   editing an old transaction still updates live actuals and raises an insight.
+
+## Recurring transactions & bills (V1)
+
+Recurring rules describe *what repeats*; the engine generates **planned
+occurrences** (due dates) from them. Full rules are in `recurring-model.md`; in
+brief:
+
+- An **unpaid occurrence is not a financial fact** — it never counts as actual
+  income/expense, never changes an account balance, and never affects net worth
+  or budget actuals. It becomes real only when posted into a transaction.
+- **Posting** creates the correct transaction type (income, expense, or a
+  transfer for transfers/liability payments) atomically, links it to the
+  occurrence, and marks it paid; a **double-post guard** prevents a second live
+  transaction. Deleting the linked transaction **reopens** the occurrence;
+  restoring/re-posting marks it paid again.
+- A **liability payment** posts as an asset→liability transfer, never as
+  income/expense, so paying debt is not miscounted as spending.
+- **Generation is idempotent** (unique per rule + original due date) and runs
+  on demand within a rolling window — no background timer, no future-years
+  pre-generation.
+- **Auto-create** is off by default (per-rule and global); when on it posts only
+  due/overdue occurrences, once, never future, and never against an archived
+  account/category.
+- Editing a rule's **schedule** regenerates only **future unposted**
+  occurrences; posted/skipped/past ones and their transactions are untouched.
+  A rule with any posted occurrence cannot be hard-deleted (end it instead).
+- Recurring reminders are **in-app only** — there are no device/push
+  notifications in V1.

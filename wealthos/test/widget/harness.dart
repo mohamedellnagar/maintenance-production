@@ -11,6 +11,7 @@ import 'package:wealthos/features/accounts/application/accounts_providers.dart';
 import 'package:wealthos/features/accounts/domain/account.dart';
 import 'package:wealthos/features/categories/application/categories_providers.dart';
 import 'package:wealthos/features/categories/domain/category.dart';
+import 'package:wealthos/features/recurring/application/recurring_providers.dart';
 import 'package:wealthos/features/settings/application/settings_providers.dart';
 import 'package:wealthos/features/settings/domain/app_settings.dart';
 import 'package:wealthos/features/transactions/application/transactions_providers.dart';
@@ -63,6 +64,11 @@ class TestHarness {
         transactionByIdProvider.overrideWith(
           (ref, id) => Stream.value(transactionsById[id]),
         ),
+        // Recurring streams default to empty so pages that embed recurring
+        // cards (dashboard, budget) don't touch live Drift streams.
+        allRulesProvider.overrideWith((ref) => Stream.value(const [])),
+        allOccurrencesProvider.overrideWith((ref) => Stream.value(const [])),
+        recurringBootstrapProvider.overrideWith((ref) async {}),
       ],
       ...extraOverrides,
     ];

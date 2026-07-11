@@ -11,6 +11,8 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/money_text.dart';
 import '../../categories/domain/category.dart';
+import '../../recurring/application/recurring_providers.dart';
+import '../../recurring/domain/recurring_type.dart';
 import '../application/budget_controller.dart';
 import '../application/budgets_providers.dart';
 import '../domain/budget_calculator.dart';
@@ -146,6 +148,12 @@ class _BudgetBody extends ConsumerWidget {
           const SizedBox(height: AppSpacing.lg),
           BudgetInsightsList(insights: view.insights, categoriesById: byId),
         ],
+        const SizedBox(height: AppSpacing.md),
+        _UpcomingRecurringCard(
+          year: view.budget.year,
+          month: view.budget.month,
+          money: money,
+        ),
         const SizedBox(height: AppSpacing.lg),
         if (view.incomes.isNotEmpty) ...[
           _SectionHeader(l.budgetSectionIncomePlan),
@@ -209,6 +217,113 @@ class _BudgetBody extends ConsumerWidget {
     );
     if (confirmed != true) return;
     await ref.read(budgetControllerProvider).reopen(view.budget.id);
+  }
+}
+
+/// Compact card summarizing *planned* (unpaid) recurring cash flow for the
+/// month. These occurrences are not part of budget actuals or balances.
+class _UpcomingRecurringCard extends ConsumerWidget {
+  const _UpcomingRecurringCard({
+    required this.year,
+    required this.month,
+    required this.money,
+  });
+  final int year;
+  final int month;
+  final Money Function(int) money;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final views = ref.watch(
+      upcomingRecurringForMonthProvider((year: year, month: month)),
+    );
+    if (views.isEmpty) return const SizedBox.shrink();
+
+    var outMinor = 0;
+    var inMinor = 0;
+    for (final v in views) {
+      if (v.type == RecurringType.income) {
+        inMinor += v.expectedAmountMinor;
+      } else if (v.type == RecurringType.expense ||
+          v.type == RecurringType.liabilityPayment) {
+        outMinor += v.expectedAmountMinor;
+      }
+    }
+
+    return Card(
+      color: theme.colorScheme.surfaceContainerHighest,
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.md),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.event_repeat_outlined,
+                  size: 18,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+                const SizedBox(width: AppSpacing.xs),
+                Text(
+                  l.budgetUpcomingRecurring,
+                  style: theme.textTheme.titleSmall,
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              l.budgetUpcomingRecurringNote,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            Row(
+              children: [
+                Expanded(
+                  child: _MiniAmount(
+                    label: l.recurringTypeExpense,
+                    money: money(outMinor),
+                  ),
+                ),
+                Expanded(
+                  child: _MiniAmount(
+                    label: l.recurringTypeIncome,
+                    money: money(inMinor),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _MiniAmount extends StatelessWidget {
+  const _MiniAmount({required this.label, required this.money});
+  final String label;
+  final Money money;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
+        MoneyText(money, style: theme.textTheme.titleMedium),
+      ],
+    );
   }
 }
 

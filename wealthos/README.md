@@ -27,6 +27,11 @@ The first release works **fully offline**: no account, no internet, no cloud.
 - 🥧 **Monthly budgets** — plan income/expenses/savings/debt payments, track
   actual vs. plan, available-to-assign, overspend, and carry surpluses forward
   via an atomic close-month flow (`docs/budgeting-model.md`).
+- 🔁 **Recurring & bills** — rules for recurring income/expense/transfer/debt
+  payments and bills, generated as *planned* occurrences that never touch
+  balances until posted (one atomic transaction, no double-posting), with
+  snooze/skip/pause, optional auto-create, and an Upcoming Bills dashboard card
+  (`docs/recurring-model.md`).
 - 🌍 **Bilingual** — real Arabic + English strings (RTL/LTR), no hardcoded UI
   text.
 - 🎨 **Material 3** — light/dark themes, accessible gain/loss cues (never
@@ -87,20 +92,22 @@ lib/
   core/       money, database, errors, localization, routing, security,
               theme, utils, widgets, di
   features/   onboarding, dashboard, accounts, transactions, categories,
-              settings   (each: domain / data / application / presentation)
-test/         unit / database / widget
-docs/         architecture, database, business-rules, testing, roadmap, plan
+              budgets, recurring, settings
+              (each: domain / data / application / presentation)
+test/         unit / database / integration / widget
+docs/         architecture, database, business-rules, testing, roadmap, plans
 ```
 
 ## Scope of the current phase
 
 **Included:** offline core — money, database, accounts, transactions, balances,
-net worth, monthly cash flow, onboarding, dashboard, settings, localization,
-theming, biometric lock, tests.
+net worth, monthly cash flow, monthly budgets, recurring transactions & bills,
+onboarding, dashboard, settings, localization, theming, biometric lock, tests.
 
 **Not included (deferred):** cloud login/sync, backend/API, AI, bank linking,
-stock prices, online FX, subscriptions, ads, advanced budgets, goals, loan
-schedules, forecasting, PDF/Excel export, cloud backup. See `docs/roadmap.md`.
+stock prices, online FX, subscriptions, ads, goals, loan schedules,
+forecasting, push/device notifications, PDF/Excel export, cloud backup. See
+`docs/roadmap.md`.
 
 ## Documentation
 
@@ -109,6 +116,8 @@ schedules, forecasting, PDF/Excel export, cloud backup. See `docs/roadmap.md`.
   worth, adjustments, delete/restore (with worked examples)
 - `docs/budgeting-model.md` — monthly budgets, actual vs. plan, rollover,
   debt-payment, double-counting, closed months (with worked examples)
+- `docs/recurring-model.md` — rules vs. occurrences vs. transactions,
+  recurrence math, generation, posting, auto-create, insights
 - `docs/database.md` — schema, constraints, migrations, seeding, integrity
 - `docs/business-rules.md` — money, accounts, transactions, net worth rules
 - `docs/testing.md` — what is tested and how

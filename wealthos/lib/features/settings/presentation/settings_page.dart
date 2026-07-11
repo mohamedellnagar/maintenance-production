@@ -75,6 +75,15 @@ class SettingsPage extends ConsumerWidget {
             onChanged: (v) => _onBiometricChanged(ref, enabled: v),
           ),
           const Divider(),
+          _SectionHeader(l.navRecurring),
+          SwitchListTile(
+            value: settings.autoCreateRecurringEnabled,
+            title: Text(l.settingsAutoCreateRecurring),
+            subtitle: Text(l.settingsAutoCreateRecurringSubtitle),
+            onChanged: (v) =>
+                controller.setAutoCreateRecurringEnabled(enabled: v),
+          ),
+          const Divider(),
           _SectionHeader(l.settingsAbout),
           ListTile(
             title: Text(l.settingsCurrency),

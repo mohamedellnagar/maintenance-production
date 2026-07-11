@@ -13,6 +13,8 @@ class AppSettingsTable extends Table {
       boolean().withDefault(const Constant(false))();
   BoolColumn get onboardingCompleted =>
       boolean().withDefault(const Constant(false))();
+  BoolColumn get autoCreateRecurringEnabled =>
+      boolean().withDefault(const Constant(false))();
   DateTimeColumn get createdAt => dateTime()();
   DateTimeColumn get updatedAt => dateTime()();
 
@@ -209,4 +211,102 @@ class BudgetRolloversTable extends Table {
 
   @override
   Set<Column<Object>> get primaryKey => {id};
+}
+
+/// A schedule that produces recurring financial events (income, expense,
+/// transfer or liability payment). Dates are stored as integer epoch-days.
+class RecurringRulesTable extends Table {
+  @override
+  String get tableName => 'recurring_rules';
+
+  TextColumn get id => text()();
+  TextColumn get name => text().withLength(min: 1, max: 100)();
+  TextColumn get recurringType => text()();
+  TextColumn get accountId =>
+      text().nullable().references(AccountsTable, #id)();
+  @ReferenceName('recurringDestination')
+  TextColumn get destinationAccountId =>
+      text().nullable().references(AccountsTable, #id)();
+  TextColumn get categoryId =>
+      text().nullable().references(CategoriesTable, #id)();
+  IntColumn get amountMinor => integer()();
+  TextColumn get currencyCode => text().withLength(min: 3, max: 3)();
+  TextColumn get recurrenceFrequency => text()();
+  IntColumn get intervalValue => integer().withDefault(const Constant(1))();
+  IntColumn get monthlyDay => integer().nullable()();
+  IntColumn get monthlyWeekOrdinal => integer().nullable()();
+  IntColumn get monthlyWeekday => integer().nullable()();
+  IntColumn get yearlyMonth => integer().nullable()();
+  IntColumn get yearlyDay => integer().nullable()();
+  IntColumn get startDate => integer()(); // epoch day
+  IntColumn get endDate => integer().nullable()();
+  IntColumn get maxOccurrences => integer().nullable()();
+  BoolColumn get autoCreateTransaction =>
+      boolean().withDefault(const Constant(false))();
+  IntColumn get reminderDaysBefore =>
+      integer().withDefault(const Constant(0))();
+  TextColumn get notes => text().nullable()();
+  BoolColumn get isActive => boolean().withDefault(const Constant(true))();
+  IntColumn get lastGeneratedThrough => integer().nullable()();
+  DateTimeColumn get createdAt => dateTime()();
+  DateTimeColumn get updatedAt => dateTime()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+
+  @override
+  List<String> get customConstraints => <String>[
+    'CHECK (recurring_type IN '
+        "('income','expense','transfer','liabilityPayment'))",
+    'CHECK (recurrence_frequency IN '
+        "('daily','weekly','monthly','yearly','customInterval'))",
+    'CHECK (amount_minor > 0)',
+    'CHECK (interval_value >= 1)',
+    'CHECK (reminder_days_before >= 0)',
+  ];
+}
+
+/// Selected weekdays for a weekly rule (1=Mon..7=Sun).
+class RecurringRuleWeekdaysTable extends Table {
+  @override
+  String get tableName => 'recurring_rule_weekdays';
+
+  TextColumn get recurringRuleId =>
+      text().references(RecurringRulesTable, #id)();
+  IntColumn get weekday => integer()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {recurringRuleId, weekday};
+}
+
+/// A generated due date for a rule. Dates are integer epoch-days.
+class RecurringOccurrencesTable extends Table {
+  @override
+  String get tableName => 'recurring_occurrences';
+
+  TextColumn get id => text()();
+  TextColumn get recurringRuleId =>
+      text().references(RecurringRulesTable, #id)();
+  IntColumn get dueDate => integer()();
+  IntColumn get originalDueDate => integer()();
+  IntColumn get expectedAmountMinor => integer()();
+  TextColumn get status => text().withDefault(const Constant('scheduled'))();
+  TextColumn get generatedTransactionId =>
+      text().nullable().references(TransactionsTable, #id)();
+  DateTimeColumn get completedAt => dateTime().nullable()();
+  DateTimeColumn get skippedAt => dateTime().nullable()();
+  TextColumn get skipReason => text().nullable()();
+  IntColumn get snoozedUntil => integer().nullable()();
+  DateTimeColumn get createdAt => dateTime()();
+  DateTimeColumn get updatedAt => dateTime()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+
+  @override
+  List<String> get customConstraints => <String>[
+    "CHECK (status IN ('scheduled','paid','skipped','cancelled'))",
+    // Never generate the same occurrence twice.
+    'UNIQUE (recurring_rule_id, original_due_date)',
+  ];
 }

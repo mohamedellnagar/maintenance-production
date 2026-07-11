@@ -15,6 +15,9 @@ part 'app_database.g.dart';
     BudgetsTable,
     BudgetItemsTable,
     BudgetRolloversTable,
+    RecurringRulesTable,
+    RecurringRuleWeekdaysTable,
+    RecurringOccurrencesTable,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -24,7 +27,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -38,6 +41,16 @@ class AppDatabase extends _$AppDatabase {
         await m.createTable(budgetsTable);
         await m.createTable(budgetItemsTable);
         await m.createTable(budgetRolloversTable);
+      }
+      // v2 → v3: recurring engine + auto-create setting.
+      if (from < 3) {
+        await m.addColumn(
+          appSettingsTable,
+          appSettingsTable.autoCreateRecurringEnabled,
+        );
+        await m.createTable(recurringRulesTable);
+        await m.createTable(recurringRuleWeekdaysTable);
+        await m.createTable(recurringOccurrencesTable);
       }
     },
     beforeOpen: (OpeningDetails details) async {

@@ -93,6 +93,17 @@ Actuals are always derived live, so **editing an old transaction in a closed
 month does change that month's actuals** — this is surfaced as an insight ("a
 closed month's results changed"), never by freezing or deleting data.
 
+## Upcoming recurring (planned, not actual)
+
+Recurring rules (see `recurring-model.md`) generate **planned occurrences**.
+These are deliberately kept **out of** every budget number above — actual
+spending, actual income, assigned, available-to-assign and remaining all ignore
+unpaid occurrences, and the `BudgetCalculator` is not modified. Instead the
+Budget screen and a budget item's details show them separately as **"Upcoming
+recurring"**, matched to the month by due date and (for item details) to the
+item's category or liability account. Only when an occurrence is **posted** does
+it become a real transaction and flow into the budget's actuals like any other.
+
 ## Worked example
 
 ```

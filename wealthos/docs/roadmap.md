@@ -24,6 +24,19 @@ close-month flow, reopen, in-app insights, a Budget tab and a dashboard summary
 card. See `docs/budgeting-model.md`. Deferred to a later budgeting phase:
 actual-savings linkage, deficit carry-over, budget templates, and reports.
 
+## Phase 1.3 — Recurring Transactions & Bills Engine V1 (this release) ✅
+
+Recurring rules for income/expense/transfer/liability-payment and bills, cleanly
+separated into rules → planned occurrences → real transactions (unpaid
+occurrences never affect balances or net worth). Pure recurrence math
+(daily/weekly/monthly-by-day-or-ordinal/yearly/every-N-days with month-length
+and leap-year clamping), idempotent on-demand generation, atomic posting with a
+double-post guard, opt-in auto-create, snooze/skip/pause/resume/end/edit, a
+Recurring tab, an Upcoming Bills dashboard card, an "Upcoming recurring" view in
+Budgets, and in-app insights. Schema **v3**. See `docs/recurring-model.md`.
+Deferred to a later recurring phase: forecasting/projections, variable-amount
+estimation, and device/push reminders.
+
 ## Deliberately deferred
 
 Not built in this phase (only logical extension points left where useful):
@@ -31,14 +44,15 @@ Not built in this phase (only logical extension points left where useful):
 - Cloud login & sync, backend/API
 - AI / financial intelligence, bank linking, stock prices, online FX
 - Subscriptions, ads
-- Advanced budgets, financial goals, loan repayment schedules, forecasting
+- Financial goals, loan repayment schedules, forecasting
+- Push / device notifications (recurring reminders are in-app only)
 - PDF/Excel export, cloud backup
 
 ## Candidate next steps
 
-1. **Budgets** — monthly limits per category, progress vs. actuals.
-2. **Editing/detail** — edit & view a single transaction; account editing.
-3. **Reports** — trends over time, per-category breakdowns, date-range filters.
+1. **Reports** — trends over time, per-category breakdowns, date-range filters.
+2. **Recurring V2** — forecasting/projected cash flow, variable-amount rules.
+3. **Budgets V2** — actual-savings linkage, deficit carry-over, templates.
 4. **Multi-currency** — unlock currency selection; per-account currency with an
    explicit FX/valuation strategy for net worth.
 5. **Cached balances** — materialised balances behind `BalanceCalculator` with a

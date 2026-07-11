@@ -72,6 +72,25 @@ abstract final class FailureCodes {
       'validation.budget_item_linked_rollover';
   static const String budgetNotFound = 'error.budget_not_found';
   static const String budgetItemNotFound = 'error.budget_item_not_found';
+  // Recurring.
+  static const String recurringWeekdayRequired =
+      'validation.recurring_weekday_required';
+  static const String recurringInvalidSchedule =
+      'validation.recurring_invalid_schedule';
+  static const String recurringEndBeforeStart =
+      'validation.recurring_end_before_start';
+  static const String recurringMaxInvalid = 'validation.recurring_max_invalid';
+  static const String recurringReminderInvalid =
+      'validation.recurring_reminder_invalid';
+  static const String recurringIntervalInvalid =
+      'validation.recurring_interval_invalid';
+  static const String recurringNotLiability =
+      'validation.recurring_not_liability';
+  static const String occurrenceAlreadyPosted =
+      'validation.occurrence_already_posted';
+  static const String occurrenceNotOpen = 'validation.occurrence_not_open';
+  static const String ruleNotFound = 'error.rule_not_found';
+  static const String occurrenceNotFound = 'error.occurrence_not_found';
   static const String database = 'error.database';
   static const String unexpected = 'error.unexpected';
 }

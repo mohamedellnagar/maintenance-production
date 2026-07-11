@@ -9,6 +9,9 @@ import '../../../core/money/money.dart';
 import '../../../core/routing/app_router.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/money_text.dart';
+import '../../recurring/application/recurring_providers.dart';
+import '../../recurring/domain/recurring_type.dart';
+import '../../recurring/presentation/widgets/occurrence_tile.dart';
 import '../../transactions/application/transactions_providers.dart';
 import '../../transactions/presentation/widgets/transaction_tile.dart';
 import '../application/budget_controller.dart';
@@ -109,6 +112,32 @@ class _ItemBody extends ConsumerWidget {
     final budgeted = item.assignedAmountMinor + rolloverIn;
     final remaining = budgeted - actual;
 
+    // Planned recurring occurrences matching this item's category (or liability
+    // account) that fall in the budget's month. These are NOT actual spending —
+    // shown separately so the user can anticipate cash flow.
+    final upcomingRecurring = ref
+        .watch(
+          upcomingRecurringForMonthProvider((
+            year: budget.year,
+            month: budget.month,
+          )),
+        )
+        .where((v) {
+          if (item.categoryId != null) {
+            return v.rule.categoryId == item.categoryId;
+          }
+          if (item.type == BudgetItemType.debtPayment) {
+            return v.type == RecurringType.liabilityPayment &&
+                v.rule.destinationAccountId == item.accountId;
+          }
+          return false;
+        })
+        .toList();
+    final upcomingRecurringTotal = upcomingRecurring.fold(
+      0,
+      (s, v) => s + v.expectedAmountMinor,
+    );
+
     Money money(int m) => Money(amountMinor: m, currencyCode: currency);
 
     return ListView(
@@ -155,6 +184,30 @@ class _ItemBody extends ConsumerWidget {
           )
         else
           Text(l.budgetReadOnly),
+        if (upcomingRecurring.isNotEmpty) ...[
+          const SizedBox(height: AppSpacing.lg),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                l.budgetUpcomingRecurring,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              MoneyText(
+                money(upcomingRecurringTotal),
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+            ],
+          ),
+          Text(
+            l.budgetUpcomingRecurringNote,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          for (final v in upcomingRecurring) OccurrenceTile(view: v),
+        ],
         const SizedBox(height: AppSpacing.lg),
         Text(
           l.budgetContributingTransactions,

@@ -2,6 +2,7 @@ import '../../features/accounts/domain/account_type.dart';
 import '../../features/budgets/domain/budget.dart';
 import '../../features/budgets/domain/budget_calculator.dart';
 import '../../features/budgets/domain/budget_item.dart';
+import '../../features/recurring/domain/recurring_type.dart';
 import '../../features/transactions/domain/transaction_semantic.dart';
 import '../../features/transactions/domain/transaction_type.dart';
 import 'generated/app_localizations.dart';
@@ -59,6 +60,36 @@ extension BudgetStatusLabel on BudgetStatus {
     BudgetStatus.draft => l.budgetStatusDraft,
     BudgetStatus.active => l.budgetStatusActive,
     BudgetStatus.closed => l.budgetStatusClosed,
+  };
+}
+
+extension RecurringTypeLabel on RecurringType {
+  String label(AppLocalizations l) => switch (this) {
+    RecurringType.income => l.recurringTypeIncome,
+    RecurringType.expense => l.recurringTypeExpense,
+    RecurringType.transfer => l.recurringTypeTransfer,
+    RecurringType.liabilityPayment => l.recurringTypeLiabilityPayment,
+  };
+}
+
+extension RecurrenceFrequencyLabel on RecurrenceFrequency {
+  String label(AppLocalizations l) => switch (this) {
+    RecurrenceFrequency.daily => l.recurringFreqDaily,
+    RecurrenceFrequency.weekly => l.recurringFreqWeekly,
+    RecurrenceFrequency.monthly => l.recurringFreqMonthly,
+    RecurrenceFrequency.yearly => l.recurringFreqYearly,
+    RecurrenceFrequency.customInterval => l.recurringFreqCustomInterval,
+  };
+}
+
+extension OccurrenceDisplayStatusLabel on OccurrenceDisplayStatus {
+  String label(AppLocalizations l) => switch (this) {
+    OccurrenceDisplayStatus.scheduled => l.occStatusScheduled,
+    OccurrenceDisplayStatus.due => l.occStatusDue,
+    OccurrenceDisplayStatus.overdue => l.occStatusOverdue,
+    OccurrenceDisplayStatus.paid => l.occStatusPaid,
+    OccurrenceDisplayStatus.skipped => l.occStatusSkipped,
+    OccurrenceDisplayStatus.cancelled => l.occStatusCancelled,
   };
 }
 

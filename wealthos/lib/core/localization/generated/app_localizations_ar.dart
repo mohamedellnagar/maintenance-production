@@ -355,10 +355,359 @@ class AppLocalizationsAr extends AppLocalizations {
   String get navBudget => 'الميزانية';
 
   @override
+  String get navRecurring => 'المتكررات';
+
+  @override
   String get navAccounts => 'الحسابات';
 
   @override
   String get navSettings => 'الإعدادات';
+
+  @override
+  String get recurringTitle => 'المتكررات';
+
+  @override
+  String get recurringDueToday => 'مستحق اليوم';
+
+  @override
+  String get recurringOverdue => 'متأخر';
+
+  @override
+  String get recurringUpcoming7 => 'خلال ٧ أيام';
+
+  @override
+  String get recurringUpcoming30 => 'خلال ٣٠ يومًا';
+
+  @override
+  String get recurringActiveRules => 'القواعد النشطة';
+
+  @override
+  String get recurringPlannedIncome => 'الدخل المتوقع القادم';
+
+  @override
+  String get recurringPlannedExpenses => 'المصروفات والمدفوعات القادمة';
+
+  @override
+  String get recurringPlannedNote => 'مجدول — وليس تدفقًا نقديًا فعليًا.';
+
+  @override
+  String get recurringEmptyTitle => 'لا توجد متكررات بعد';
+
+  @override
+  String get recurringEmptyMessage =>
+      'أضف قاعدة للرواتب أو الإيجار أو الاشتراكات أو أقساط القروض.';
+
+  @override
+  String get recurringAddRule => 'إضافة متكرر';
+
+  @override
+  String get recurringNoOccurrences => 'لا شيء مجدول هنا.';
+
+  @override
+  String get recurringTypeIncome => 'دخل';
+
+  @override
+  String get recurringTypeExpense => 'مصروف';
+
+  @override
+  String get recurringTypeTransfer => 'تحويل';
+
+  @override
+  String get recurringTypeLiabilityPayment => 'سداد التزام';
+
+  @override
+  String get recurringFreqDaily => 'يومي';
+
+  @override
+  String get recurringFreqWeekly => 'أسبوعي';
+
+  @override
+  String get recurringFreqMonthly => 'شهري';
+
+  @override
+  String get recurringFreqYearly => 'سنوي';
+
+  @override
+  String get recurringFreqCustomInterval => 'كل N أيام';
+
+  @override
+  String get occStatusScheduled => 'مجدول';
+
+  @override
+  String get occStatusDue => 'مستحق';
+
+  @override
+  String get occStatusOverdue => 'متأخر';
+
+  @override
+  String get occStatusPaid => 'مدفوع';
+
+  @override
+  String get occStatusSkipped => 'متخطى';
+
+  @override
+  String get occStatusCancelled => 'ملغى';
+
+  @override
+  String get recurringName => 'الاسم';
+
+  @override
+  String get recurringAmount => 'المبلغ';
+
+  @override
+  String get recurringType => 'النوع';
+
+  @override
+  String get recurringSourceAccount => 'من حساب';
+
+  @override
+  String get recurringDestinationAccount => 'إلى حساب';
+
+  @override
+  String get recurringCategory => 'التصنيف';
+
+  @override
+  String get recurringFrequency => 'التكرار';
+
+  @override
+  String get recurringInterval => 'الفاصل';
+
+  @override
+  String get recurringWeekdays => 'أيام الأسبوع';
+
+  @override
+  String get recurringMonthlyMode => 'شهريًا حسب';
+
+  @override
+  String get recurringMonthlyByDay => 'يوم من الشهر';
+
+  @override
+  String get recurringMonthlyByWeekday => 'يوم في الأسبوع';
+
+  @override
+  String get recurringMonthlyDay => 'يوم الشهر';
+
+  @override
+  String get recurringOrdinal => 'الترتيب';
+
+  @override
+  String get recurringWeekday => 'اليوم';
+
+  @override
+  String get recurringYearlyMonth => 'الشهر';
+
+  @override
+  String get recurringYearlyDay => 'اليوم';
+
+  @override
+  String get recurringStartDate => 'تاريخ البداية';
+
+  @override
+  String get recurringEndDate => 'تاريخ النهاية';
+
+  @override
+  String get recurringMaxOccurrences => 'أقصى عدد استحقاقات';
+
+  @override
+  String get recurringReminderDays => 'تذكير قبل بأيام';
+
+  @override
+  String get recurringAutoCreate => 'الإنشاء تلقائيًا عند الاستحقاق';
+
+  @override
+  String get recurringNotes => 'ملاحظات';
+
+  @override
+  String get recurringSelectAsset => 'اختر حساب أصل';
+
+  @override
+  String get recurringSelectLiability => 'اختر حساب التزام';
+
+  @override
+  String get recurringSaved => 'تم حفظ القاعدة المتكررة';
+
+  @override
+  String get recurringRuleDetails => 'القاعدة المتكررة';
+
+  @override
+  String get recurringNextDue => 'الاستحقاق القادم';
+
+  @override
+  String get recurringCompletedCount => 'المنفذة';
+
+  @override
+  String get recurringOverdueCount => 'المتأخرة';
+
+  @override
+  String get recurringRecentTransactions => 'آخر العمليات';
+
+  @override
+  String get recurringPause => 'إيقاف مؤقت';
+
+  @override
+  String get recurringResume => 'استئناف';
+
+  @override
+  String get recurringEnd => 'إنهاء القاعدة';
+
+  @override
+  String get recurringEndConfirm =>
+      'إنهاء هذه القاعدة؟ تتوقف الاستحقاقات القادمة ويُحتفظ بالسجل.';
+
+  @override
+  String get recurringDeleteConfirm =>
+      'حذف هذه القاعدة؟ ممكن فقط إذا لم يُنفَّذ أي استحقاق.';
+
+  @override
+  String get recurringPaused => 'متوقفة';
+
+  @override
+  String get recurringActive => 'نشطة';
+
+  @override
+  String get recurringEnded => 'منتهية';
+
+  @override
+  String get recurringArchivedWarning =>
+      'تستخدم هذه القاعدة حسابًا أو تصنيفًا مؤرشفًا.';
+
+  @override
+  String get ordinalFirst => 'الأول';
+
+  @override
+  String get ordinalSecond => 'الثاني';
+
+  @override
+  String get ordinalThird => 'الثالث';
+
+  @override
+  String get ordinalFourth => 'الرابع';
+
+  @override
+  String get ordinalLast => 'الأخير';
+
+  @override
+  String get occurrenceDetails => 'الاستحقاق';
+
+  @override
+  String get occExpectedAmount => 'المبلغ المتوقع';
+
+  @override
+  String get occOriginalDate => 'التاريخ الأصلي';
+
+  @override
+  String get occSnoozedDate => 'مؤجل إلى';
+
+  @override
+  String get occMarkPaid => 'تسجيل كمدفوع';
+
+  @override
+  String get occMarkReceived => 'تسجيل كمستلم';
+
+  @override
+  String get occSnooze => 'تأجيل';
+
+  @override
+  String get occSnooze1Week => 'تأجيل أسبوع';
+
+  @override
+  String get occSkip => 'تخطي';
+
+  @override
+  String get occSkipConfirm => 'تخطي هذا الاستحقاق فقط؟ يستمر الجدول.';
+
+  @override
+  String get occSkipReason => 'السبب (اختياري)';
+
+  @override
+  String get occLinkedTransaction => 'العملية المرتبطة';
+
+  @override
+  String get occPosted => 'مسجّل كعملية';
+
+  @override
+  String get occSnoozed => 'تم تأجيل الاستحقاق';
+
+  @override
+  String get occSkippedMsg => 'تم تخطي الاستحقاق';
+
+  @override
+  String get occEditBeforePosting => 'تعديل قبل التنفيذ';
+
+  @override
+  String get recurrenceDaily => 'كل يوم';
+
+  @override
+  String recurrenceEveryNDays(int count) {
+    return 'كل $count أيام';
+  }
+
+  @override
+  String recurrenceWeeklyOn(String days) {
+    return 'أسبوعيًا يوم $days';
+  }
+
+  @override
+  String recurrenceEveryNWeeksOn(int count, String days) {
+    return 'كل $count أسابيع يوم $days';
+  }
+
+  @override
+  String recurrenceMonthlyDayText(int day) {
+    return 'شهريًا في يوم $day';
+  }
+
+  @override
+  String recurrenceMonthlyOrdinalText(String ordinal, String weekday) {
+    return 'شهريًا في $ordinal $weekday';
+  }
+
+  @override
+  String recurrenceYearlyText(String date) {
+    return 'سنويًا في $date';
+  }
+
+  @override
+  String get dashboardUpcomingBills => 'الفواتير القادمة';
+
+  @override
+  String get recurringViewAll => 'عرض الكل';
+
+  @override
+  String get recurringNoUpcoming => 'لا توجد فواتير قادمة.';
+
+  @override
+  String get budgetUpcomingRecurring => 'المتكررات القادمة';
+
+  @override
+  String get budgetUpcomingRecurringNote =>
+      'مخططة ولم تُسجَّل بعد. لا تؤثر على الإنفاق الفعلي أو الأرصدة.';
+
+  @override
+  String get settingsAutoCreateRecurring => 'إنشاء المتكررات تلقائيًا';
+
+  @override
+  String get settingsAutoCreateRecurringSubtitle =>
+      'عند استحقاق قاعدة، سجّلها تلقائيًا. متوقف افتراضيًا.';
+
+  @override
+  String get insightBillOverdue => 'لديك فاتورة متأخرة.';
+
+  @override
+  String get insightMultipleDueToday => 'أكثر من فاتورة مستحقة اليوم.';
+
+  @override
+  String get insightIncomeUpcoming => 'دخل متوقع قريبًا.';
+
+  @override
+  String get insightAutoCreateFailed => 'تعذّر إنشاء عملية متكررة تلقائيًا.';
+
+  @override
+  String get insightRecurringArchived =>
+      'قاعدة متكررة تستخدم حسابًا أو تصنيفًا مؤرشفًا.';
+
+  @override
+  String get insightManyUnpaid => 'عدة استحقاقات متكررة غير مسددة.';
 
   @override
   String get budgetTitle => 'الميزانية';
@@ -686,6 +1035,43 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get errorBudgetItemNotFound => 'بند الميزانية غير موجود.';
+
+  @override
+  String get errorRecurringWeekdayRequired => 'اختر يومًا واحدًا على الأقل.';
+
+  @override
+  String get errorRecurringInvalidSchedule => 'الجدول غير مكتمل أو غير صالح.';
+
+  @override
+  String get errorRecurringEndBeforeStart =>
+      'لا يمكن أن يسبق تاريخ النهاية تاريخ البداية.';
+
+  @override
+  String get errorRecurringMaxInvalid =>
+      'يجب أن يكون أقصى عدد استحقاقات أكبر من صفر.';
+
+  @override
+  String get errorRecurringReminderInvalid =>
+      'لا يمكن أن تكون أيام التذكير سالبة.';
+
+  @override
+  String get errorRecurringIntervalInvalid => 'يجب أن يكون الفاصل ١ على الأقل.';
+
+  @override
+  String get errorRecurringNotLiability =>
+      'يجب أن يكون سداد الالتزام من حساب أصل إلى حساب التزام.';
+
+  @override
+  String get errorOccurrenceAlreadyPosted => 'هذا الاستحقاق مسجّل بالفعل.';
+
+  @override
+  String get errorOccurrenceNotOpen => 'لا يمكن تسجيل هذا الاستحقاق.';
+
+  @override
+  String get errorRuleNotFound => 'القاعدة المتكررة غير موجودة.';
+
+  @override
+  String get errorOccurrenceNotFound => 'الاستحقاق غير موجود.';
 
   @override
   String get errorDatabase => 'حدث خطأ في قاعدة البيانات.';

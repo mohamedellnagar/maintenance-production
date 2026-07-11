@@ -17,6 +17,7 @@ class AppSettings {
     required this.themeMode,
     required this.biometricEnabled,
     required this.onboardingCompleted,
+    this.autoCreateRecurringEnabled = false,
   });
 
   final String baseCurrency;
@@ -25,17 +26,24 @@ class AppSettings {
   final bool biometricEnabled;
   final bool onboardingCompleted;
 
+  /// Whether opted-in recurring rules may auto-post due occurrences. Off by
+  /// default; the user turns it on explicitly in Settings.
+  final bool autoCreateRecurringEnabled;
+
   AppSettings copyWith({
     String? baseCurrency,
     String? languageCode,
     AppThemeMode? themeMode,
     bool? biometricEnabled,
     bool? onboardingCompleted,
+    bool? autoCreateRecurringEnabled,
   }) => AppSettings(
     baseCurrency: baseCurrency ?? this.baseCurrency,
     languageCode: languageCode ?? this.languageCode,
     themeMode: themeMode ?? this.themeMode,
     biometricEnabled: biometricEnabled ?? this.biometricEnabled,
     onboardingCompleted: onboardingCompleted ?? this.onboardingCompleted,
+    autoCreateRecurringEnabled:
+        autoCreateRecurringEnabled ?? this.autoCreateRecurringEnabled,
   );
 }
