@@ -1694,20 +1694,20 @@ const MOV_TYPE={purchase:{l:'شراء',c:'movPurchase',icon:'+'},consume:{l:'ص�
 function Inventory({user}){
 const api=useApi();const isAdmin=user?.role==='ADMIN';
 const[tab,setTab]=useState('items');
-const[items,setItems]=useState([]);const[movements,setMovements]=useState([]);const[suppliers,setSuppliers]=useState([]);const[summary,setSummary]=useState(null);const[villas,setVillas]=useState([]);
+const[items,setItems]=useState([]);const[movements,setMovements]=useState([]);const[suppliers,setSuppliers]=useState([]);const[summary,setSummary]=useState(null);const[villas,setVillas]=useState([]);const[apts,setApts]=useState([]);
 const[loading,setLoading]=useState(true);
 // modals
 const emptyItem={name:'',unit:'قطعة',category:'',reorder_level:0,notes:''};
 const[itemForm,setItemForm]=useState(emptyItem);const[editingItem,setEditingItem]=useState(null);const[itemOpen,setItemOpen]=useState(false);
 const emptySup={name:'',phone:'',notes:''};const[supForm,setSupForm]=useState(emptySup);const[editingSup,setEditingSup]=useState(null);const[supOpen,setSupOpen]=useState(false);
 const[movOpen,setMovOpen]=useState(false);const[movType,setMovType]=useState('purchase');
-const emptyMov={item_id:'',quantity:'',unit_price:'',movement_date:new Date().toISOString().slice(0,10),supplier_id:'',villa_id:'',notes:''};
+const emptyMov={item_id:'',quantity:'',unit_price:'',movement_date:new Date().toISOString().slice(0,10),supplier_id:'',villa_id:'',apartment_id:'',notes:''};
 const[movForm,setMovForm]=useState(emptyMov);
 const[movFilter,setMovFilter]=useState('');
 // import
 const[impOpen,setImpOpen]=useState(false);const impFileRef=useRef();const[impFile,setImpFile]=useState(null);const[impPreview,setImpPreview]=useState(null);const[impResult,setImpResult]=useState(null);const[impLoading,setImpLoading]=useState(false);
 
-const loadAll=()=>{setLoading(true);Promise.all([api('/inventory/items'),api('/inventory/movements'),api('/suppliers'),api('/inventory/summary'),api('/villas')]).then(([it,mv,su,sm,vl])=>{setItems(it);setMovements(mv);setSuppliers(su);setSummary(sm);setVillas(vl);setLoading(false)})};
+const loadAll=()=>{setLoading(true);Promise.all([api('/inventory/items'),api('/inventory/movements'),api('/suppliers'),api('/inventory/summary'),api('/villas'),api('/apartments')]).then(([it,mv,su,sm,vl,ap])=>{setItems(it);setMovements(mv);setSuppliers(su);setSummary(sm);setVillas(vl);setApts(ap);setLoading(false)})};
 const API_BASE=()=>import.meta.env.VITE_API_URL||(location.hostname==='localhost'?'http://localhost:4000/api':'/api');
 function downloadInvTemplate(){const t=localStorage.token;fetch(API_BASE()+'/inventory/import/template',{headers:{Authorization:'Bearer '+t}}).then(r=>r.blob()).then(b=>{const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download='نموذج_المخزن.xlsx';a.click();URL.revokeObjectURL(u)})}
 async function impLoadPreview(f){setImpLoading(true);setImpPreview(null);setImpResult(null);try{const fd=new FormData();fd.append('file',f);const r=await fetch(API_BASE()+'/inventory/import/preview',{method:'POST',headers:{Authorization:'Bearer '+localStorage.token},body:fd});const j=await r.json();if(!r.ok)throw new Error(j.message||'خطأ');setImpPreview(j.data)}catch(e){showToast(e.message,'error')}setImpLoading(false)}
@@ -1796,7 +1796,7 @@ return <div className="invRoot">
         <td>{fmt(m.quantity)} <span className="invUnit">{m.item_unit}</span></td>
         <td>{fmt(m.unit_price)}</td>
         <td className="invValCell">{fmt(m.total_amount)}</td>
-        <td>{m.supplier_name||m.villa_name||'—'}</td>
+        <td>{m.supplier_name||(m.villa_name?m.villa_name+(m.apartment_no?' — شقة '+m.apartment_no:''):'—')}</td>
         <td className="invBy">{m.created_by_name||'—'}</td>
         <td>{isAdmin&&<button className="danger iconBtn" onClick={()=>removeMov(m.id)}><Trash2 size={13}/></button>}</td>
       </tr>)}</tbody>
@@ -1857,7 +1857,9 @@ return <div className="invRoot">
     {movType==='purchase'&&<Field label="سعر الوحدة (AED)" required><input required type="number" min="0" step="0.01" value={movForm.unit_price} onChange={e=>setMovForm({...movForm,unit_price:e.target.value})}/></Field>}
     {movType==='purchase'&&movForm.quantity&&movForm.unit_price&&<div className="invMovHint">الإجمالي: <strong>{fmt(Number(movForm.quantity)*Number(movForm.unit_price))} AED</strong></div>}
     {movType==='purchase'&&<Field label="المورّد"><select value={movForm.supplier_id} onChange={e=>setMovForm({...movForm,supplier_id:e.target.value})}><option value="">—</option>{suppliers.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}</select></Field>}
-    {movType==='consume'&&<Field label="الفيلا المستفيدة"><select value={movForm.villa_id} onChange={e=>setMovForm({...movForm,villa_id:e.target.value})}><option value="">— (عام)</option>{villas.map(v=><option key={v.id} value={v.id}>{v.name}</option>)}</select></Field>}
+    {movType==='consume'&&<Field label="الفيلا المستفيدة"><select value={movForm.villa_id} onChange={e=>setMovForm({...movForm,villa_id:e.target.value,apartment_id:''})}><option value="">— (عام)</option>{villas.map(v=><option key={v.id} value={v.id}>{v.name}</option>)}</select></Field>}
+    {movType==='consume'&&movForm.villa_id&&<Field label="الوحدة (الشقة)"><select value={movForm.apartment_id} onChange={e=>setMovForm({...movForm,apartment_id:e.target.value})}><option value="">— للفيلا بشكل عام</option>{apts.filter(a=>String(a.villa_id)===String(movForm.villa_id)).map(a=><option key={a.id} value={a.id}>شقة {a.apartment_no}</option>)}</select></Field>}
+    {movType==='consume'&&movForm.villa_id&&<div className="invMovHint">{movForm.apartment_id?'الصرف لهذه الوحدة تحديداً':'بدون تحديد وحدة = الصرف للفيلا بشكل عام'}</div>}
     <Field label="التاريخ" required><input required type="date" value={movForm.movement_date} onChange={e=>setMovForm({...movForm,movement_date:e.target.value})}/></Field>
     <Field label="ملاحظات" wide><input value={movForm.notes} onChange={e=>setMovForm({...movForm,notes:e.target.value})} placeholder={movType==='consume'?'سبب الصرف / رقم العمل...':'رقم الفاتورة...'}/></Field>
     <button className={movType==='consume'?'':''}>{movType==='purchase'?'تسجيل الشراء':movType==='consume'?'تسجيل الصرف':'حفظ التسوية'}</button><button type="button" className="secondary" onClick={()=>setMovOpen(false)}>إلغاء</button>

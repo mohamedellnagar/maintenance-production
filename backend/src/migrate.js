@@ -16,6 +16,7 @@ const COLUMNS = [
   ['lease_installments', 'is_cancelled', "is_cancelled TINYINT(1) NOT NULL DEFAULT 0"],
   ['installment_payments', 'created_by', "created_by BIGINT NULL"],
   ['tenants', 'car_number', "car_number VARCHAR(50) NULL"],
+  ['stock_movements', 'apartment_id', "apartment_id BIGINT NULL"],
 ];
 
 const TABLES = [

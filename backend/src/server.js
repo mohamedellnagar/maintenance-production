@@ -692,10 +692,11 @@ app.get('/api/inventory/items/:id', auth, pageGuard('inventory'), wrap(async (re
     WHERE i.id=? GROUP BY i.id`, [req.params.id]);
   if (!item) throw Object.assign(new Error('الصنف غير موجود'), { status: 404 });
   const [movements] = await pool.query(`
-    SELECT m.*, s.name supplier_name, v.name villa_name, u.name created_by_name
+    SELECT m.*, s.name supplier_name, v.name villa_name, a.apartment_no, u.name created_by_name
     FROM stock_movements m
     LEFT JOIN suppliers s ON s.id=m.supplier_id
     LEFT JOIN villas v ON v.id=m.villa_id
+    LEFT JOIN apartments a ON a.id=m.apartment_id
     LEFT JOIN users u ON u.id=m.created_by
     WHERE m.item_id=? ORDER BY m.movement_date DESC, m.id DESC`, [req.params.id]);
   ok(res, { item: decorateItem(item), movements });
@@ -728,11 +729,12 @@ app.get('/api/inventory/movements', auth, pageGuard('inventory'), wrap(async (re
   if (req.query.from) { where.push('m.movement_date>=?'); p.push(req.query.from); }
   if (req.query.to) { where.push('m.movement_date<=?'); p.push(req.query.to); }
   const [rows] = await pool.query(`
-    SELECT m.*, i.name item_name, i.unit item_unit, s.name supplier_name, v.name villa_name, u.name created_by_name
+    SELECT m.*, i.name item_name, i.unit item_unit, s.name supplier_name, v.name villa_name, a.apartment_no, u.name created_by_name
     FROM stock_movements m
     JOIN inventory_items i ON i.id=m.item_id
     LEFT JOIN suppliers s ON s.id=m.supplier_id
     LEFT JOIN villas v ON v.id=m.villa_id
+    LEFT JOIN apartments a ON a.id=m.apartment_id
     LEFT JOIN users u ON u.id=m.created_by
     WHERE ${where.join(' AND ')} ORDER BY m.movement_date DESC, m.id DESC LIMIT 500`, p);
   ok(res, rows);
@@ -740,7 +742,7 @@ app.get('/api/inventory/movements', auth, pageGuard('inventory'), wrap(async (re
 
 // record a movement (purchase / consume / adjust)
 app.post('/api/inventory/movements', auth, wrap(async (req, res) => {
-  const { item_id, type, quantity, unit_price, movement_date, supplier_id, villa_id, record_id, notes } = req.body;
+  const { item_id, type, quantity, unit_price, movement_date, supplier_id, villa_id, apartment_id, record_id, notes } = req.body;
   requireFields(req.body, ['item_id', 'type', 'quantity', 'movement_date']);
   if (!['purchase', 'consume', 'adjust'].includes(type)) throw Object.assign(new Error('نوع الحركة غير صالح'), { status: 400 });
   const qty = Number(quantity);
@@ -766,6 +768,7 @@ app.post('/api/inventory/movements', auth, wrap(async (req, res) => {
     item_id, type, quantity: qty, unit_price: up, total_amount: total, movement_date,
     supplier_id: type === 'purchase' ? (supplier_id || null) : null,
     villa_id: type === 'consume' ? (villa_id || null) : null,
+    apartment_id: type === 'consume' ? (apartment_id || null) : null,
     record_id: type === 'consume' ? (record_id || null) : null,
     notes: notes || null, created_by: req.user.id,
   });

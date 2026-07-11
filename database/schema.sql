@@ -181,6 +181,7 @@ CREATE TABLE stock_movements (
   movement_date DATE NOT NULL,
   supplier_id BIGINT NULL,
   villa_id BIGINT NULL,
+  apartment_id BIGINT NULL,
   record_id BIGINT NULL,
   notes TEXT NULL,
   created_by BIGINT NULL,
