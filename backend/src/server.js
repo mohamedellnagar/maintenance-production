@@ -9,6 +9,7 @@ import multer from 'multer';
 import * as XLSX from 'xlsx';
 import { pool } from './config/db.js';
 import { auth, adminOnly } from './middleware/auth.js';
+import { runMigrations } from './migrate.js';
 
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } });
 
@@ -1126,4 +1127,7 @@ app.use((err, req, res, next) => {
 
 process.on('unhandledRejection', (err) => console.error('Unhandled rejection:', err));
 
-app.listen(process.env.PORT || 4000, () => console.log('API running'));
+// auto-apply idempotent schema migrations on startup, then start the server
+runMigrations()
+  .catch(err => console.error('[migrate] continuing despite error:', err.message))
+  .finally(() => app.listen(process.env.PORT || 4000, () => console.log('API running')));
