@@ -48,7 +48,15 @@ abstract final class FailureCodes {
   static const String categoryRequired = 'validation.category_required';
   static const String adjustmentReasonRequired =
       'validation.adjustment_reason_required';
+  static const String categoryNotAllowed = 'validation.category_not_allowed';
+  static const String categoryTypeMismatch =
+      'validation.category_type_mismatch';
+  static const String accountArchived = 'validation.account_archived';
+  static const String categoryArchived = 'validation.category_archived';
+  static const String adjustmentNoChange = 'validation.adjustment_no_change';
   static const String accountNotFound = 'error.account_not_found';
+  static const String categoryNotFound = 'error.category_not_found';
+  static const String transactionNotFound = 'error.transaction_not_found';
   static const String database = 'error.database';
   static const String unexpected = 'error.unexpected';
 }

@@ -9,7 +9,8 @@ import '../../features/dashboard/presentation/dashboard_page.dart';
 import '../../features/onboarding/presentation/onboarding_page.dart';
 import '../../features/settings/application/settings_providers.dart';
 import '../../features/settings/presentation/settings_page.dart';
-import '../../features/transactions/presentation/add_transaction_page.dart';
+import '../../features/transactions/presentation/transaction_details_page.dart';
+import '../../features/transactions/presentation/transaction_form_page.dart';
 
 abstract final class AppRoutes {
   static const String onboarding = '/onboarding';
@@ -18,9 +19,13 @@ abstract final class AppRoutes {
   static const String addAccount = '/accounts/add';
   static const String accountDetail = '/accounts/:id';
   static const String addTransaction = '/transactions/add';
+  static const String transactionDetail = '/transactions/:id';
+  static const String editTransaction = '/transactions/:id/edit';
   static const String settings = '/settings';
 
   static String accountDetailPath(String id) => '/accounts/$id';
+  static String transactionDetailPath(String id) => '/transactions/$id';
+  static String editTransactionPath(String id) => '/transactions/$id/edit';
 }
 
 /// Builds the app router. Redirects to onboarding until it is completed.
@@ -64,9 +69,20 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         builder: (_, state) =>
             AccountDetailPage(accountId: state.pathParameters['id']!),
       ),
+      // Literal `/transactions/add` must precede the `:id` routes.
       GoRoute(
         path: AppRoutes.addTransaction,
-        builder: (_, _) => const AddTransactionPage(),
+        builder: (_, _) => const TransactionFormPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.editTransaction,
+        builder: (_, state) =>
+            TransactionFormPage(transactionId: state.pathParameters['id']),
+      ),
+      GoRoute(
+        path: AppRoutes.transactionDetail,
+        builder: (_, state) =>
+            TransactionDetailsPage(transactionId: state.pathParameters['id']!),
       ),
       GoRoute(
         path: AppRoutes.settings,

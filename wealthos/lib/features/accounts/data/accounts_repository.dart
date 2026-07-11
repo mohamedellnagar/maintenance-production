@@ -87,6 +87,13 @@ class AccountsRepository {
     return row == null ? null : _toDomain(row);
   }
 
+  /// Streams a single account by id, so screens react to rename/archive.
+  Stream<Account?> watchById(String id) {
+    return (_db.select(_db.accountsTable)..where((t) => t.id.equals(id)))
+        .watchSingleOrNull()
+        .map((row) => row == null ? null : _toDomain(row));
+  }
+
   Future<List<Account>> getAll({bool includeArchived = false}) async {
     final query = _db.select(_db.accountsTable)
       ..orderBy([(t) => OrderingTerm(expression: t.displayOrder)]);

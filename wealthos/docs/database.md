@@ -74,6 +74,21 @@ CHECK: `account_type` and `classification` restricted to their enum sets.
 These mirror `TransactionValidator` so the UI shows friendly messages while the
 database still refuses invalid rows as a last line of defence.
 
+## Cross-table integrity (repository-enforced)
+
+Some rules depend on other tables and cannot be expressed as single-table SQL
+`CHECK`s, so `TransactionsRepository` enforces them inside the same database
+transaction as the write (covered by `test/database/hardening_test.dart`):
+
+- no transaction on an **archived** account (source or transfer destination);
+- no **archived** category, and the category **type must match** the
+  transaction type (income vs. expense);
+- transaction currency equals each account's currency and the base currency.
+
+Schema version stays **1** — this phase added no columns or constraints. Foreign
+keys are `PRAGMA`-enabled in `beforeOpen`; a test asserts a bad reference is
+rejected. Structural rules that *are* single-table remain `CHECK` constraints.
+
 ## Migrations
 
 `onCreate` builds all tables and seeds default categories. `beforeOpen` enables

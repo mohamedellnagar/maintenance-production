@@ -67,22 +67,71 @@ Effect rules (above) are the single source of truth (`TransactionEffect`).
   credits destination. It is **not** income or expense. It is written inside one
   database transaction; account existence is checked within that transaction, so
   a bad reference rolls the whole thing back (atomicity).
-- **Adjustment** — corrects a balance. Requires a non-empty reason. Its
-  `amount_minor` is a **signed** delta (may be negative), the one deliberate
-  exception to the "> 0" rule, because an adjustment's only purpose is to nudge a
-  balance up or down and there is no separate direction field. It is excluded
-  from cash-flow (income/expense) reports.
+- **Adjustment** — corrects a balance. The user enters the **actual new
+  balance**; the app computes and stores `delta = desiredSigned −
+  calculatedSigned` (`AdjustmentCalculator`), shows the difference, requires a
+  non-empty reason, and blocks a zero-change save. `amount_minor` is that
+  **signed** delta (may be negative) — the one deliberate exception to the "> 0"
+  rule. Adjustments are excluded from cash-flow reports.
+
+### Liability operations (credit cards, loans)
+
+The four transaction types represent every liability operation without a
+misleading phantom-cash entry; the UI labels them via `TransactionSemantic`.
+See `accounting-model.md` for worked examples and tests.
+
+- **Credit-card purchase** = an `expense` on the card → debt up, counted as an
+  expense under its category.
+- **Liability charge / loan interest** = an `expense` on the liability → debt up.
+- **Liability / card repayment** = a `transfer` from an asset into the liability
+  → cash down, debt down, **not** income or expense (so a purchase already
+  recorded is never double-counted).
+- **Loan receipt / draw-down** = a `transfer` from the liability into an asset →
+  cash up, debt up, net worth unchanged.
+- Income booked on a liability reduces what is owed (the documented
+  income-on-liability rule).
+
+### Cross-table integrity (enforced in the repository)
+
+Rules that depend on other tables are enforced inside the same database
+transaction as the write, so a violation rolls everything back:
+
+- a transaction cannot reference an **archived** account (source or transfer
+  destination) or an **archived** category;
+- a category is only allowed on income/expense, and its **type must match**
+  (income category for income, expense category for expense);
+- the transaction currency must equal each account's currency and the base
+  currency;
+- `account_id` / `destination_account_id` must reference existing accounts
+  (also guarded by SQLite foreign keys, which are `PRAGMA`-enabled).
+
+Structural rules (amount ≠ 0, direction-by-type, transfer needs two distinct
+endpoints, adjustment needs a reason, no category on transfer/adjustment) are
+enforced by both `TransactionValidator` and SQL `CHECK` constraints.
+
+### Editing
+
+A transaction can be edited (amount, date, account, category, note, transfer
+destination, or an adjustment's actual balance/reason). Editing re-runs **all**
+validation — including after a type change — and rewrites the single row inside
+one database transaction, so balances always recompute correctly and no stale
+accounting rights survive. Transfers stay a single row, so both endpoints move
+atomically.
 
 ### Opening balances
 
-Entered once at account creation. Stored as the signed opening contribution
-(negated for liabilities). Not editable as a standalone "current balance" — use
-an **adjustment** to correct a balance later, preserving an auditable reason.
+Entered once at account creation as a positive, intuitive amount (a liability's
+**outstanding balance**), converted to the signed opening in the domain
+(`AccountBalance.signedOpeningBalance`). Not editable as a standalone "current
+balance" — use an **adjustment** to correct a balance later, preserving a reason.
 
-### Soft delete
+### Soft delete & restore
 
 Financial rows are never hard-deleted; `deleted_at` is set and deleted rows are
-excluded from every balance, report and list.
+excluded from every balance, report and list. **Restore** clears `deleted_at` on
+the same row (never a new transaction). A repeated delete is an idempotent
+success. Deleting a transfer removes both endpoints' effect; deleting an
+adjustment reverses its delta.
 
 ## Net worth & cash flow
 

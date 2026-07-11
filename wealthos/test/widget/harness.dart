@@ -27,11 +27,9 @@ const _testSettings = AppSettings(
 /// Builds a [ProviderScope] + [MaterialApp] around [child] for widget tests.
 ///
 /// By default the data providers are overridden with fixed, synchronous values
-/// (empty accounts/transactions/categories, ready settings) so tests exercise
-/// UI behaviour without touching live Drift streams — which keeps them fast and
-/// free of pending-timer flakiness. Real database behaviour is covered by the
-/// database tests. Pass [withRealDatabase] to use an in-memory DB instead (for
-/// flows like onboarding that write settings).
+/// so tests exercise UI without touching live Drift streams (which keeps them
+/// fast and free of pending-timer flakiness). Real database behaviour is
+/// covered by the database tests. Pass data or [withRealDatabase] to customise.
 class TestHarness {
   TestHarness() : database = AppDatabase.forTesting(NativeDatabase.memory());
 
@@ -41,27 +39,34 @@ class TestHarness {
     Widget child, {
     Locale locale = const Locale('en'),
     bool withRealDatabase = false,
-    List<Override> overrides = const [],
+    List<Account> accounts = const [],
+    List<Transaction> transactions = const [],
+    List<Category> categories = const [],
+    Map<String, Transaction> transactionsById = const {},
   }) {
-    final baseOverrides = <Override>[
+    final overrides = <Override>[
       appDatabaseProvider.overrideWithValue(database),
       if (!withRealDatabase) ...[
         settingsProvider.overrideWith((ref) => Stream.value(_testSettings)),
-        accountsProvider.overrideWith((ref) => Stream.value(const <Account>[])),
-        allAccountsProvider.overrideWith(
-          (ref) => Stream.value(const <Account>[]),
+        accountsProvider.overrideWith(
+          (ref) => Stream.value(accounts.where((a) => !a.isArchived).toList()),
         ),
+        allAccountsProvider.overrideWith((ref) => Stream.value(accounts)),
         allTransactionsProvider.overrideWith(
-          (ref) => Stream.value(const <Transaction>[]),
+          (ref) => Stream.value(transactions),
         ),
         categoriesByTypeProvider.overrideWith(
-          (ref, type) => Stream.value(const <Category>[]),
+          (ref, type) =>
+              Stream.value(categories.where((c) => c.type == type).toList()),
+        ),
+        transactionByIdProvider.overrideWith(
+          (ref, id) => Stream.value(transactionsById[id]),
         ),
       ],
     ];
 
     return ProviderScope(
-      overrides: [...baseOverrides, ...overrides],
+      overrides: overrides,
       child: MaterialApp(
         locale: locale,
         supportedLocales: AppLocalizations.supportedLocales,

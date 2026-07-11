@@ -182,6 +182,24 @@ abstract class AppLocalizations {
   /// **'All'**
   String get commonAll;
 
+  /// No description provided for @commonEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get commonEdit;
+
+  /// No description provided for @commonDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get commonDelete;
+
+  /// No description provided for @commonUndo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get commonUndo;
+
   /// No description provided for @onboardingLanguageTitle.
   ///
   /// In en, this message translates to:
@@ -410,6 +428,12 @@ abstract class AppLocalizations {
   /// **'Amount owed'**
   String get accountsOwedAmount;
 
+  /// No description provided for @accountsOutstandingBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Outstanding balance'**
+  String get accountsOutstandingBalance;
+
   /// No description provided for @classificationAsset.
   ///
   /// In en, this message translates to:
@@ -545,7 +569,7 @@ abstract class AppLocalizations {
   /// No description provided for @transactionAdjustmentHint.
   ///
   /// In en, this message translates to:
-  /// **'Adjustments correct a balance and are excluded from cash-flow reports.'**
+  /// **'Enter the real balance; we compute the correction. Adjustments are excluded from cash-flow reports.'**
   String get transactionAdjustmentHint;
 
   /// No description provided for @transactionSaved.
@@ -553,6 +577,120 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Transaction saved'**
   String get transactionSaved;
+
+  /// No description provided for @transactionEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit transaction'**
+  String get transactionEdit;
+
+  /// No description provided for @transactionUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction updated'**
+  String get transactionUpdated;
+
+  /// No description provided for @transactionActualBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Actual balance'**
+  String get transactionActualBalance;
+
+  /// No description provided for @transactionCalculatedBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Current calculated balance'**
+  String get transactionCalculatedBalance;
+
+  /// No description provided for @transactionDifference.
+  ///
+  /// In en, this message translates to:
+  /// **'Difference'**
+  String get transactionDifference;
+
+  /// No description provided for @transactionDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction details'**
+  String get transactionDetailsTitle;
+
+  /// No description provided for @transactionStatusActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get transactionStatusActive;
+
+  /// No description provided for @transactionStatusDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleted'**
+  String get transactionStatusDeleted;
+
+  /// No description provided for @transactionEffect.
+  ///
+  /// In en, this message translates to:
+  /// **'Effect on accounts'**
+  String get transactionEffect;
+
+  /// No description provided for @transactionCreatedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Created'**
+  String get transactionCreatedAt;
+
+  /// No description provided for @transactionUpdatedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Last updated'**
+  String get transactionUpdatedAt;
+
+  /// No description provided for @transactionDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete transaction'**
+  String get transactionDelete;
+
+  /// No description provided for @transactionDeleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this transaction? Balances will update. You can undo this.'**
+  String get transactionDeleteConfirm;
+
+  /// No description provided for @transactionDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction deleted'**
+  String get transactionDeleted;
+
+  /// No description provided for @transactionRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore'**
+  String get transactionRestore;
+
+  /// No description provided for @transactionRestored.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction restored'**
+  String get transactionRestored;
+
+  /// No description provided for @semanticLiabilityCharge.
+  ///
+  /// In en, this message translates to:
+  /// **'Charge to liability'**
+  String get semanticLiabilityCharge;
+
+  /// No description provided for @semanticLiabilityRepayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Repayment'**
+  String get semanticLiabilityRepayment;
+
+  /// No description provided for @semanticLiabilityDrawdown.
+  ///
+  /// In en, this message translates to:
+  /// **'Liability draw-down'**
+  String get semanticLiabilityDrawdown;
 
   /// No description provided for @settingsTitle.
   ///
@@ -698,11 +836,53 @@ abstract class AppLocalizations {
   /// **'Please give a reason for the adjustment.'**
   String get errorAdjustmentReasonRequired;
 
+  /// No description provided for @errorCategoryNotAllowed.
+  ///
+  /// In en, this message translates to:
+  /// **'A category can only be set on income or expense.'**
+  String get errorCategoryNotAllowed;
+
+  /// No description provided for @errorCategoryTypeMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'The category does not match the transaction type.'**
+  String get errorCategoryTypeMismatch;
+
+  /// No description provided for @errorAccountArchived.
+  ///
+  /// In en, this message translates to:
+  /// **'This account is archived and cannot be used.'**
+  String get errorAccountArchived;
+
+  /// No description provided for @errorCategoryArchived.
+  ///
+  /// In en, this message translates to:
+  /// **'This category is archived and cannot be used.'**
+  String get errorCategoryArchived;
+
+  /// No description provided for @errorAdjustmentNoChange.
+  ///
+  /// In en, this message translates to:
+  /// **'The balance is unchanged; no adjustment is needed.'**
+  String get errorAdjustmentNoChange;
+
   /// No description provided for @errorAccountNotFound.
   ///
   /// In en, this message translates to:
   /// **'Account not found.'**
   String get errorAccountNotFound;
+
+  /// No description provided for @errorCategoryNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Category not found.'**
+  String get errorCategoryNotFound;
+
+  /// No description provided for @errorTransactionNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction not found.'**
+  String get errorTransactionNotFound;
 
   /// No description provided for @errorDatabase.
   ///

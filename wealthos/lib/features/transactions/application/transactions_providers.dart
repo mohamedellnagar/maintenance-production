@@ -21,3 +21,8 @@ final accountTransactionsProvider =
       (ref, accountId) =>
           ref.watch(transactionsRepositoryProvider).watchForAccount(accountId),
     );
+
+/// A single transaction by id (including soft-deleted), reactive.
+final transactionByIdProvider = StreamProvider.family<Transaction?, String>(
+  (ref, id) => ref.watch(transactionsRepositoryProvider).watchById(id),
+);

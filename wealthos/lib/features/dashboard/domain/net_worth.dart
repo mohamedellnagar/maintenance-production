@@ -34,32 +34,27 @@ abstract final class NetWorthCalculator {
     List<Transaction> transactions, {
     required String currencyCode,
   }) {
-    var assets = 0;
-    var liabilitySigned = 0;
+    var totalAssets = 0;
+    var totalLiabilities = 0;
+    var netWorth = 0;
     for (final account in accounts) {
-      final balance = BalanceCalculator.balanceOf(
-        account,
-        transactions,
-      ).amountMinor;
+      final balance = BalanceCalculator.forAccount(account, transactions);
+      // Net worth is the sum of signed net-worth contributions.
+      netWorth += balance.netWorthContributionMinor;
+      // Assets and liabilities are shown as their positive display amounts.
       if (account.isLiability) {
-        liabilitySigned += balance;
+        totalLiabilities += balance.displayBalanceMinor;
       } else {
-        assets += balance;
+        totalAssets += balance.displayBalanceMinor;
       }
     }
-    // Liability balances live on the negative number line; report the amount
-    // owed as a positive figure.
-    final liabilities = -liabilitySigned;
     return NetWorthSummary(
-      totalAssets: Money(amountMinor: assets, currencyCode: currencyCode),
+      totalAssets: Money(amountMinor: totalAssets, currencyCode: currencyCode),
       totalLiabilities: Money(
-        amountMinor: liabilities,
+        amountMinor: totalLiabilities,
         currencyCode: currencyCode,
       ),
-      netWorth: Money(
-        amountMinor: assets - liabilities,
-        currencyCode: currencyCode,
-      ),
+      netWorth: Money(amountMinor: netWorth, currencyCode: currencyCode),
     );
   }
 

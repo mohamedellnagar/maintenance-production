@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:wealthos/core/localization/generated/app_localizations.dart';
-import 'package:wealthos/features/transactions/presentation/add_transaction_page.dart';
+import 'package:wealthos/features/transactions/presentation/transaction_form_page.dart';
 
 import 'harness.dart';
 
@@ -12,7 +12,7 @@ void main() {
     final harness = TestHarness();
     addTearDown(harness.dispose);
 
-    await tester.pumpWidget(harness.wrap(const AddTransactionPage()));
+    await tester.pumpWidget(harness.wrap(const TransactionFormPage()));
     await pumpUntilStable(tester);
 
     final l = await AppLocalizations.delegate.load(const Locale('en'));

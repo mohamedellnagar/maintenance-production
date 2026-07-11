@@ -6,12 +6,11 @@ import '../../../core/di/providers.dart';
 import '../../../core/localization/enum_labels.dart';
 import '../../../core/localization/generated/app_localizations.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../../../core/widgets/money_text.dart';
 import '../../transactions/application/transactions_providers.dart';
 import '../../transactions/presentation/widgets/transaction_tile.dart';
 import '../application/accounts_providers.dart';
 import '../domain/account.dart';
-import '../domain/balance_calculator.dart';
+import 'widgets/account_balance_text.dart';
 
 class AccountDetailPage extends ConsumerWidget {
   const AccountDetailPage({required this.accountId, super.key});
@@ -79,10 +78,7 @@ class _DetailBody extends ConsumerWidget {
     final transactionsAsync = ref.watch(
       accountTransactionsProvider(account.id),
     );
-    final allTransactions = ref.watch(allTransactionsProvider).value;
-    final balance = allTransactions == null
-        ? null
-        : BalanceCalculator.balanceOf(account, allTransactions);
+    final balance = ref.watch(accountBalanceProvider(account));
 
     return ListView(
       padding: const EdgeInsets.all(AppSpacing.screen),
@@ -94,7 +90,9 @@ class _DetailBody extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  l.accountsCurrentBalance,
+                  account.isLiability
+                      ? l.accountsOutstandingBalance
+                      : l.accountsCurrentBalance,
                   style: theme.textTheme.titleSmall?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
@@ -103,9 +101,8 @@ class _DetailBody extends ConsumerWidget {
                 if (balance == null)
                   const CircularProgressIndicator()
                 else
-                  MoneyText(
+                  AccountBalanceText(
                     balance,
-                    colorBySign: account.isLiability,
                     style: theme.textTheme.headlineMedium,
                   ),
                 const SizedBox(height: AppSpacing.md),

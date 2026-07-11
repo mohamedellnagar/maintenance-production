@@ -51,6 +51,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonAll => 'All';
 
   @override
+  String get commonEdit => 'Edit';
+
+  @override
+  String get commonDelete => 'Delete';
+
+  @override
+  String get commonUndo => 'Undo';
+
+  @override
   String get onboardingLanguageTitle => 'Choose your language';
 
   @override
@@ -171,6 +180,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get accountsOwedAmount => 'Amount owed';
 
   @override
+  String get accountsOutstandingBalance => 'Outstanding balance';
+
+  @override
   String get classificationAsset => 'Asset';
 
   @override
@@ -238,10 +250,68 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get transactionAdjustmentHint =>
-      'Adjustments correct a balance and are excluded from cash-flow reports.';
+      'Enter the real balance; we compute the correction. Adjustments are excluded from cash-flow reports.';
 
   @override
   String get transactionSaved => 'Transaction saved';
+
+  @override
+  String get transactionEdit => 'Edit transaction';
+
+  @override
+  String get transactionUpdated => 'Transaction updated';
+
+  @override
+  String get transactionActualBalance => 'Actual balance';
+
+  @override
+  String get transactionCalculatedBalance => 'Current calculated balance';
+
+  @override
+  String get transactionDifference => 'Difference';
+
+  @override
+  String get transactionDetailsTitle => 'Transaction details';
+
+  @override
+  String get transactionStatusActive => 'Active';
+
+  @override
+  String get transactionStatusDeleted => 'Deleted';
+
+  @override
+  String get transactionEffect => 'Effect on accounts';
+
+  @override
+  String get transactionCreatedAt => 'Created';
+
+  @override
+  String get transactionUpdatedAt => 'Last updated';
+
+  @override
+  String get transactionDelete => 'Delete transaction';
+
+  @override
+  String get transactionDeleteConfirm =>
+      'Delete this transaction? Balances will update. You can undo this.';
+
+  @override
+  String get transactionDeleted => 'Transaction deleted';
+
+  @override
+  String get transactionRestore => 'Restore';
+
+  @override
+  String get transactionRestored => 'Transaction restored';
+
+  @override
+  String get semanticLiabilityCharge => 'Charge to liability';
+
+  @override
+  String get semanticLiabilityRepayment => 'Repayment';
+
+  @override
+  String get semanticLiabilityDrawdown => 'Liability draw-down';
 
   @override
   String get settingsTitle => 'Settings';
@@ -320,7 +390,33 @@ class AppLocalizationsEn extends AppLocalizations {
       'Please give a reason for the adjustment.';
 
   @override
+  String get errorCategoryNotAllowed =>
+      'A category can only be set on income or expense.';
+
+  @override
+  String get errorCategoryTypeMismatch =>
+      'The category does not match the transaction type.';
+
+  @override
+  String get errorAccountArchived =>
+      'This account is archived and cannot be used.';
+
+  @override
+  String get errorCategoryArchived =>
+      'This category is archived and cannot be used.';
+
+  @override
+  String get errorAdjustmentNoChange =>
+      'The balance is unchanged; no adjustment is needed.';
+
+  @override
   String get errorAccountNotFound => 'Account not found.';
+
+  @override
+  String get errorCategoryNotFound => 'Category not found.';
+
+  @override
+  String get errorTransactionNotFound => 'Transaction not found.';
 
   @override
   String get errorDatabase => 'A database error occurred.';

@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
-import '../../../core/money/money.dart';
 import '../../transactions/application/transactions_providers.dart';
 import '../domain/account.dart';
+import '../domain/account_balance.dart';
 import '../domain/balance_calculator.dart';
 
 /// All non-archived accounts, live.
@@ -17,14 +17,18 @@ final allAccountsProvider = StreamProvider<List<Account>>(
       ref.watch(accountsRepositoryProvider).watchAll(includeArchived: true),
 );
 
-/// A single account by id.
-final accountByIdProvider = FutureProvider.family<Account?, String>(
-  (ref, id) => ref.watch(accountsRepositoryProvider).getById(id),
+/// A single account by id, reactive to rename/archive.
+final accountByIdProvider = StreamProvider.family<Account?, String>(
+  (ref, id) => ref.watch(accountsRepositoryProvider).watchById(id),
 );
 
-/// Live balance of one account, derived from opening balance + transactions.
-final accountBalanceProvider = Provider.family<Money?, Account>((ref, account) {
+/// Live [AccountBalance] (signed / display / net-worth) for one account,
+/// derived from opening balance + transactions.
+final accountBalanceProvider = Provider.family<AccountBalance?, Account>((
+  ref,
+  account,
+) {
   final transactions = ref.watch(allTransactionsProvider).value;
   if (transactions == null) return null;
-  return BalanceCalculator.balanceOf(account, transactions);
+  return BalanceCalculator.forAccount(account, transactions);
 });

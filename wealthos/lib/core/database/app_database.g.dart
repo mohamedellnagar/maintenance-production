@@ -3086,6 +3086,66 @@ typedef $$AccountsTableTableUpdateCompanionBuilder =
       Value<int> rowid,
     });
 
+final class $$AccountsTableTableReferences
+    extends
+        BaseReferences<_$AppDatabase, $AccountsTableTable, AccountsTableData> {
+  $$AccountsTableTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static MultiTypedResultKey<
+    $TransactionsTableTable,
+    List<TransactionsTableData>
+  >
+  _outgoingTransactionsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.transactionsTable,
+    aliasName: 'accounts__id__transactions__account_id',
+  );
+
+  $$TransactionsTableTableProcessedTableManager get outgoingTransactions {
+    final manager = $$TransactionsTableTableTableManager(
+      $_db,
+      $_db.transactionsTable,
+    ).filter((f) => f.accountId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _outgoingTransactionsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<
+    $TransactionsTableTable,
+    List<TransactionsTableData>
+  >
+  _incomingTransactionsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.transactionsTable,
+    aliasName: 'accounts__id__transactions__destination_account_id',
+  );
+
+  $$TransactionsTableTableProcessedTableManager get incomingTransactions {
+    final manager =
+        $$TransactionsTableTableTableManager(
+          $_db,
+          $_db.transactionsTable,
+        ).filter(
+          (f) =>
+              f.destinationAccountId.id.sqlEquals($_itemColumn<String>('id')!),
+        );
+
+    final cache = $_typedResult.readTableOrNull(
+      _incomingTransactionsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
 class $$AccountsTableTableFilterComposer
     extends Composer<_$AppDatabase, $AccountsTableTable> {
   $$AccountsTableTableFilterComposer({
@@ -3159,6 +3219,56 @@ class $$AccountsTableTableFilterComposer
     column: $table.updatedAt,
     builder: (column) => ColumnFilters(column),
   );
+
+  Expression<bool> outgoingTransactions(
+    Expression<bool> Function($$TransactionsTableTableFilterComposer f) f,
+  ) {
+    final $$TransactionsTableTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.transactionsTable,
+      getReferencedColumn: (t) => t.accountId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$TransactionsTableTableFilterComposer(
+            $db: $db,
+            $table: $db.transactionsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> incomingTransactions(
+    Expression<bool> Function($$TransactionsTableTableFilterComposer f) f,
+  ) {
+    final $$TransactionsTableTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.transactionsTable,
+      getReferencedColumn: (t) => t.destinationAccountId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$TransactionsTableTableFilterComposer(
+            $db: $db,
+            $table: $db.transactionsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$AccountsTableTableOrderingComposer
@@ -3299,6 +3409,58 @@ class $$AccountsTableTableAnnotationComposer
 
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  Expression<T> outgoingTransactions<T extends Object>(
+    Expression<T> Function($$TransactionsTableTableAnnotationComposer a) f,
+  ) {
+    final $$TransactionsTableTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.transactionsTable,
+          getReferencedColumn: (t) => t.accountId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$TransactionsTableTableAnnotationComposer(
+                $db: $db,
+                $table: $db.transactionsTable,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+
+  Expression<T> incomingTransactions<T extends Object>(
+    Expression<T> Function($$TransactionsTableTableAnnotationComposer a) f,
+  ) {
+    final $$TransactionsTableTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.transactionsTable,
+          getReferencedColumn: (t) => t.destinationAccountId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$TransactionsTableTableAnnotationComposer(
+                $db: $db,
+                $table: $db.transactionsTable,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
 }
 
 class $$AccountsTableTableTableManager
@@ -3312,16 +3474,12 @@ class $$AccountsTableTableTableManager
           $$AccountsTableTableAnnotationComposer,
           $$AccountsTableTableCreateCompanionBuilder,
           $$AccountsTableTableUpdateCompanionBuilder,
-          (
-            AccountsTableData,
-            BaseReferences<
-              _$AppDatabase,
-              $AccountsTableTable,
-              AccountsTableData
-            >,
-          ),
+          (AccountsTableData, $$AccountsTableTableReferences),
           AccountsTableData,
-          PrefetchHooks Function()
+          PrefetchHooks Function({
+            bool outgoingTransactions,
+            bool incomingTransactions,
+          })
         > {
   $$AccountsTableTableTableManager(_$AppDatabase db, $AccountsTableTable table)
     : super(
@@ -3399,9 +3557,70 @@ class $$AccountsTableTableTableManager
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$AccountsTableTableReferences(db, table, e),
+                ),
+              )
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback:
+              ({outgoingTransactions = false, incomingTransactions = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (outgoingTransactions) db.transactionsTable,
+                    if (incomingTransactions) db.transactionsTable,
+                  ],
+                  addJoins: null,
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (outgoingTransactions)
+                        await $_getPrefetchedData<
+                          AccountsTableData,
+                          $AccountsTableTable,
+                          TransactionsTableData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$AccountsTableTableReferences
+                              ._outgoingTransactionsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$AccountsTableTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).outgoingTransactions,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.accountId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (incomingTransactions)
+                        await $_getPrefetchedData<
+                          AccountsTableData,
+                          $AccountsTableTable,
+                          TransactionsTableData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$AccountsTableTableReferences
+                              ._incomingTransactionsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$AccountsTableTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).incomingTransactions,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.destinationAccountId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
+              },
         ),
       );
 }
@@ -3416,12 +3635,12 @@ typedef $$AccountsTableTableProcessedTableManager =
       $$AccountsTableTableAnnotationComposer,
       $$AccountsTableTableCreateCompanionBuilder,
       $$AccountsTableTableUpdateCompanionBuilder,
-      (
-        AccountsTableData,
-        BaseReferences<_$AppDatabase, $AccountsTableTable, AccountsTableData>,
-      ),
+      (AccountsTableData, $$AccountsTableTableReferences),
       AccountsTableData,
-      PrefetchHooks Function()
+      PrefetchHooks Function({
+        bool outgoingTransactions,
+        bool incomingTransactions,
+      })
     >;
 typedef $$CategoriesTableTableCreateCompanionBuilder =
     CategoriesTableCompanion Function({

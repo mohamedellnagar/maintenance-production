@@ -1,4 +1,5 @@
 import '../../features/accounts/domain/account_type.dart';
+import '../../features/transactions/domain/transaction_semantic.dart';
 import '../../features/transactions/domain/transaction_type.dart';
 import 'generated/app_localizations.dart';
 
@@ -29,5 +30,17 @@ extension TransactionTypeLabel on TransactionType {
     TransactionType.expense => l.transactionTypeExpense,
     TransactionType.transfer => l.transactionTypeTransfer,
     TransactionType.adjustment => l.transactionTypeAdjustment,
+  };
+}
+
+extension TransactionSemanticLabel on TransactionSemantic {
+  String label(AppLocalizations l) => switch (this) {
+    TransactionSemantic.income => l.transactionTypeIncome,
+    TransactionSemantic.expense => l.transactionTypeExpense,
+    TransactionSemantic.liabilityCharge => l.semanticLiabilityCharge,
+    TransactionSemantic.transfer => l.transactionTypeTransfer,
+    TransactionSemantic.liabilityRepayment => l.semanticLiabilityRepayment,
+    TransactionSemantic.liabilityDrawdown => l.semanticLiabilityDrawdown,
+    TransactionSemantic.adjustment => l.transactionTypeAdjustment,
   };
 }

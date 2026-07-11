@@ -12,8 +12,11 @@ presentation  →  application  →  domain  ←  data
 
 - **domain** — pure Dart: entities (`Account`, `Transaction`, `Category`,
   `AppSettings`), enums, and the financial calculators
-  (`Money`, `TransactionEffect`, `BalanceCalculator`, `NetWorthCalculator`,
-  `TransactionValidator`). No Flutter, no I/O. Fully unit-testable.
+  (`Money`, `AccountBalance`, `TransactionEffect`, `BalanceCalculator`,
+  `NetWorthCalculator`, `AdjustmentCalculator`, `TransactionSemantic`,
+  `TransactionValidator`). No Flutter, no I/O. Fully unit-testable. Balance
+  sign/display conversions live here so widgets never re-derive them — see
+  `accounting-model.md`.
 - **data** — repositories backed by the Drift database. They map rows ⇆ domain
   entities, enforce validation, and own persistence concerns (atomic transfers,
   soft delete, currency invariants).

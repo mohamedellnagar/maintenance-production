@@ -7,9 +7,9 @@ import '../../../core/localization/generated/app_localizations.dart';
 import '../../../core/routing/app_router.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/empty_state.dart';
-import '../../../core/widgets/money_text.dart';
 import '../application/accounts_providers.dart';
 import '../domain/account.dart';
+import 'widgets/account_balance_text.dart';
 
 class AccountsListPage extends ConsumerWidget {
   const AccountsListPage({super.key});
@@ -88,11 +88,7 @@ class _AccountCard extends ConsumerWidget {
                 width: 16,
                 child: CircularProgressIndicator(strokeWidth: 2),
               )
-            : MoneyText(
-                balance,
-                colorBySign: account.isLiability,
-                style: theme.textTheme.titleMedium,
-              ),
+            : AccountBalanceText(balance, style: theme.textTheme.titleMedium),
       ),
     );
   }

@@ -46,6 +46,11 @@ abstract final class TransactionValidator {
       return const ValidationFailure(FailureCodes.amountMustBePositive);
     }
 
+    // A category is only meaningful on cash-flow (income/expense) transactions.
+    if (!input.type.isCashFlow && !_isBlank(input.categoryId)) {
+      return const ValidationFailure(FailureCodes.categoryNotAllowed);
+    }
+
     switch (input.type) {
       case TransactionType.income:
       case TransactionType.expense:

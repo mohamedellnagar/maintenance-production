@@ -10,6 +10,7 @@ import '../../../core/money/money.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../settings/application/settings_providers.dart';
 import '../data/accounts_repository.dart';
+import '../domain/account_balance.dart';
 import '../domain/account_type.dart';
 
 class AddAccountPage extends ConsumerStatefulWidget {
@@ -60,12 +61,15 @@ class _AddAccountPageState extends ConsumerState<AddAccountPage> {
     var openingMinor = 0;
     final raw = _openingController.text.trim();
     if (raw.isNotEmpty) {
-      openingMinor = Money.parse(raw, currencyCode: currency).amountMinor;
-      // For liabilities the user enters the amount owed (positive); store it as
-      // a negative net-worth contribution so one balance formula fits all.
-      if (_classification == AccountClassification.liability) {
-        openingMinor = -openingMinor;
-      }
+      // The user always enters a positive, intuitive amount (a liability's
+      // outstanding balance); the domain converts it to the signed opening.
+      openingMinor = AccountBalance.signedOpeningBalance(
+        classification: _classification,
+        enteredDisplayMinor: Money.parse(
+          raw,
+          currencyCode: currency,
+        ).amountMinor,
+      );
     }
 
     final result = await ref
@@ -142,7 +146,7 @@ class _AddAccountPageState extends ConsumerState<AddAccountPage> {
               controller: _openingController,
               decoration: InputDecoration(
                 labelText: isLiability
-                    ? '${l.accountsOwedAmount} (${l.commonOptional})'
+                    ? '${l.accountsOutstandingBalance} (${l.commonOptional})'
                     : '${l.accountsOpeningBalance} (${l.commonOptional})',
                 suffixText: currency,
               ),

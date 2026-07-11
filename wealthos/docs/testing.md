@@ -60,6 +60,34 @@ test/
 - add-account validation: empty name shows an error
 - add-transaction validation: empty form flags amount + account
 
+## Foundation-hardening tests
+
+`test/unit/accounting_model_test.dart`
+- `AccountBalance` signed vs. display vs. net-worth for assets and liabilities
+- signed opening balance from user input (asset & liability)
+- net worth with mixed assets/liabilities (spec example: −20,000)
+- `AdjustmentCalculator` delta for assets and liabilities, and no-change → 0
+- `TransactionSemantic` classification (charge, repayment, draw-down, …)
+
+`test/database/hardening_test.dart` (real in-memory DB)
+- liability scenarios: credit-card purchase, credit-card repayment, loan
+  receipt, loan repayment, loan interest (balances + cash-flow effects)
+- edit: amount recompute, transfer re-routed atomically, income→expense flip,
+  missing-transaction rejection
+- delete/restore: transfer effect removed then restored (same row), adjustment
+  reversed, idempotent repeated delete
+- integrity: archived account/destination/category rejection, wrong category
+  type, category on a transfer, non-base currency, **foreign-key enforcement**
+- summaries exclude soft-deleted rows
+
+`test/integration/reactive_test.dart` (ProviderContainer + real DB)
+- `allTransactionsProvider` reacts to create and delete
+- `accountBalanceProvider` recomputes after a transaction
+
+`test/widget/transaction_details_test.dart`
+- details render (semantic label, account, status, note, effect)
+- delete shows a confirmation dialog
+
 ## Quality gate
 
 ```bash

@@ -51,6 +51,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get commonAll => 'الكل';
 
   @override
+  String get commonEdit => 'تعديل';
+
+  @override
+  String get commonDelete => 'حذف';
+
+  @override
+  String get commonUndo => 'تراجع';
+
+  @override
   String get onboardingLanguageTitle => 'اختر لغتك';
 
   @override
@@ -169,6 +178,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get accountsOwedAmount => 'المبلغ المستحق';
 
   @override
+  String get accountsOutstandingBalance => 'الرصيد المستحق';
+
+  @override
   String get classificationAsset => 'أصل';
 
   @override
@@ -236,10 +248,68 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get transactionAdjustmentHint =>
-      'التعديلات تصحّح الرصيد ولا تُحتسب ضمن تقارير التدفق النقدي.';
+      'أدخل الرصيد الفعلي وسيحسب النظام الفرق. لا تُحتسب التعديلات ضمن تقارير التدفق النقدي.';
 
   @override
   String get transactionSaved => 'تم حفظ العملية';
+
+  @override
+  String get transactionEdit => 'تعديل العملية';
+
+  @override
+  String get transactionUpdated => 'تم تحديث العملية';
+
+  @override
+  String get transactionActualBalance => 'الرصيد الفعلي';
+
+  @override
+  String get transactionCalculatedBalance => 'الرصيد المحسوب الحالي';
+
+  @override
+  String get transactionDifference => 'الفرق';
+
+  @override
+  String get transactionDetailsTitle => 'تفاصيل العملية';
+
+  @override
+  String get transactionStatusActive => 'نشطة';
+
+  @override
+  String get transactionStatusDeleted => 'محذوفة';
+
+  @override
+  String get transactionEffect => 'الأثر على الحسابات';
+
+  @override
+  String get transactionCreatedAt => 'تاريخ الإنشاء';
+
+  @override
+  String get transactionUpdatedAt => 'آخر تعديل';
+
+  @override
+  String get transactionDelete => 'حذف العملية';
+
+  @override
+  String get transactionDeleteConfirm =>
+      'حذف هذه العملية؟ سيتم تحديث الأرصدة. يمكنك التراجع.';
+
+  @override
+  String get transactionDeleted => 'تم حذف العملية';
+
+  @override
+  String get transactionRestore => 'استعادة';
+
+  @override
+  String get transactionRestored => 'تمت استعادة العملية';
+
+  @override
+  String get semanticLiabilityCharge => 'زيادة التزام';
+
+  @override
+  String get semanticLiabilityRepayment => 'سداد التزام';
+
+  @override
+  String get semanticLiabilityDrawdown => 'سحب من التزام';
 
   @override
   String get settingsTitle => 'الإعدادات';
@@ -317,7 +387,29 @@ class AppLocalizationsAr extends AppLocalizations {
   String get errorAdjustmentReasonRequired => 'من فضلك اذكر سبب التعديل.';
 
   @override
+  String get errorCategoryNotAllowed =>
+      'لا يمكن تحديد تصنيف إلا للدخل أو المصروف.';
+
+  @override
+  String get errorCategoryTypeMismatch => 'التصنيف لا يطابق نوع العملية.';
+
+  @override
+  String get errorAccountArchived => 'هذا الحساب مؤرشف ولا يمكن استخدامه.';
+
+  @override
+  String get errorCategoryArchived => 'هذا التصنيف مؤرشف ولا يمكن استخدامه.';
+
+  @override
+  String get errorAdjustmentNoChange => 'لم يتغير الرصيد؛ لا حاجة للتعديل.';
+
+  @override
   String get errorAccountNotFound => 'الحساب غير موجود.';
+
+  @override
+  String get errorCategoryNotFound => 'التصنيف غير موجود.';
+
+  @override
+  String get errorTransactionNotFound => 'العملية غير موجودة.';
 
   @override
   String get errorDatabase => 'حدث خطأ في قاعدة البيانات.';

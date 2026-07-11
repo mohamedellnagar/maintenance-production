@@ -7,6 +7,14 @@ accounts, transactions (income/expense/transfer/adjustment), derived balances,
 net worth & monthly cash flow, onboarding, dashboard, settings, ar/en + RTL,
 Material 3 light/dark, biometric app-lock setting, full test suite.
 
+## Phase 1.1 — Foundation Hardening (this release) ✅
+
+Unified asset/liability balance model (signed / display / net-worth), liability
+operations (credit cards, loans) with clear semantics, actual-balance
+adjustments, transaction details/edit/delete/restore, repository-level
+integrity (archived/category-type/currency/FK), reactive providers, and a much
+larger test suite. See `docs/accounting-model.md`.
+
 ## Deliberately deferred
 
 Not built in this phase (only logical extension points left where useful):

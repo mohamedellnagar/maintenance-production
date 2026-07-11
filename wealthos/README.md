@@ -17,7 +17,13 @@ The first release works **fully offline**: no account, no internet, no cloud.
   and idempotent seeding.
 - 🧮 **Derived balances** — an account's balance is computed from its opening
   balance + transactions, never stored as an editable field.
-- 📊 **Net worth** — assets, liabilities and net worth on one signed number line.
+- 📊 **Net worth** — assets, liabilities and net worth on one signed number
+  line; liabilities show their outstanding balance as a positive figure.
+- 💳 **Liabilities done right** — credit-card purchases, repayments, loan
+  receipts/repayments and interest with clear, non-misleading semantics
+  (`docs/accounting-model.md`).
+- ✏️ **Full transaction lifecycle** — details, edit (atomic), delete with undo,
+  and restore; balance adjustments by entering the actual balance.
 - 🌍 **Bilingual** — real Arabic + English strings (RTL/LTR), no hardcoded UI
   text.
 - 🎨 **Material 3** — light/dark themes, accessible gain/loss cues (never
@@ -96,8 +102,17 @@ schedules, forecasting, PDF/Excel export, cloud backup. See `docs/roadmap.md`.
 ## Documentation
 
 - `docs/architecture.md` — layers, structure, state, navigation
-- `docs/database.md` — schema, constraints, migrations, seeding
+- `docs/accounting-model.md` — signed vs. display balances, liabilities, net
+  worth, adjustments, delete/restore (with worked examples)
+- `docs/database.md` — schema, constraints, migrations, seeding, integrity
 - `docs/business-rules.md` — money, accounts, transactions, net worth rules
 - `docs/testing.md` — what is tested and how
+- `docs/foundation-hardening-plan.md` — hardening findings & plan
 - `docs/roadmap.md` — what is next
 - `CHANGELOG.md`
+
+> **Building an APK:** `flutter build apk --debug` needs the Android SDK. It is
+> not installed in the CI sandbox used here and its download host
+> (`dl.google.com`) is blocked by the egress policy, so the APK build cannot run
+> in that environment. On a normal machine with the Android SDK it builds
+> unchanged. `flutter analyze` and `flutter test` are the compile/behaviour gate.
