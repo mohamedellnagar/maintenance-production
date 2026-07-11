@@ -124,3 +124,89 @@ class TransactionsTable extends Table {
         "(adjustment_reason IS NOT NULL AND adjustment_reason <> ''))",
   ];
 }
+
+/// One monthly budget per (year, month, currency).
+class BudgetsTable extends Table {
+  @override
+  String get tableName => 'budgets';
+
+  TextColumn get id => text()();
+  IntColumn get year => integer()();
+  IntColumn get month => integer()();
+  TextColumn get currencyCode => text().withLength(min: 3, max: 3)();
+  TextColumn get status => text().withDefault(const Constant('active'))();
+  TextColumn get notes => text().nullable()();
+  // Totals captured when the month is closed, to detect later changes.
+  IntColumn get closedSnapshotExpenseMinor => integer().nullable()();
+  IntColumn get closedSnapshotIncomeMinor => integer().nullable()();
+  DateTimeColumn get createdAt => dateTime()();
+  DateTimeColumn get updatedAt => dateTime()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+
+  @override
+  List<String> get customConstraints => <String>[
+    "CHECK (status IN ('draft','active','closed'))",
+    'CHECK (month BETWEEN 1 AND 12)',
+    'UNIQUE (year, month, currency_code)',
+  ];
+}
+
+/// A line item within a budget.
+class BudgetItemsTable extends Table {
+  @override
+  String get tableName => 'budget_items';
+
+  TextColumn get id => text()();
+  TextColumn get budgetId => text().references(BudgetsTable, #id)();
+  TextColumn get itemType => text()();
+  TextColumn get categoryId =>
+      text().nullable().references(CategoriesTable, #id)();
+  TextColumn get accountId =>
+      text().nullable().references(AccountsTable, #id)();
+  TextColumn get customName => text().nullable()();
+  IntColumn get assignedAmountMinor => integer()();
+  BoolColumn get rolloverEnabled =>
+      boolean().withDefault(const Constant(false))();
+  IntColumn get displayOrder => integer().withDefault(const Constant(0))();
+  TextColumn get notes => text().nullable()();
+  DateTimeColumn get createdAt => dateTime()();
+  DateTimeColumn get updatedAt => dateTime()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+
+  @override
+  List<String> get customConstraints => <String>[
+    "CHECK (item_type IN ('expense','saving','debtPayment','incomePlan'))",
+    'CHECK (assigned_amount_minor >= 0)',
+    // NULLs are distinct in SQLite, so these block duplicate category / account
+    // items while allowing multiple saving rows (both columns null).
+    'UNIQUE (budget_id, category_id)',
+    'UNIQUE (budget_id, account_id)',
+  ];
+}
+
+/// A traceable carry-over from one month's item to the next.
+class BudgetRolloversTable extends Table {
+  @override
+  String get tableName => 'budget_rollovers';
+
+  TextColumn get id => text()();
+  @ReferenceName('rolloversFrom')
+  TextColumn get fromBudgetId => text().references(BudgetsTable, #id)();
+  @ReferenceName('rolloversTo')
+  TextColumn get toBudgetId => text().references(BudgetsTable, #id)();
+  @ReferenceName('rolloversFromItem')
+  TextColumn get sourceBudgetItemId =>
+      text().references(BudgetItemsTable, #id)();
+  @ReferenceName('rolloversToItem')
+  TextColumn get targetBudgetItemId =>
+      text().nullable().references(BudgetItemsTable, #id)();
+  IntColumn get amountMinor => integer()();
+  DateTimeColumn get createdAt => dateTime()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}

@@ -1,7 +1,30 @@
 # Database
 
-Local storage is **SQLite** via [Drift]. Schema version **1**. Foreign keys are
+Local storage is **SQLite** via [Drift]. Schema version **2**. Foreign keys are
 enabled (`PRAGMA foreign_keys = ON`). All money is stored as integer minor units.
+
+## Budget tables (v2)
+
+- **`budgets`** — `id`, `year`, `month`, `currency_code`, `status`
+  (`draft|active|closed`), `notes?`, `closed_snapshot_expense_minor?`,
+  `closed_snapshot_income_minor?`, timestamps. `UNIQUE(year, month,
+  currency_code)`; CHECKs on `status` and `month BETWEEN 1 AND 12`.
+- **`budget_items`** — `id`, `budget_id→budgets`, `item_type`
+  (`expense|saving|debtPayment|incomePlan`), `category_id?→categories`,
+  `account_id?→accounts`, `custom_name?`, `assigned_amount_minor` (`>= 0`),
+  `rollover_enabled`, `display_order`, `notes?`, timestamps. `UNIQUE(budget_id,
+  category_id)` and `UNIQUE(budget_id, account_id)` (SQLite NULLs are distinct,
+  so multiple savings rows are allowed while duplicate category/liability items
+  are blocked).
+- **`budget_rollovers`** — `id`, `from_budget_id→budgets`,
+  `to_budget_id→budgets`, `source_budget_item_id→budget_items`,
+  `target_budget_item_id?→budget_items`, `amount_minor`, `created_at`.
+
+`schemaVersion` is **2**; `onUpgrade` creates the three tables. A test upgrades a
+`user_version = 1` database and asserts the tables appear (see
+`test/database/budget_test.dart`). Repository-enforced budget rules (category
+type, archived rejection, hierarchy, closed-month read-only, delete-with-linked-
+rollover) sit alongside these constraints.
 
 ## Tables
 

@@ -142,3 +142,26 @@ adjustment reverses its delta.
 - **Monthly income / expense** = Σ `amount_minor` of non-deleted income /
   expense transactions in the selected month. Transfers and adjustments are
   excluded (they are not cash flow).
+
+## Budgeting (V1)
+
+Monthly budgets plan income and spending on top of the ledger without changing
+it. Full rules and worked examples are in `budgeting-model.md`; in brief:
+
+- Expected income (plan) is kept separate from actual income (income
+  transactions); account balances are never treated as monthly income; transfers
+  and adjustments never count as income/expense; a credit-card repayment is not
+  a second expense.
+- Item types: `expense` (expense category), `incomePlan` (income category),
+  `debtPayment` (liability account), `saving` (plan only in V1).
+- `availableToAssign = expectedIncome + incomingRollover − assignedExpense −
+  assignedSaving − assignedDebtPayment` (never fed by account balances; a
+  negative value warns but does not block).
+- Expense actual counts the item's category **and its descendants**; duplicate
+  and parent/child items are rejected to prevent double counting.
+- Debt-payment actual counts only liability **repayments** (via
+  `TransactionSemantic`), never charges, draw-downs, adjustments or deleted rows.
+- Rollover carries only a **positive** expense remaining, opt-in per item,
+  through an atomic **close-month** flow with traceable records; deficits are
+  shown but not auto-carried. Closed months are read-only until **reopen**;
+  editing an old transaction still updates live actuals and raises an insight.

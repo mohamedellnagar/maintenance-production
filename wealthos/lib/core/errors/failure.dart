@@ -57,6 +57,21 @@ abstract final class FailureCodes {
   static const String accountNotFound = 'error.account_not_found';
   static const String categoryNotFound = 'error.category_not_found';
   static const String transactionNotFound = 'error.transaction_not_found';
+  // Budgeting.
+  static const String budgetAssignedNegative =
+      'validation.budget_assigned_negative';
+  static const String budgetCategoryRequired = 'validation.budget_category';
+  static const String budgetLiabilityRequired = 'validation.budget_liability';
+  static const String budgetNotLiability = 'validation.budget_not_liability';
+  static const String budgetDuplicateItem = 'validation.budget_duplicate_item';
+  static const String budgetHierarchyConflict =
+      'validation.budget_hierarchy_conflict';
+  static const String budgetExists = 'validation.budget_exists';
+  static const String budgetClosed = 'validation.budget_closed';
+  static const String budgetItemLinkedRollover =
+      'validation.budget_item_linked_rollover';
+  static const String budgetNotFound = 'error.budget_not_found';
+  static const String budgetItemNotFound = 'error.budget_item_not_found';
   static const String database = 'error.database';
   static const String unexpected = 'error.unexpected';
 }

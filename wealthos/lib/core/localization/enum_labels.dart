@@ -1,4 +1,7 @@
 import '../../features/accounts/domain/account_type.dart';
+import '../../features/budgets/domain/budget.dart';
+import '../../features/budgets/domain/budget_calculator.dart';
+import '../../features/budgets/domain/budget_item.dart';
 import '../../features/transactions/domain/transaction_semantic.dart';
 import '../../features/transactions/domain/transaction_type.dart';
 import 'generated/app_localizations.dart';
@@ -30,6 +33,32 @@ extension TransactionTypeLabel on TransactionType {
     TransactionType.expense => l.transactionTypeExpense,
     TransactionType.transfer => l.transactionTypeTransfer,
     TransactionType.adjustment => l.transactionTypeAdjustment,
+  };
+}
+
+extension BudgetItemTypeLabel on BudgetItemType {
+  String label(AppLocalizations l) => switch (this) {
+    BudgetItemType.expense => l.budgetItemTypeExpense,
+    BudgetItemType.saving => l.budgetItemTypeSaving,
+    BudgetItemType.debtPayment => l.budgetItemTypeDebt,
+    BudgetItemType.incomePlan => l.budgetItemTypeIncome,
+  };
+}
+
+extension ExpenseItemStatusLabel on ExpenseItemStatus {
+  String label(AppLocalizations l) => switch (this) {
+    ExpenseItemStatus.notStarted => l.budgetStatusNotStarted,
+    ExpenseItemStatus.onTrack => l.budgetStatusOnTrack,
+    ExpenseItemStatus.nearLimit => l.budgetStatusNearLimit,
+    ExpenseItemStatus.overspent => l.budgetStatusOverspent,
+  };
+}
+
+extension BudgetStatusLabel on BudgetStatus {
+  String label(AppLocalizations l) => switch (this) {
+    BudgetStatus.draft => l.budgetStatusDraft,
+    BudgetStatus.active => l.budgetStatusActive,
+    BudgetStatus.closed => l.budgetStatusClosed,
   };
 }
 

@@ -351,6 +351,250 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsVersion => 'Version';
 
   @override
+  String get navDashboard => 'Home';
+
+  @override
+  String get navBudget => 'Budget';
+
+  @override
+  String get navAccounts => 'Accounts';
+
+  @override
+  String get navSettings => 'Settings';
+
+  @override
+  String get budgetTitle => 'Budget';
+
+  @override
+  String get budgetStatusDraft => 'Draft';
+
+  @override
+  String get budgetStatusActive => 'Active';
+
+  @override
+  String get budgetStatusClosed => 'Closed';
+
+  @override
+  String get budgetExpectedIncome => 'Expected income';
+
+  @override
+  String get budgetActualIncome => 'Actual income';
+
+  @override
+  String get budgetTotalAssigned => 'Total assigned';
+
+  @override
+  String get budgetAvailableToAssign => 'Available to assign';
+
+  @override
+  String get budgetActualExpense => 'Actual expense';
+
+  @override
+  String get budgetTotalRemaining => 'Total remaining';
+
+  @override
+  String get budgetOverspentCount => 'Overspent categories';
+
+  @override
+  String get budgetSectionIncomePlan => 'Income plan';
+
+  @override
+  String get budgetSectionExpense => 'Expenses';
+
+  @override
+  String get budgetSectionSavings => 'Savings';
+
+  @override
+  String get budgetSectionDebt => 'Debt payments';
+
+  @override
+  String get budgetItemAssigned => 'Assigned';
+
+  @override
+  String get budgetItemActual => 'Actual';
+
+  @override
+  String get budgetItemRemaining => 'Remaining';
+
+  @override
+  String get budgetItemOverspentBy => 'Overspent by';
+
+  @override
+  String get budgetItemPlanned => 'Planned';
+
+  @override
+  String get budgetItemVariance => 'Variance';
+
+  @override
+  String get budgetItemRolloverIn => 'Rolled in';
+
+  @override
+  String get budgetItemRolloverOut => 'Rolled out';
+
+  @override
+  String budgetItemUsage(int percent) {
+    return '$percent% used';
+  }
+
+  @override
+  String get budgetStatusNotStarted => 'Not started';
+
+  @override
+  String get budgetStatusOnTrack => 'On track';
+
+  @override
+  String get budgetStatusNearLimit => 'Near limit';
+
+  @override
+  String get budgetStatusOverspent => 'Overspent';
+
+  @override
+  String get budgetEmptyTitle => 'No budget for this month';
+
+  @override
+  String get budgetEmptyMessage =>
+      'Create a monthly budget to plan your income and spending.';
+
+  @override
+  String get budgetCreateEmpty => 'Create empty budget';
+
+  @override
+  String get budgetCopyPrevious => 'Copy previous month';
+
+  @override
+  String get budgetCreateTitle => 'Create budget';
+
+  @override
+  String budgetCopiedSkipped(int count) {
+    return '$count item(s) were skipped because their category or account is archived.';
+  }
+
+  @override
+  String get budgetAddItem => 'Add item';
+
+  @override
+  String get budgetItemTypeExpense => 'Expense';
+
+  @override
+  String get budgetItemTypeSaving => 'Saving';
+
+  @override
+  String get budgetItemTypeDebt => 'Debt payment';
+
+  @override
+  String get budgetItemTypeIncome => 'Income plan';
+
+  @override
+  String get budgetItemName => 'Name';
+
+  @override
+  String get budgetAssignedAmount => 'Assigned amount';
+
+  @override
+  String get budgetExpectedAmount => 'Expected amount';
+
+  @override
+  String get budgetPlannedPayment => 'Planned payment';
+
+  @override
+  String get budgetRolloverEnabled => 'Roll over unused amount';
+
+  @override
+  String get budgetItemNotes => 'Notes';
+
+  @override
+  String get budgetSelectExpenseCategory => 'Expense category';
+
+  @override
+  String get budgetSelectIncomeCategory => 'Income category';
+
+  @override
+  String get budgetSelectLiability => 'Liability account';
+
+  @override
+  String get budgetItemDetailsTitle => 'Budget item';
+
+  @override
+  String get budgetContributingTransactions => 'Contributing transactions';
+
+  @override
+  String get budgetNoContributions => 'No contributing transactions yet.';
+
+  @override
+  String get budgetCloseMonth => 'Close month';
+
+  @override
+  String get budgetCloseTitle => 'Close this month';
+
+  @override
+  String get budgetCloseReview =>
+      'Review the month, then choose which surpluses to carry forward.';
+
+  @override
+  String get budgetCloseSelectRollover => 'Carry forward';
+
+  @override
+  String get budgetCloseConfirm => 'Close month';
+
+  @override
+  String get budgetClosedBanner =>
+      'This month is closed. Its results still reflect the latest transactions.';
+
+  @override
+  String get budgetReopen => 'Reopen month';
+
+  @override
+  String get budgetReopenConfirm => 'Reopen this closed month for editing?';
+
+  @override
+  String get budgetReadOnly =>
+      'Budget items are read-only while the month is closed.';
+
+  @override
+  String get budgetDeleteItem => 'Delete item';
+
+  @override
+  String get budgetDeleteItemConfirm => 'Delete this budget item?';
+
+  @override
+  String get budgetItemSaved => 'Budget item saved';
+
+  @override
+  String get budgetSummaryCardTitle => 'This month\'s budget';
+
+  @override
+  String get budgetOpen => 'Open budget';
+
+  @override
+  String get budgetCreateCta => 'Create a budget for this month';
+
+  @override
+  String get budgetSavingPlanOnly =>
+      'Planned (savings are shown as a plan only in this version).';
+
+  @override
+  String insightOverspent(String category) {
+    return 'Over budget: $category';
+  }
+
+  @override
+  String insightHighConsumption(String category) {
+    return '80%+ used: $category';
+  }
+
+  @override
+  String get insightNegativeAvailable =>
+      'You have assigned more than your expected income.';
+
+  @override
+  String get insightIncomeBelowExpected =>
+      'Actual income is below the expected amount.';
+
+  @override
+  String get insightClosedMonthChanged =>
+      'A closed month\'s results changed after closing.';
+
+  @override
   String get lockTitle => 'WealthOS is locked';
 
   @override
@@ -417,6 +661,46 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errorTransactionNotFound => 'Transaction not found.';
+
+  @override
+  String get errorBudgetAssignedNegative =>
+      'The assigned amount cannot be negative.';
+
+  @override
+  String get errorBudgetCategoryRequired => 'Please choose a category.';
+
+  @override
+  String get errorBudgetLiabilityRequired =>
+      'Please choose a liability account.';
+
+  @override
+  String get errorBudgetNotLiability =>
+      'A debt payment must use a liability account.';
+
+  @override
+  String get errorBudgetDuplicateItem =>
+      'This category or account already has a budget item.';
+
+  @override
+  String get errorBudgetHierarchyConflict =>
+      'A parent or child category is already budgeted.';
+
+  @override
+  String get errorBudgetExists => 'A budget already exists for this month.';
+
+  @override
+  String get errorBudgetClosed =>
+      'The month is closed. Reopen it to make changes.';
+
+  @override
+  String get errorBudgetItemLinkedRollover =>
+      'This item has a linked roll-over and cannot be deleted.';
+
+  @override
+  String get errorBudgetNotFound => 'Budget not found.';
+
+  @override
+  String get errorBudgetItemNotFound => 'Budget item not found.';
 
   @override
   String get errorDatabase => 'A database error occurred.';

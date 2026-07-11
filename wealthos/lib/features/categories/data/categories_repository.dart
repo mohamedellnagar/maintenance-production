@@ -29,6 +29,15 @@ class CategoriesRepository {
         .map((rows) => rows.map(_toDomain).toList());
   }
 
+  /// All categories (including archived) — needed for hierarchy resolution and
+  /// name lookups.
+  Stream<List<Category>> watchAll() {
+    return (_db.select(_db.categoriesTable)
+          ..orderBy([(t) => OrderingTerm(expression: t.nameEn)]))
+        .watch()
+        .map((rows) => rows.map(_toDomain).toList());
+  }
+
   Future<Category?> getById(String id) async {
     final row = await (_db.select(
       _db.categoriesTable,

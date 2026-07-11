@@ -88,6 +88,31 @@ test/
 - details render (semantic label, account, status, note, effect)
 - delete shows a confirmation dialog
 
+## Budgeting tests (V1)
+
+`test/unit/budget_calculator_test.dart`
+- expected/actual income, total assigned, available-to-assign (no balance leak),
+  incoming rollover; expense spending, remaining, overspend, usage %, near-limit
+  and not-started status; category self+descendants; debt-payment (repayments
+  only, excludes charge/draw-down/adjustment/deleted); month boundaries,
+  leap-year February, December→January.
+
+`test/database/budget_test.dart`
+- **v1→v2 migration** creates the budget tables; one-budget-per-month; CRUD;
+  invalid category type; archived category / non-liability rejection; duplicate
+  and parent/child hierarchy rejection; copy previous month (items only, none
+  when no previous); atomic close + traceable rollover; closed read-only;
+  reopen; delete-with-linked-rollover rejection; foreign keys.
+
+`test/integration/budget_reactive_test.dart`
+- expense updates budget actual; edit amount; category change moves actual
+  between items; delete then restore; repayment updates debt while a card charge
+  does not — all through live providers.
+
+`test/widget/budget_test.dart`
+- empty budget state, add-item validation, overspent tile status, dashboard
+  budget-card CTA, closed-month banner + reopen + read-only (no add FAB).
+
 ## Quality gate
 
 ```bash

@@ -42,7 +42,8 @@ lib/
     utils/                 # safe dev-only logger
     widgets/               # shared presentation widgets
   features/
-    onboarding/ dashboard/ accounts/ transactions/ categories/ settings/
+    onboarding/ dashboard/ accounts/ transactions/ categories/ budgets/
+    settings/
       domain/ data/ application/ presentation/   # only where used
 ```
 
@@ -57,7 +58,15 @@ thin projection of the database.
 
 [GoRouter] with a single redirect: until `onboarding_completed` is true the app
 is pinned to `/onboarding`; afterwards `/onboarding` redirects home. The router
-refreshes when settings change.
+refreshes when settings change. Main navigation is a `StatefulShellRoute`
+bottom-nav shell with four tabs — Dashboard, **Budget**, Accounts, Settings —
+and detail/form screens push full-screen above the shell (root navigator).
+
+The **budgets** feature adds `BudgetCalculator` (pure month math),
+`BudgetInsightBuilder`, a `BudgetsRepository` (one-per-month, integrity, atomic
+close/rollover) and a reactive `budgetViewProvider` that recomputes whenever
+transactions, categories, accounts, items or rollovers change. See
+`accounting-model.md` and `budgeting-model.md`.
 
 ## Error handling
 

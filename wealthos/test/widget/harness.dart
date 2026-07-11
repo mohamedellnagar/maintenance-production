@@ -43,6 +43,7 @@ class TestHarness {
     List<Transaction> transactions = const [],
     List<Category> categories = const [],
     Map<String, Transaction> transactionsById = const {},
+    List<Override> extraOverrides = const [],
   }) {
     final overrides = <Override>[
       appDatabaseProvider.overrideWithValue(database),
@@ -63,6 +64,7 @@ class TestHarness {
           (ref, id) => Stream.value(transactionsById[id]),
         ),
       ],
+      ...extraOverrides,
     ];
 
     return ProviderScope(

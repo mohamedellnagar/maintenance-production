@@ -24,6 +24,9 @@ The first release works **fully offline**: no account, no internet, no cloud.
   (`docs/accounting-model.md`).
 - ✏️ **Full transaction lifecycle** — details, edit (atomic), delete with undo,
   and restore; balance adjustments by entering the actual balance.
+- 🥧 **Monthly budgets** — plan income/expenses/savings/debt payments, track
+  actual vs. plan, available-to-assign, overspend, and carry surpluses forward
+  via an atomic close-month flow (`docs/budgeting-model.md`).
 - 🌍 **Bilingual** — real Arabic + English strings (RTL/LTR), no hardcoded UI
   text.
 - 🎨 **Material 3** — light/dark themes, accessible gain/loss cues (never
@@ -104,6 +107,8 @@ schedules, forecasting, PDF/Excel export, cloud backup. See `docs/roadmap.md`.
 - `docs/architecture.md` — layers, structure, state, navigation
 - `docs/accounting-model.md` — signed vs. display balances, liabilities, net
   worth, adjustments, delete/restore (with worked examples)
+- `docs/budgeting-model.md` — monthly budgets, actual vs. plan, rollover,
+  debt-payment, double-counting, closed months (with worked examples)
 - `docs/database.md` — schema, constraints, migrations, seeding, integrity
 - `docs/business-rules.md` — money, accounts, transactions, net worth rules
 - `docs/testing.md` — what is tested and how

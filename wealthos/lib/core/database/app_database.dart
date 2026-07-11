@@ -7,7 +7,15 @@ import 'tables.dart';
 part 'app_database.g.dart';
 
 @DriftDatabase(
-  tables: [AppSettingsTable, AccountsTable, CategoriesTable, TransactionsTable],
+  tables: [
+    AppSettingsTable,
+    AccountsTable,
+    CategoriesTable,
+    TransactionsTable,
+    BudgetsTable,
+    BudgetItemsTable,
+    BudgetRolloversTable,
+  ],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(impl.openConnection());
@@ -16,13 +24,21 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (Migrator m) async {
       await m.createAll();
       await seedDefaultCategories();
+    },
+    onUpgrade: (Migrator m, int from, int to) async {
+      // v1 → v2: add the budgeting tables.
+      if (from < 2) {
+        await m.createTable(budgetsTable);
+        await m.createTable(budgetItemsTable);
+        await m.createTable(budgetRolloversTable);
+      }
     },
     beforeOpen: (OpeningDetails details) async {
       await customStatement('PRAGMA foreign_keys = ON');

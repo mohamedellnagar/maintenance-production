@@ -2758,6 +2758,1906 @@ class TransactionsTableCompanion
   }
 }
 
+class $BudgetsTableTable extends BudgetsTable
+    with TableInfo<$BudgetsTableTable, BudgetsTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $BudgetsTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _yearMeta = const VerificationMeta('year');
+  @override
+  late final GeneratedColumn<int> year = GeneratedColumn<int>(
+    'year',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _monthMeta = const VerificationMeta('month');
+  @override
+  late final GeneratedColumn<int> month = GeneratedColumn<int>(
+    'month',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _currencyCodeMeta = const VerificationMeta(
+    'currencyCode',
+  );
+  @override
+  late final GeneratedColumn<String> currencyCode = GeneratedColumn<String>(
+    'currency_code',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 3,
+      maxTextLength: 3,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('active'),
+  );
+  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  @override
+  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
+    'notes',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _closedSnapshotExpenseMinorMeta =
+      const VerificationMeta('closedSnapshotExpenseMinor');
+  @override
+  late final GeneratedColumn<int> closedSnapshotExpenseMinor =
+      GeneratedColumn<int>(
+        'closed_snapshot_expense_minor',
+        aliasedName,
+        true,
+        type: DriftSqlType.int,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _closedSnapshotIncomeMinorMeta =
+      const VerificationMeta('closedSnapshotIncomeMinor');
+  @override
+  late final GeneratedColumn<int> closedSnapshotIncomeMinor =
+      GeneratedColumn<int>(
+        'closed_snapshot_income_minor',
+        aliasedName,
+        true,
+        type: DriftSqlType.int,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    year,
+    month,
+    currencyCode,
+    status,
+    notes,
+    closedSnapshotExpenseMinor,
+    closedSnapshotIncomeMinor,
+    createdAt,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'budgets';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<BudgetsTableData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('year')) {
+      context.handle(
+        _yearMeta,
+        year.isAcceptableOrUnknown(data['year']!, _yearMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_yearMeta);
+    }
+    if (data.containsKey('month')) {
+      context.handle(
+        _monthMeta,
+        month.isAcceptableOrUnknown(data['month']!, _monthMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_monthMeta);
+    }
+    if (data.containsKey('currency_code')) {
+      context.handle(
+        _currencyCodeMeta,
+        currencyCode.isAcceptableOrUnknown(
+          data['currency_code']!,
+          _currencyCodeMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_currencyCodeMeta);
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    }
+    if (data.containsKey('notes')) {
+      context.handle(
+        _notesMeta,
+        notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
+      );
+    }
+    if (data.containsKey('closed_snapshot_expense_minor')) {
+      context.handle(
+        _closedSnapshotExpenseMinorMeta,
+        closedSnapshotExpenseMinor.isAcceptableOrUnknown(
+          data['closed_snapshot_expense_minor']!,
+          _closedSnapshotExpenseMinorMeta,
+        ),
+      );
+    }
+    if (data.containsKey('closed_snapshot_income_minor')) {
+      context.handle(
+        _closedSnapshotIncomeMinorMeta,
+        closedSnapshotIncomeMinor.isAcceptableOrUnknown(
+          data['closed_snapshot_income_minor']!,
+          _closedSnapshotIncomeMinorMeta,
+        ),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  BudgetsTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return BudgetsTableData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      year: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}year'],
+      )!,
+      month: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}month'],
+      )!,
+      currencyCode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}currency_code'],
+      )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      ),
+      closedSnapshotExpenseMinor: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}closed_snapshot_expense_minor'],
+      ),
+      closedSnapshotIncomeMinor: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}closed_snapshot_income_minor'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $BudgetsTableTable createAlias(String alias) {
+    return $BudgetsTableTable(attachedDatabase, alias);
+  }
+}
+
+class BudgetsTableData extends DataClass
+    implements Insertable<BudgetsTableData> {
+  final String id;
+  final int year;
+  final int month;
+  final String currencyCode;
+  final String status;
+  final String? notes;
+  final int? closedSnapshotExpenseMinor;
+  final int? closedSnapshotIncomeMinor;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  const BudgetsTableData({
+    required this.id,
+    required this.year,
+    required this.month,
+    required this.currencyCode,
+    required this.status,
+    this.notes,
+    this.closedSnapshotExpenseMinor,
+    this.closedSnapshotIncomeMinor,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['year'] = Variable<int>(year);
+    map['month'] = Variable<int>(month);
+    map['currency_code'] = Variable<String>(currencyCode);
+    map['status'] = Variable<String>(status);
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    if (!nullToAbsent || closedSnapshotExpenseMinor != null) {
+      map['closed_snapshot_expense_minor'] = Variable<int>(
+        closedSnapshotExpenseMinor,
+      );
+    }
+    if (!nullToAbsent || closedSnapshotIncomeMinor != null) {
+      map['closed_snapshot_income_minor'] = Variable<int>(
+        closedSnapshotIncomeMinor,
+      );
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  BudgetsTableCompanion toCompanion(bool nullToAbsent) {
+    return BudgetsTableCompanion(
+      id: Value(id),
+      year: Value(year),
+      month: Value(month),
+      currencyCode: Value(currencyCode),
+      status: Value(status),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
+      closedSnapshotExpenseMinor:
+          closedSnapshotExpenseMinor == null && nullToAbsent
+          ? const Value.absent()
+          : Value(closedSnapshotExpenseMinor),
+      closedSnapshotIncomeMinor:
+          closedSnapshotIncomeMinor == null && nullToAbsent
+          ? const Value.absent()
+          : Value(closedSnapshotIncomeMinor),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory BudgetsTableData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return BudgetsTableData(
+      id: serializer.fromJson<String>(json['id']),
+      year: serializer.fromJson<int>(json['year']),
+      month: serializer.fromJson<int>(json['month']),
+      currencyCode: serializer.fromJson<String>(json['currencyCode']),
+      status: serializer.fromJson<String>(json['status']),
+      notes: serializer.fromJson<String?>(json['notes']),
+      closedSnapshotExpenseMinor: serializer.fromJson<int?>(
+        json['closedSnapshotExpenseMinor'],
+      ),
+      closedSnapshotIncomeMinor: serializer.fromJson<int?>(
+        json['closedSnapshotIncomeMinor'],
+      ),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'year': serializer.toJson<int>(year),
+      'month': serializer.toJson<int>(month),
+      'currencyCode': serializer.toJson<String>(currencyCode),
+      'status': serializer.toJson<String>(status),
+      'notes': serializer.toJson<String?>(notes),
+      'closedSnapshotExpenseMinor': serializer.toJson<int?>(
+        closedSnapshotExpenseMinor,
+      ),
+      'closedSnapshotIncomeMinor': serializer.toJson<int?>(
+        closedSnapshotIncomeMinor,
+      ),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  BudgetsTableData copyWith({
+    String? id,
+    int? year,
+    int? month,
+    String? currencyCode,
+    String? status,
+    Value<String?> notes = const Value.absent(),
+    Value<int?> closedSnapshotExpenseMinor = const Value.absent(),
+    Value<int?> closedSnapshotIncomeMinor = const Value.absent(),
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) => BudgetsTableData(
+    id: id ?? this.id,
+    year: year ?? this.year,
+    month: month ?? this.month,
+    currencyCode: currencyCode ?? this.currencyCode,
+    status: status ?? this.status,
+    notes: notes.present ? notes.value : this.notes,
+    closedSnapshotExpenseMinor: closedSnapshotExpenseMinor.present
+        ? closedSnapshotExpenseMinor.value
+        : this.closedSnapshotExpenseMinor,
+    closedSnapshotIncomeMinor: closedSnapshotIncomeMinor.present
+        ? closedSnapshotIncomeMinor.value
+        : this.closedSnapshotIncomeMinor,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  BudgetsTableData copyWithCompanion(BudgetsTableCompanion data) {
+    return BudgetsTableData(
+      id: data.id.present ? data.id.value : this.id,
+      year: data.year.present ? data.year.value : this.year,
+      month: data.month.present ? data.month.value : this.month,
+      currencyCode: data.currencyCode.present
+          ? data.currencyCode.value
+          : this.currencyCode,
+      status: data.status.present ? data.status.value : this.status,
+      notes: data.notes.present ? data.notes.value : this.notes,
+      closedSnapshotExpenseMinor: data.closedSnapshotExpenseMinor.present
+          ? data.closedSnapshotExpenseMinor.value
+          : this.closedSnapshotExpenseMinor,
+      closedSnapshotIncomeMinor: data.closedSnapshotIncomeMinor.present
+          ? data.closedSnapshotIncomeMinor.value
+          : this.closedSnapshotIncomeMinor,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BudgetsTableData(')
+          ..write('id: $id, ')
+          ..write('year: $year, ')
+          ..write('month: $month, ')
+          ..write('currencyCode: $currencyCode, ')
+          ..write('status: $status, ')
+          ..write('notes: $notes, ')
+          ..write('closedSnapshotExpenseMinor: $closedSnapshotExpenseMinor, ')
+          ..write('closedSnapshotIncomeMinor: $closedSnapshotIncomeMinor, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    year,
+    month,
+    currencyCode,
+    status,
+    notes,
+    closedSnapshotExpenseMinor,
+    closedSnapshotIncomeMinor,
+    createdAt,
+    updatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is BudgetsTableData &&
+          other.id == this.id &&
+          other.year == this.year &&
+          other.month == this.month &&
+          other.currencyCode == this.currencyCode &&
+          other.status == this.status &&
+          other.notes == this.notes &&
+          other.closedSnapshotExpenseMinor == this.closedSnapshotExpenseMinor &&
+          other.closedSnapshotIncomeMinor == this.closedSnapshotIncomeMinor &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class BudgetsTableCompanion extends UpdateCompanion<BudgetsTableData> {
+  final Value<String> id;
+  final Value<int> year;
+  final Value<int> month;
+  final Value<String> currencyCode;
+  final Value<String> status;
+  final Value<String?> notes;
+  final Value<int?> closedSnapshotExpenseMinor;
+  final Value<int?> closedSnapshotIncomeMinor;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const BudgetsTableCompanion({
+    this.id = const Value.absent(),
+    this.year = const Value.absent(),
+    this.month = const Value.absent(),
+    this.currencyCode = const Value.absent(),
+    this.status = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.closedSnapshotExpenseMinor = const Value.absent(),
+    this.closedSnapshotIncomeMinor = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  BudgetsTableCompanion.insert({
+    required String id,
+    required int year,
+    required int month,
+    required String currencyCode,
+    this.status = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.closedSnapshotExpenseMinor = const Value.absent(),
+    this.closedSnapshotIncomeMinor = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       year = Value(year),
+       month = Value(month),
+       currencyCode = Value(currencyCode),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<BudgetsTableData> custom({
+    Expression<String>? id,
+    Expression<int>? year,
+    Expression<int>? month,
+    Expression<String>? currencyCode,
+    Expression<String>? status,
+    Expression<String>? notes,
+    Expression<int>? closedSnapshotExpenseMinor,
+    Expression<int>? closedSnapshotIncomeMinor,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (year != null) 'year': year,
+      if (month != null) 'month': month,
+      if (currencyCode != null) 'currency_code': currencyCode,
+      if (status != null) 'status': status,
+      if (notes != null) 'notes': notes,
+      if (closedSnapshotExpenseMinor != null)
+        'closed_snapshot_expense_minor': closedSnapshotExpenseMinor,
+      if (closedSnapshotIncomeMinor != null)
+        'closed_snapshot_income_minor': closedSnapshotIncomeMinor,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  BudgetsTableCompanion copyWith({
+    Value<String>? id,
+    Value<int>? year,
+    Value<int>? month,
+    Value<String>? currencyCode,
+    Value<String>? status,
+    Value<String?>? notes,
+    Value<int?>? closedSnapshotExpenseMinor,
+    Value<int?>? closedSnapshotIncomeMinor,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return BudgetsTableCompanion(
+      id: id ?? this.id,
+      year: year ?? this.year,
+      month: month ?? this.month,
+      currencyCode: currencyCode ?? this.currencyCode,
+      status: status ?? this.status,
+      notes: notes ?? this.notes,
+      closedSnapshotExpenseMinor:
+          closedSnapshotExpenseMinor ?? this.closedSnapshotExpenseMinor,
+      closedSnapshotIncomeMinor:
+          closedSnapshotIncomeMinor ?? this.closedSnapshotIncomeMinor,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (year.present) {
+      map['year'] = Variable<int>(year.value);
+    }
+    if (month.present) {
+      map['month'] = Variable<int>(month.value);
+    }
+    if (currencyCode.present) {
+      map['currency_code'] = Variable<String>(currencyCode.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (closedSnapshotExpenseMinor.present) {
+      map['closed_snapshot_expense_minor'] = Variable<int>(
+        closedSnapshotExpenseMinor.value,
+      );
+    }
+    if (closedSnapshotIncomeMinor.present) {
+      map['closed_snapshot_income_minor'] = Variable<int>(
+        closedSnapshotIncomeMinor.value,
+      );
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BudgetsTableCompanion(')
+          ..write('id: $id, ')
+          ..write('year: $year, ')
+          ..write('month: $month, ')
+          ..write('currencyCode: $currencyCode, ')
+          ..write('status: $status, ')
+          ..write('notes: $notes, ')
+          ..write('closedSnapshotExpenseMinor: $closedSnapshotExpenseMinor, ')
+          ..write('closedSnapshotIncomeMinor: $closedSnapshotIncomeMinor, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $BudgetItemsTableTable extends BudgetItemsTable
+    with TableInfo<$BudgetItemsTableTable, BudgetItemsTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $BudgetItemsTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _budgetIdMeta = const VerificationMeta(
+    'budgetId',
+  );
+  @override
+  late final GeneratedColumn<String> budgetId = GeneratedColumn<String>(
+    'budget_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES budgets (id)',
+    ),
+  );
+  static const VerificationMeta _itemTypeMeta = const VerificationMeta(
+    'itemType',
+  );
+  @override
+  late final GeneratedColumn<String> itemType = GeneratedColumn<String>(
+    'item_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _categoryIdMeta = const VerificationMeta(
+    'categoryId',
+  );
+  @override
+  late final GeneratedColumn<String> categoryId = GeneratedColumn<String>(
+    'category_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES categories (id)',
+    ),
+  );
+  static const VerificationMeta _accountIdMeta = const VerificationMeta(
+    'accountId',
+  );
+  @override
+  late final GeneratedColumn<String> accountId = GeneratedColumn<String>(
+    'account_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES accounts (id)',
+    ),
+  );
+  static const VerificationMeta _customNameMeta = const VerificationMeta(
+    'customName',
+  );
+  @override
+  late final GeneratedColumn<String> customName = GeneratedColumn<String>(
+    'custom_name',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _assignedAmountMinorMeta =
+      const VerificationMeta('assignedAmountMinor');
+  @override
+  late final GeneratedColumn<int> assignedAmountMinor = GeneratedColumn<int>(
+    'assigned_amount_minor',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _rolloverEnabledMeta = const VerificationMeta(
+    'rolloverEnabled',
+  );
+  @override
+  late final GeneratedColumn<bool> rolloverEnabled = GeneratedColumn<bool>(
+    'rollover_enabled',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("rollover_enabled" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _displayOrderMeta = const VerificationMeta(
+    'displayOrder',
+  );
+  @override
+  late final GeneratedColumn<int> displayOrder = GeneratedColumn<int>(
+    'display_order',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  @override
+  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
+    'notes',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    budgetId,
+    itemType,
+    categoryId,
+    accountId,
+    customName,
+    assignedAmountMinor,
+    rolloverEnabled,
+    displayOrder,
+    notes,
+    createdAt,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'budget_items';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<BudgetItemsTableData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('budget_id')) {
+      context.handle(
+        _budgetIdMeta,
+        budgetId.isAcceptableOrUnknown(data['budget_id']!, _budgetIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_budgetIdMeta);
+    }
+    if (data.containsKey('item_type')) {
+      context.handle(
+        _itemTypeMeta,
+        itemType.isAcceptableOrUnknown(data['item_type']!, _itemTypeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_itemTypeMeta);
+    }
+    if (data.containsKey('category_id')) {
+      context.handle(
+        _categoryIdMeta,
+        categoryId.isAcceptableOrUnknown(data['category_id']!, _categoryIdMeta),
+      );
+    }
+    if (data.containsKey('account_id')) {
+      context.handle(
+        _accountIdMeta,
+        accountId.isAcceptableOrUnknown(data['account_id']!, _accountIdMeta),
+      );
+    }
+    if (data.containsKey('custom_name')) {
+      context.handle(
+        _customNameMeta,
+        customName.isAcceptableOrUnknown(data['custom_name']!, _customNameMeta),
+      );
+    }
+    if (data.containsKey('assigned_amount_minor')) {
+      context.handle(
+        _assignedAmountMinorMeta,
+        assignedAmountMinor.isAcceptableOrUnknown(
+          data['assigned_amount_minor']!,
+          _assignedAmountMinorMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_assignedAmountMinorMeta);
+    }
+    if (data.containsKey('rollover_enabled')) {
+      context.handle(
+        _rolloverEnabledMeta,
+        rolloverEnabled.isAcceptableOrUnknown(
+          data['rollover_enabled']!,
+          _rolloverEnabledMeta,
+        ),
+      );
+    }
+    if (data.containsKey('display_order')) {
+      context.handle(
+        _displayOrderMeta,
+        displayOrder.isAcceptableOrUnknown(
+          data['display_order']!,
+          _displayOrderMeta,
+        ),
+      );
+    }
+    if (data.containsKey('notes')) {
+      context.handle(
+        _notesMeta,
+        notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  BudgetItemsTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return BudgetItemsTableData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      budgetId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}budget_id'],
+      )!,
+      itemType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}item_type'],
+      )!,
+      categoryId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}category_id'],
+      ),
+      accountId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}account_id'],
+      ),
+      customName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}custom_name'],
+      ),
+      assignedAmountMinor: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}assigned_amount_minor'],
+      )!,
+      rolloverEnabled: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}rollover_enabled'],
+      )!,
+      displayOrder: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}display_order'],
+      )!,
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $BudgetItemsTableTable createAlias(String alias) {
+    return $BudgetItemsTableTable(attachedDatabase, alias);
+  }
+}
+
+class BudgetItemsTableData extends DataClass
+    implements Insertable<BudgetItemsTableData> {
+  final String id;
+  final String budgetId;
+  final String itemType;
+  final String? categoryId;
+  final String? accountId;
+  final String? customName;
+  final int assignedAmountMinor;
+  final bool rolloverEnabled;
+  final int displayOrder;
+  final String? notes;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  const BudgetItemsTableData({
+    required this.id,
+    required this.budgetId,
+    required this.itemType,
+    this.categoryId,
+    this.accountId,
+    this.customName,
+    required this.assignedAmountMinor,
+    required this.rolloverEnabled,
+    required this.displayOrder,
+    this.notes,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['budget_id'] = Variable<String>(budgetId);
+    map['item_type'] = Variable<String>(itemType);
+    if (!nullToAbsent || categoryId != null) {
+      map['category_id'] = Variable<String>(categoryId);
+    }
+    if (!nullToAbsent || accountId != null) {
+      map['account_id'] = Variable<String>(accountId);
+    }
+    if (!nullToAbsent || customName != null) {
+      map['custom_name'] = Variable<String>(customName);
+    }
+    map['assigned_amount_minor'] = Variable<int>(assignedAmountMinor);
+    map['rollover_enabled'] = Variable<bool>(rolloverEnabled);
+    map['display_order'] = Variable<int>(displayOrder);
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  BudgetItemsTableCompanion toCompanion(bool nullToAbsent) {
+    return BudgetItemsTableCompanion(
+      id: Value(id),
+      budgetId: Value(budgetId),
+      itemType: Value(itemType),
+      categoryId: categoryId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(categoryId),
+      accountId: accountId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(accountId),
+      customName: customName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(customName),
+      assignedAmountMinor: Value(assignedAmountMinor),
+      rolloverEnabled: Value(rolloverEnabled),
+      displayOrder: Value(displayOrder),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory BudgetItemsTableData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return BudgetItemsTableData(
+      id: serializer.fromJson<String>(json['id']),
+      budgetId: serializer.fromJson<String>(json['budgetId']),
+      itemType: serializer.fromJson<String>(json['itemType']),
+      categoryId: serializer.fromJson<String?>(json['categoryId']),
+      accountId: serializer.fromJson<String?>(json['accountId']),
+      customName: serializer.fromJson<String?>(json['customName']),
+      assignedAmountMinor: serializer.fromJson<int>(
+        json['assignedAmountMinor'],
+      ),
+      rolloverEnabled: serializer.fromJson<bool>(json['rolloverEnabled']),
+      displayOrder: serializer.fromJson<int>(json['displayOrder']),
+      notes: serializer.fromJson<String?>(json['notes']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'budgetId': serializer.toJson<String>(budgetId),
+      'itemType': serializer.toJson<String>(itemType),
+      'categoryId': serializer.toJson<String?>(categoryId),
+      'accountId': serializer.toJson<String?>(accountId),
+      'customName': serializer.toJson<String?>(customName),
+      'assignedAmountMinor': serializer.toJson<int>(assignedAmountMinor),
+      'rolloverEnabled': serializer.toJson<bool>(rolloverEnabled),
+      'displayOrder': serializer.toJson<int>(displayOrder),
+      'notes': serializer.toJson<String?>(notes),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  BudgetItemsTableData copyWith({
+    String? id,
+    String? budgetId,
+    String? itemType,
+    Value<String?> categoryId = const Value.absent(),
+    Value<String?> accountId = const Value.absent(),
+    Value<String?> customName = const Value.absent(),
+    int? assignedAmountMinor,
+    bool? rolloverEnabled,
+    int? displayOrder,
+    Value<String?> notes = const Value.absent(),
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) => BudgetItemsTableData(
+    id: id ?? this.id,
+    budgetId: budgetId ?? this.budgetId,
+    itemType: itemType ?? this.itemType,
+    categoryId: categoryId.present ? categoryId.value : this.categoryId,
+    accountId: accountId.present ? accountId.value : this.accountId,
+    customName: customName.present ? customName.value : this.customName,
+    assignedAmountMinor: assignedAmountMinor ?? this.assignedAmountMinor,
+    rolloverEnabled: rolloverEnabled ?? this.rolloverEnabled,
+    displayOrder: displayOrder ?? this.displayOrder,
+    notes: notes.present ? notes.value : this.notes,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  BudgetItemsTableData copyWithCompanion(BudgetItemsTableCompanion data) {
+    return BudgetItemsTableData(
+      id: data.id.present ? data.id.value : this.id,
+      budgetId: data.budgetId.present ? data.budgetId.value : this.budgetId,
+      itemType: data.itemType.present ? data.itemType.value : this.itemType,
+      categoryId: data.categoryId.present
+          ? data.categoryId.value
+          : this.categoryId,
+      accountId: data.accountId.present ? data.accountId.value : this.accountId,
+      customName: data.customName.present
+          ? data.customName.value
+          : this.customName,
+      assignedAmountMinor: data.assignedAmountMinor.present
+          ? data.assignedAmountMinor.value
+          : this.assignedAmountMinor,
+      rolloverEnabled: data.rolloverEnabled.present
+          ? data.rolloverEnabled.value
+          : this.rolloverEnabled,
+      displayOrder: data.displayOrder.present
+          ? data.displayOrder.value
+          : this.displayOrder,
+      notes: data.notes.present ? data.notes.value : this.notes,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BudgetItemsTableData(')
+          ..write('id: $id, ')
+          ..write('budgetId: $budgetId, ')
+          ..write('itemType: $itemType, ')
+          ..write('categoryId: $categoryId, ')
+          ..write('accountId: $accountId, ')
+          ..write('customName: $customName, ')
+          ..write('assignedAmountMinor: $assignedAmountMinor, ')
+          ..write('rolloverEnabled: $rolloverEnabled, ')
+          ..write('displayOrder: $displayOrder, ')
+          ..write('notes: $notes, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    budgetId,
+    itemType,
+    categoryId,
+    accountId,
+    customName,
+    assignedAmountMinor,
+    rolloverEnabled,
+    displayOrder,
+    notes,
+    createdAt,
+    updatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is BudgetItemsTableData &&
+          other.id == this.id &&
+          other.budgetId == this.budgetId &&
+          other.itemType == this.itemType &&
+          other.categoryId == this.categoryId &&
+          other.accountId == this.accountId &&
+          other.customName == this.customName &&
+          other.assignedAmountMinor == this.assignedAmountMinor &&
+          other.rolloverEnabled == this.rolloverEnabled &&
+          other.displayOrder == this.displayOrder &&
+          other.notes == this.notes &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class BudgetItemsTableCompanion extends UpdateCompanion<BudgetItemsTableData> {
+  final Value<String> id;
+  final Value<String> budgetId;
+  final Value<String> itemType;
+  final Value<String?> categoryId;
+  final Value<String?> accountId;
+  final Value<String?> customName;
+  final Value<int> assignedAmountMinor;
+  final Value<bool> rolloverEnabled;
+  final Value<int> displayOrder;
+  final Value<String?> notes;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const BudgetItemsTableCompanion({
+    this.id = const Value.absent(),
+    this.budgetId = const Value.absent(),
+    this.itemType = const Value.absent(),
+    this.categoryId = const Value.absent(),
+    this.accountId = const Value.absent(),
+    this.customName = const Value.absent(),
+    this.assignedAmountMinor = const Value.absent(),
+    this.rolloverEnabled = const Value.absent(),
+    this.displayOrder = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  BudgetItemsTableCompanion.insert({
+    required String id,
+    required String budgetId,
+    required String itemType,
+    this.categoryId = const Value.absent(),
+    this.accountId = const Value.absent(),
+    this.customName = const Value.absent(),
+    required int assignedAmountMinor,
+    this.rolloverEnabled = const Value.absent(),
+    this.displayOrder = const Value.absent(),
+    this.notes = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       budgetId = Value(budgetId),
+       itemType = Value(itemType),
+       assignedAmountMinor = Value(assignedAmountMinor),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<BudgetItemsTableData> custom({
+    Expression<String>? id,
+    Expression<String>? budgetId,
+    Expression<String>? itemType,
+    Expression<String>? categoryId,
+    Expression<String>? accountId,
+    Expression<String>? customName,
+    Expression<int>? assignedAmountMinor,
+    Expression<bool>? rolloverEnabled,
+    Expression<int>? displayOrder,
+    Expression<String>? notes,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (budgetId != null) 'budget_id': budgetId,
+      if (itemType != null) 'item_type': itemType,
+      if (categoryId != null) 'category_id': categoryId,
+      if (accountId != null) 'account_id': accountId,
+      if (customName != null) 'custom_name': customName,
+      if (assignedAmountMinor != null)
+        'assigned_amount_minor': assignedAmountMinor,
+      if (rolloverEnabled != null) 'rollover_enabled': rolloverEnabled,
+      if (displayOrder != null) 'display_order': displayOrder,
+      if (notes != null) 'notes': notes,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  BudgetItemsTableCompanion copyWith({
+    Value<String>? id,
+    Value<String>? budgetId,
+    Value<String>? itemType,
+    Value<String?>? categoryId,
+    Value<String?>? accountId,
+    Value<String?>? customName,
+    Value<int>? assignedAmountMinor,
+    Value<bool>? rolloverEnabled,
+    Value<int>? displayOrder,
+    Value<String?>? notes,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return BudgetItemsTableCompanion(
+      id: id ?? this.id,
+      budgetId: budgetId ?? this.budgetId,
+      itemType: itemType ?? this.itemType,
+      categoryId: categoryId ?? this.categoryId,
+      accountId: accountId ?? this.accountId,
+      customName: customName ?? this.customName,
+      assignedAmountMinor: assignedAmountMinor ?? this.assignedAmountMinor,
+      rolloverEnabled: rolloverEnabled ?? this.rolloverEnabled,
+      displayOrder: displayOrder ?? this.displayOrder,
+      notes: notes ?? this.notes,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (budgetId.present) {
+      map['budget_id'] = Variable<String>(budgetId.value);
+    }
+    if (itemType.present) {
+      map['item_type'] = Variable<String>(itemType.value);
+    }
+    if (categoryId.present) {
+      map['category_id'] = Variable<String>(categoryId.value);
+    }
+    if (accountId.present) {
+      map['account_id'] = Variable<String>(accountId.value);
+    }
+    if (customName.present) {
+      map['custom_name'] = Variable<String>(customName.value);
+    }
+    if (assignedAmountMinor.present) {
+      map['assigned_amount_minor'] = Variable<int>(assignedAmountMinor.value);
+    }
+    if (rolloverEnabled.present) {
+      map['rollover_enabled'] = Variable<bool>(rolloverEnabled.value);
+    }
+    if (displayOrder.present) {
+      map['display_order'] = Variable<int>(displayOrder.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BudgetItemsTableCompanion(')
+          ..write('id: $id, ')
+          ..write('budgetId: $budgetId, ')
+          ..write('itemType: $itemType, ')
+          ..write('categoryId: $categoryId, ')
+          ..write('accountId: $accountId, ')
+          ..write('customName: $customName, ')
+          ..write('assignedAmountMinor: $assignedAmountMinor, ')
+          ..write('rolloverEnabled: $rolloverEnabled, ')
+          ..write('displayOrder: $displayOrder, ')
+          ..write('notes: $notes, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $BudgetRolloversTableTable extends BudgetRolloversTable
+    with TableInfo<$BudgetRolloversTableTable, BudgetRolloversTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $BudgetRolloversTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _fromBudgetIdMeta = const VerificationMeta(
+    'fromBudgetId',
+  );
+  @override
+  late final GeneratedColumn<String> fromBudgetId = GeneratedColumn<String>(
+    'from_budget_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES budgets (id)',
+    ),
+  );
+  static const VerificationMeta _toBudgetIdMeta = const VerificationMeta(
+    'toBudgetId',
+  );
+  @override
+  late final GeneratedColumn<String> toBudgetId = GeneratedColumn<String>(
+    'to_budget_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES budgets (id)',
+    ),
+  );
+  static const VerificationMeta _sourceBudgetItemIdMeta =
+      const VerificationMeta('sourceBudgetItemId');
+  @override
+  late final GeneratedColumn<String> sourceBudgetItemId =
+      GeneratedColumn<String>(
+        'source_budget_item_id',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+        defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES budget_items (id)',
+        ),
+      );
+  static const VerificationMeta _targetBudgetItemIdMeta =
+      const VerificationMeta('targetBudgetItemId');
+  @override
+  late final GeneratedColumn<String> targetBudgetItemId =
+      GeneratedColumn<String>(
+        'target_budget_item_id',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES budget_items (id)',
+        ),
+      );
+  static const VerificationMeta _amountMinorMeta = const VerificationMeta(
+    'amountMinor',
+  );
+  @override
+  late final GeneratedColumn<int> amountMinor = GeneratedColumn<int>(
+    'amount_minor',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    fromBudgetId,
+    toBudgetId,
+    sourceBudgetItemId,
+    targetBudgetItemId,
+    amountMinor,
+    createdAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'budget_rollovers';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<BudgetRolloversTableData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('from_budget_id')) {
+      context.handle(
+        _fromBudgetIdMeta,
+        fromBudgetId.isAcceptableOrUnknown(
+          data['from_budget_id']!,
+          _fromBudgetIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_fromBudgetIdMeta);
+    }
+    if (data.containsKey('to_budget_id')) {
+      context.handle(
+        _toBudgetIdMeta,
+        toBudgetId.isAcceptableOrUnknown(
+          data['to_budget_id']!,
+          _toBudgetIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_toBudgetIdMeta);
+    }
+    if (data.containsKey('source_budget_item_id')) {
+      context.handle(
+        _sourceBudgetItemIdMeta,
+        sourceBudgetItemId.isAcceptableOrUnknown(
+          data['source_budget_item_id']!,
+          _sourceBudgetItemIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_sourceBudgetItemIdMeta);
+    }
+    if (data.containsKey('target_budget_item_id')) {
+      context.handle(
+        _targetBudgetItemIdMeta,
+        targetBudgetItemId.isAcceptableOrUnknown(
+          data['target_budget_item_id']!,
+          _targetBudgetItemIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('amount_minor')) {
+      context.handle(
+        _amountMinorMeta,
+        amountMinor.isAcceptableOrUnknown(
+          data['amount_minor']!,
+          _amountMinorMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_amountMinorMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  BudgetRolloversTableData map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return BudgetRolloversTableData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      fromBudgetId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}from_budget_id'],
+      )!,
+      toBudgetId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}to_budget_id'],
+      )!,
+      sourceBudgetItemId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}source_budget_item_id'],
+      )!,
+      targetBudgetItemId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}target_budget_item_id'],
+      ),
+      amountMinor: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}amount_minor'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+    );
+  }
+
+  @override
+  $BudgetRolloversTableTable createAlias(String alias) {
+    return $BudgetRolloversTableTable(attachedDatabase, alias);
+  }
+}
+
+class BudgetRolloversTableData extends DataClass
+    implements Insertable<BudgetRolloversTableData> {
+  final String id;
+  final String fromBudgetId;
+  final String toBudgetId;
+  final String sourceBudgetItemId;
+  final String? targetBudgetItemId;
+  final int amountMinor;
+  final DateTime createdAt;
+  const BudgetRolloversTableData({
+    required this.id,
+    required this.fromBudgetId,
+    required this.toBudgetId,
+    required this.sourceBudgetItemId,
+    this.targetBudgetItemId,
+    required this.amountMinor,
+    required this.createdAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['from_budget_id'] = Variable<String>(fromBudgetId);
+    map['to_budget_id'] = Variable<String>(toBudgetId);
+    map['source_budget_item_id'] = Variable<String>(sourceBudgetItemId);
+    if (!nullToAbsent || targetBudgetItemId != null) {
+      map['target_budget_item_id'] = Variable<String>(targetBudgetItemId);
+    }
+    map['amount_minor'] = Variable<int>(amountMinor);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    return map;
+  }
+
+  BudgetRolloversTableCompanion toCompanion(bool nullToAbsent) {
+    return BudgetRolloversTableCompanion(
+      id: Value(id),
+      fromBudgetId: Value(fromBudgetId),
+      toBudgetId: Value(toBudgetId),
+      sourceBudgetItemId: Value(sourceBudgetItemId),
+      targetBudgetItemId: targetBudgetItemId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(targetBudgetItemId),
+      amountMinor: Value(amountMinor),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory BudgetRolloversTableData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return BudgetRolloversTableData(
+      id: serializer.fromJson<String>(json['id']),
+      fromBudgetId: serializer.fromJson<String>(json['fromBudgetId']),
+      toBudgetId: serializer.fromJson<String>(json['toBudgetId']),
+      sourceBudgetItemId: serializer.fromJson<String>(
+        json['sourceBudgetItemId'],
+      ),
+      targetBudgetItemId: serializer.fromJson<String?>(
+        json['targetBudgetItemId'],
+      ),
+      amountMinor: serializer.fromJson<int>(json['amountMinor']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'fromBudgetId': serializer.toJson<String>(fromBudgetId),
+      'toBudgetId': serializer.toJson<String>(toBudgetId),
+      'sourceBudgetItemId': serializer.toJson<String>(sourceBudgetItemId),
+      'targetBudgetItemId': serializer.toJson<String?>(targetBudgetItemId),
+      'amountMinor': serializer.toJson<int>(amountMinor),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+    };
+  }
+
+  BudgetRolloversTableData copyWith({
+    String? id,
+    String? fromBudgetId,
+    String? toBudgetId,
+    String? sourceBudgetItemId,
+    Value<String?> targetBudgetItemId = const Value.absent(),
+    int? amountMinor,
+    DateTime? createdAt,
+  }) => BudgetRolloversTableData(
+    id: id ?? this.id,
+    fromBudgetId: fromBudgetId ?? this.fromBudgetId,
+    toBudgetId: toBudgetId ?? this.toBudgetId,
+    sourceBudgetItemId: sourceBudgetItemId ?? this.sourceBudgetItemId,
+    targetBudgetItemId: targetBudgetItemId.present
+        ? targetBudgetItemId.value
+        : this.targetBudgetItemId,
+    amountMinor: amountMinor ?? this.amountMinor,
+    createdAt: createdAt ?? this.createdAt,
+  );
+  BudgetRolloversTableData copyWithCompanion(
+    BudgetRolloversTableCompanion data,
+  ) {
+    return BudgetRolloversTableData(
+      id: data.id.present ? data.id.value : this.id,
+      fromBudgetId: data.fromBudgetId.present
+          ? data.fromBudgetId.value
+          : this.fromBudgetId,
+      toBudgetId: data.toBudgetId.present
+          ? data.toBudgetId.value
+          : this.toBudgetId,
+      sourceBudgetItemId: data.sourceBudgetItemId.present
+          ? data.sourceBudgetItemId.value
+          : this.sourceBudgetItemId,
+      targetBudgetItemId: data.targetBudgetItemId.present
+          ? data.targetBudgetItemId.value
+          : this.targetBudgetItemId,
+      amountMinor: data.amountMinor.present
+          ? data.amountMinor.value
+          : this.amountMinor,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BudgetRolloversTableData(')
+          ..write('id: $id, ')
+          ..write('fromBudgetId: $fromBudgetId, ')
+          ..write('toBudgetId: $toBudgetId, ')
+          ..write('sourceBudgetItemId: $sourceBudgetItemId, ')
+          ..write('targetBudgetItemId: $targetBudgetItemId, ')
+          ..write('amountMinor: $amountMinor, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    fromBudgetId,
+    toBudgetId,
+    sourceBudgetItemId,
+    targetBudgetItemId,
+    amountMinor,
+    createdAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is BudgetRolloversTableData &&
+          other.id == this.id &&
+          other.fromBudgetId == this.fromBudgetId &&
+          other.toBudgetId == this.toBudgetId &&
+          other.sourceBudgetItemId == this.sourceBudgetItemId &&
+          other.targetBudgetItemId == this.targetBudgetItemId &&
+          other.amountMinor == this.amountMinor &&
+          other.createdAt == this.createdAt);
+}
+
+class BudgetRolloversTableCompanion
+    extends UpdateCompanion<BudgetRolloversTableData> {
+  final Value<String> id;
+  final Value<String> fromBudgetId;
+  final Value<String> toBudgetId;
+  final Value<String> sourceBudgetItemId;
+  final Value<String?> targetBudgetItemId;
+  final Value<int> amountMinor;
+  final Value<DateTime> createdAt;
+  final Value<int> rowid;
+  const BudgetRolloversTableCompanion({
+    this.id = const Value.absent(),
+    this.fromBudgetId = const Value.absent(),
+    this.toBudgetId = const Value.absent(),
+    this.sourceBudgetItemId = const Value.absent(),
+    this.targetBudgetItemId = const Value.absent(),
+    this.amountMinor = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  BudgetRolloversTableCompanion.insert({
+    required String id,
+    required String fromBudgetId,
+    required String toBudgetId,
+    required String sourceBudgetItemId,
+    this.targetBudgetItemId = const Value.absent(),
+    required int amountMinor,
+    required DateTime createdAt,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       fromBudgetId = Value(fromBudgetId),
+       toBudgetId = Value(toBudgetId),
+       sourceBudgetItemId = Value(sourceBudgetItemId),
+       amountMinor = Value(amountMinor),
+       createdAt = Value(createdAt);
+  static Insertable<BudgetRolloversTableData> custom({
+    Expression<String>? id,
+    Expression<String>? fromBudgetId,
+    Expression<String>? toBudgetId,
+    Expression<String>? sourceBudgetItemId,
+    Expression<String>? targetBudgetItemId,
+    Expression<int>? amountMinor,
+    Expression<DateTime>? createdAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (fromBudgetId != null) 'from_budget_id': fromBudgetId,
+      if (toBudgetId != null) 'to_budget_id': toBudgetId,
+      if (sourceBudgetItemId != null)
+        'source_budget_item_id': sourceBudgetItemId,
+      if (targetBudgetItemId != null)
+        'target_budget_item_id': targetBudgetItemId,
+      if (amountMinor != null) 'amount_minor': amountMinor,
+      if (createdAt != null) 'created_at': createdAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  BudgetRolloversTableCompanion copyWith({
+    Value<String>? id,
+    Value<String>? fromBudgetId,
+    Value<String>? toBudgetId,
+    Value<String>? sourceBudgetItemId,
+    Value<String?>? targetBudgetItemId,
+    Value<int>? amountMinor,
+    Value<DateTime>? createdAt,
+    Value<int>? rowid,
+  }) {
+    return BudgetRolloversTableCompanion(
+      id: id ?? this.id,
+      fromBudgetId: fromBudgetId ?? this.fromBudgetId,
+      toBudgetId: toBudgetId ?? this.toBudgetId,
+      sourceBudgetItemId: sourceBudgetItemId ?? this.sourceBudgetItemId,
+      targetBudgetItemId: targetBudgetItemId ?? this.targetBudgetItemId,
+      amountMinor: amountMinor ?? this.amountMinor,
+      createdAt: createdAt ?? this.createdAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (fromBudgetId.present) {
+      map['from_budget_id'] = Variable<String>(fromBudgetId.value);
+    }
+    if (toBudgetId.present) {
+      map['to_budget_id'] = Variable<String>(toBudgetId.value);
+    }
+    if (sourceBudgetItemId.present) {
+      map['source_budget_item_id'] = Variable<String>(sourceBudgetItemId.value);
+    }
+    if (targetBudgetItemId.present) {
+      map['target_budget_item_id'] = Variable<String>(targetBudgetItemId.value);
+    }
+    if (amountMinor.present) {
+      map['amount_minor'] = Variable<int>(amountMinor.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BudgetRolloversTableCompanion(')
+          ..write('id: $id, ')
+          ..write('fromBudgetId: $fromBudgetId, ')
+          ..write('toBudgetId: $toBudgetId, ')
+          ..write('sourceBudgetItemId: $sourceBudgetItemId, ')
+          ..write('targetBudgetItemId: $targetBudgetItemId, ')
+          ..write('amountMinor: $amountMinor, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -2770,6 +4670,12 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   );
   late final $TransactionsTableTable transactionsTable =
       $TransactionsTableTable(this);
+  late final $BudgetsTableTable budgetsTable = $BudgetsTableTable(this);
+  late final $BudgetItemsTableTable budgetItemsTable = $BudgetItemsTableTable(
+    this,
+  );
+  late final $BudgetRolloversTableTable budgetRolloversTable =
+      $BudgetRolloversTableTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2779,6 +4685,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     accountsTable,
     categoriesTable,
     transactionsTable,
+    budgetsTable,
+    budgetItemsTable,
+    budgetRolloversTable,
   ];
 }
 
@@ -3144,6 +5053,26 @@ final class $$AccountsTableTableReferences
       manager.$state.copyWith(prefetchedData: cache),
     );
   }
+
+  static MultiTypedResultKey<$BudgetItemsTableTable, List<BudgetItemsTableData>>
+  _budgetItemsTableRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.budgetItemsTable,
+    aliasName: 'accounts__id__budget_items__account_id',
+  );
+
+  $$BudgetItemsTableTableProcessedTableManager get budgetItemsTableRefs {
+    final manager = $$BudgetItemsTableTableTableManager(
+      $_db,
+      $_db.budgetItemsTable,
+    ).filter((f) => f.accountId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _budgetItemsTableRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$AccountsTableTableFilterComposer
@@ -3261,6 +5190,31 @@ class $$AccountsTableTableFilterComposer
           }) => $$TransactionsTableTableFilterComposer(
             $db: $db,
             $table: $db.transactionsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> budgetItemsTableRefs(
+    Expression<bool> Function($$BudgetItemsTableTableFilterComposer f) f,
+  ) {
+    final $$BudgetItemsTableTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.budgetItemsTable,
+      getReferencedColumn: (t) => t.accountId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BudgetItemsTableTableFilterComposer(
+            $db: $db,
+            $table: $db.budgetItemsTable,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -3461,6 +5415,31 @@ class $$AccountsTableTableAnnotationComposer
         );
     return f(composer);
   }
+
+  Expression<T> budgetItemsTableRefs<T extends Object>(
+    Expression<T> Function($$BudgetItemsTableTableAnnotationComposer a) f,
+  ) {
+    final $$BudgetItemsTableTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.budgetItemsTable,
+      getReferencedColumn: (t) => t.accountId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BudgetItemsTableTableAnnotationComposer(
+            $db: $db,
+            $table: $db.budgetItemsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$AccountsTableTableTableManager
@@ -3479,6 +5458,7 @@ class $$AccountsTableTableTableManager
           PrefetchHooks Function({
             bool outgoingTransactions,
             bool incomingTransactions,
+            bool budgetItemsTableRefs,
           })
         > {
   $$AccountsTableTableTableManager(_$AppDatabase db, $AccountsTableTable table)
@@ -3565,12 +5545,17 @@ class $$AccountsTableTableTableManager
               )
               .toList(),
           prefetchHooksCallback:
-              ({outgoingTransactions = false, incomingTransactions = false}) {
+              ({
+                outgoingTransactions = false,
+                incomingTransactions = false,
+                budgetItemsTableRefs = false,
+              }) {
                 return PrefetchHooks(
                   db: db,
                   explicitlyWatchedTables: [
                     if (outgoingTransactions) db.transactionsTable,
                     if (incomingTransactions) db.transactionsTable,
+                    if (budgetItemsTableRefs) db.budgetItemsTable,
                   ],
                   addJoins: null,
                   getPrefetchedDataCallback: (items) async {
@@ -3617,6 +5602,27 @@ class $$AccountsTableTableTableManager
                               ),
                           typedResults: items,
                         ),
+                      if (budgetItemsTableRefs)
+                        await $_getPrefetchedData<
+                          AccountsTableData,
+                          $AccountsTableTable,
+                          BudgetItemsTableData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$AccountsTableTableReferences
+                              ._budgetItemsTableRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$AccountsTableTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).budgetItemsTableRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.accountId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
                     ];
                   },
                 );
@@ -3640,6 +5646,7 @@ typedef $$AccountsTableTableProcessedTableManager =
       PrefetchHooks Function({
         bool outgoingTransactions,
         bool incomingTransactions,
+        bool budgetItemsTableRefs,
       })
     >;
 typedef $$CategoriesTableTableCreateCompanionBuilder =
@@ -3702,6 +5709,26 @@ final class $$CategoriesTableTableReferences
 
     final cache = $_typedResult.readTableOrNull(
       _transactionsTableRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$BudgetItemsTableTable, List<BudgetItemsTableData>>
+  _budgetItemsTableRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.budgetItemsTable,
+    aliasName: 'categories__id__budget_items__category_id',
+  );
+
+  $$BudgetItemsTableTableProcessedTableManager get budgetItemsTableRefs {
+    final manager = $$BudgetItemsTableTableTableManager(
+      $_db,
+      $_db.budgetItemsTable,
+    ).filter((f) => f.categoryId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _budgetItemsTableRefsTable($_db),
     );
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: cache),
@@ -3784,6 +5811,31 @@ class $$CategoriesTableTableFilterComposer
           }) => $$TransactionsTableTableFilterComposer(
             $db: $db,
             $table: $db.transactionsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> budgetItemsTableRefs(
+    Expression<bool> Function($$BudgetItemsTableTableFilterComposer f) f,
+  ) {
+    final $$BudgetItemsTableTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.budgetItemsTable,
+      getReferencedColumn: (t) => t.categoryId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BudgetItemsTableTableFilterComposer(
+            $db: $db,
+            $table: $db.budgetItemsTable,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -3922,6 +5974,31 @@ class $$CategoriesTableTableAnnotationComposer
         );
     return f(composer);
   }
+
+  Expression<T> budgetItemsTableRefs<T extends Object>(
+    Expression<T> Function($$BudgetItemsTableTableAnnotationComposer a) f,
+  ) {
+    final $$BudgetItemsTableTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.budgetItemsTable,
+      getReferencedColumn: (t) => t.categoryId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BudgetItemsTableTableAnnotationComposer(
+            $db: $db,
+            $table: $db.budgetItemsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$CategoriesTableTableTableManager
@@ -3937,7 +6014,10 @@ class $$CategoriesTableTableTableManager
           $$CategoriesTableTableUpdateCompanionBuilder,
           (CategoriesTableData, $$CategoriesTableTableReferences),
           CategoriesTableData,
-          PrefetchHooks Function({bool transactionsTableRefs})
+          PrefetchHooks Function({
+            bool transactionsTableRefs,
+            bool budgetItemsTableRefs,
+          })
         > {
   $$CategoriesTableTableTableManager(
     _$AppDatabase db,
@@ -4012,38 +6092,63 @@ class $$CategoriesTableTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({transactionsTableRefs = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [
-                if (transactionsTableRefs) db.transactionsTable,
-              ],
-              addJoins: null,
-              getPrefetchedDataCallback: (items) async {
-                return [
-                  if (transactionsTableRefs)
-                    await $_getPrefetchedData<
-                      CategoriesTableData,
-                      $CategoriesTableTable,
-                      TransactionsTableData
-                    >(
-                      currentTable: table,
-                      referencedTable: $$CategoriesTableTableReferences
-                          ._transactionsTableRefsTable(db),
-                      managerFromTypedResult: (p0) =>
-                          $$CategoriesTableTableReferences(
-                            db,
-                            table,
-                            p0,
-                          ).transactionsTableRefs,
-                      referencedItemsForCurrentItem: (item, referencedItems) =>
-                          referencedItems.where((e) => e.categoryId == item.id),
-                      typedResults: items,
-                    ),
-                ];
+          prefetchHooksCallback:
+              ({transactionsTableRefs = false, budgetItemsTableRefs = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (transactionsTableRefs) db.transactionsTable,
+                    if (budgetItemsTableRefs) db.budgetItemsTable,
+                  ],
+                  addJoins: null,
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (transactionsTableRefs)
+                        await $_getPrefetchedData<
+                          CategoriesTableData,
+                          $CategoriesTableTable,
+                          TransactionsTableData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$CategoriesTableTableReferences
+                              ._transactionsTableRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$CategoriesTableTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).transactionsTableRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.categoryId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (budgetItemsTableRefs)
+                        await $_getPrefetchedData<
+                          CategoriesTableData,
+                          $CategoriesTableTable,
+                          BudgetItemsTableData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$CategoriesTableTableReferences
+                              ._budgetItemsTableRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$CategoriesTableTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).budgetItemsTableRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.categoryId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
               },
-            );
-          },
         ),
       );
 }
@@ -4060,7 +6165,10 @@ typedef $$CategoriesTableTableProcessedTableManager =
       $$CategoriesTableTableUpdateCompanionBuilder,
       (CategoriesTableData, $$CategoriesTableTableReferences),
       CategoriesTableData,
-      PrefetchHooks Function({bool transactionsTableRefs})
+      PrefetchHooks Function({
+        bool transactionsTableRefs,
+        bool budgetItemsTableRefs,
+      })
     >;
 typedef $$TransactionsTableTableCreateCompanionBuilder =
     TransactionsTableCompanion Function({
@@ -4750,6 +6858,2139 @@ typedef $$TransactionsTableTableProcessedTableManager =
         bool categoryId,
       })
     >;
+typedef $$BudgetsTableTableCreateCompanionBuilder =
+    BudgetsTableCompanion Function({
+      required String id,
+      required int year,
+      required int month,
+      required String currencyCode,
+      Value<String> status,
+      Value<String?> notes,
+      Value<int?> closedSnapshotExpenseMinor,
+      Value<int?> closedSnapshotIncomeMinor,
+      required DateTime createdAt,
+      required DateTime updatedAt,
+      Value<int> rowid,
+    });
+typedef $$BudgetsTableTableUpdateCompanionBuilder =
+    BudgetsTableCompanion Function({
+      Value<String> id,
+      Value<int> year,
+      Value<int> month,
+      Value<String> currencyCode,
+      Value<String> status,
+      Value<String?> notes,
+      Value<int?> closedSnapshotExpenseMinor,
+      Value<int?> closedSnapshotIncomeMinor,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
+
+final class $$BudgetsTableTableReferences
+    extends
+        BaseReferences<_$AppDatabase, $BudgetsTableTable, BudgetsTableData> {
+  $$BudgetsTableTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$BudgetItemsTableTable, List<BudgetItemsTableData>>
+  _budgetItemsTableRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.budgetItemsTable,
+    aliasName: 'budgets__id__budget_items__budget_id',
+  );
+
+  $$BudgetItemsTableTableProcessedTableManager get budgetItemsTableRefs {
+    final manager = $$BudgetItemsTableTableTableManager(
+      $_db,
+      $_db.budgetItemsTable,
+    ).filter((f) => f.budgetId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _budgetItemsTableRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<
+    $BudgetRolloversTableTable,
+    List<BudgetRolloversTableData>
+  >
+  _rolloversFromTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.budgetRolloversTable,
+    aliasName: 'budgets__id__budget_rollovers__from_budget_id',
+  );
+
+  $$BudgetRolloversTableTableProcessedTableManager get rolloversFrom {
+    final manager = $$BudgetRolloversTableTableTableManager(
+      $_db,
+      $_db.budgetRolloversTable,
+    ).filter((f) => f.fromBudgetId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_rolloversFromTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<
+    $BudgetRolloversTableTable,
+    List<BudgetRolloversTableData>
+  >
+  _rolloversToTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.budgetRolloversTable,
+    aliasName: 'budgets__id__budget_rollovers__to_budget_id',
+  );
+
+  $$BudgetRolloversTableTableProcessedTableManager get rolloversTo {
+    final manager = $$BudgetRolloversTableTableTableManager(
+      $_db,
+      $_db.budgetRolloversTable,
+    ).filter((f) => f.toBudgetId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_rolloversToTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$BudgetsTableTableFilterComposer
+    extends Composer<_$AppDatabase, $BudgetsTableTable> {
+  $$BudgetsTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get year => $composableBuilder(
+    column: $table.year,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get month => $composableBuilder(
+    column: $table.month,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get currencyCode => $composableBuilder(
+    column: $table.currencyCode,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get closedSnapshotExpenseMinor => $composableBuilder(
+    column: $table.closedSnapshotExpenseMinor,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get closedSnapshotIncomeMinor => $composableBuilder(
+    column: $table.closedSnapshotIncomeMinor,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  Expression<bool> budgetItemsTableRefs(
+    Expression<bool> Function($$BudgetItemsTableTableFilterComposer f) f,
+  ) {
+    final $$BudgetItemsTableTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.budgetItemsTable,
+      getReferencedColumn: (t) => t.budgetId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BudgetItemsTableTableFilterComposer(
+            $db: $db,
+            $table: $db.budgetItemsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> rolloversFrom(
+    Expression<bool> Function($$BudgetRolloversTableTableFilterComposer f) f,
+  ) {
+    final $$BudgetRolloversTableTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.budgetRolloversTable,
+      getReferencedColumn: (t) => t.fromBudgetId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BudgetRolloversTableTableFilterComposer(
+            $db: $db,
+            $table: $db.budgetRolloversTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> rolloversTo(
+    Expression<bool> Function($$BudgetRolloversTableTableFilterComposer f) f,
+  ) {
+    final $$BudgetRolloversTableTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.budgetRolloversTable,
+      getReferencedColumn: (t) => t.toBudgetId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BudgetRolloversTableTableFilterComposer(
+            $db: $db,
+            $table: $db.budgetRolloversTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$BudgetsTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $BudgetsTableTable> {
+  $$BudgetsTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get year => $composableBuilder(
+    column: $table.year,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get month => $composableBuilder(
+    column: $table.month,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get currencyCode => $composableBuilder(
+    column: $table.currencyCode,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get closedSnapshotExpenseMinor => $composableBuilder(
+    column: $table.closedSnapshotExpenseMinor,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get closedSnapshotIncomeMinor => $composableBuilder(
+    column: $table.closedSnapshotIncomeMinor,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$BudgetsTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $BudgetsTableTable> {
+  $$BudgetsTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get year =>
+      $composableBuilder(column: $table.year, builder: (column) => column);
+
+  GeneratedColumn<int> get month =>
+      $composableBuilder(column: $table.month, builder: (column) => column);
+
+  GeneratedColumn<String> get currencyCode => $composableBuilder(
+    column: $table.currencyCode,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<String> get notes =>
+      $composableBuilder(column: $table.notes, builder: (column) => column);
+
+  GeneratedColumn<int> get closedSnapshotExpenseMinor => $composableBuilder(
+    column: $table.closedSnapshotExpenseMinor,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get closedSnapshotIncomeMinor => $composableBuilder(
+    column: $table.closedSnapshotIncomeMinor,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  Expression<T> budgetItemsTableRefs<T extends Object>(
+    Expression<T> Function($$BudgetItemsTableTableAnnotationComposer a) f,
+  ) {
+    final $$BudgetItemsTableTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.budgetItemsTable,
+      getReferencedColumn: (t) => t.budgetId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BudgetItemsTableTableAnnotationComposer(
+            $db: $db,
+            $table: $db.budgetItemsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> rolloversFrom<T extends Object>(
+    Expression<T> Function($$BudgetRolloversTableTableAnnotationComposer a) f,
+  ) {
+    final $$BudgetRolloversTableTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.budgetRolloversTable,
+          getReferencedColumn: (t) => t.fromBudgetId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$BudgetRolloversTableTableAnnotationComposer(
+                $db: $db,
+                $table: $db.budgetRolloversTable,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+
+  Expression<T> rolloversTo<T extends Object>(
+    Expression<T> Function($$BudgetRolloversTableTableAnnotationComposer a) f,
+  ) {
+    final $$BudgetRolloversTableTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.budgetRolloversTable,
+          getReferencedColumn: (t) => t.toBudgetId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$BudgetRolloversTableTableAnnotationComposer(
+                $db: $db,
+                $table: $db.budgetRolloversTable,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+}
+
+class $$BudgetsTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $BudgetsTableTable,
+          BudgetsTableData,
+          $$BudgetsTableTableFilterComposer,
+          $$BudgetsTableTableOrderingComposer,
+          $$BudgetsTableTableAnnotationComposer,
+          $$BudgetsTableTableCreateCompanionBuilder,
+          $$BudgetsTableTableUpdateCompanionBuilder,
+          (BudgetsTableData, $$BudgetsTableTableReferences),
+          BudgetsTableData,
+          PrefetchHooks Function({
+            bool budgetItemsTableRefs,
+            bool rolloversFrom,
+            bool rolloversTo,
+          })
+        > {
+  $$BudgetsTableTableTableManager(_$AppDatabase db, $BudgetsTableTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$BudgetsTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$BudgetsTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$BudgetsTableTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<int> year = const Value.absent(),
+                Value<int> month = const Value.absent(),
+                Value<String> currencyCode = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<String?> notes = const Value.absent(),
+                Value<int?> closedSnapshotExpenseMinor = const Value.absent(),
+                Value<int?> closedSnapshotIncomeMinor = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => BudgetsTableCompanion(
+                id: id,
+                year: year,
+                month: month,
+                currencyCode: currencyCode,
+                status: status,
+                notes: notes,
+                closedSnapshotExpenseMinor: closedSnapshotExpenseMinor,
+                closedSnapshotIncomeMinor: closedSnapshotIncomeMinor,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required int year,
+                required int month,
+                required String currencyCode,
+                Value<String> status = const Value.absent(),
+                Value<String?> notes = const Value.absent(),
+                Value<int?> closedSnapshotExpenseMinor = const Value.absent(),
+                Value<int?> closedSnapshotIncomeMinor = const Value.absent(),
+                required DateTime createdAt,
+                required DateTime updatedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => BudgetsTableCompanion.insert(
+                id: id,
+                year: year,
+                month: month,
+                currencyCode: currencyCode,
+                status: status,
+                notes: notes,
+                closedSnapshotExpenseMinor: closedSnapshotExpenseMinor,
+                closedSnapshotIncomeMinor: closedSnapshotIncomeMinor,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$BudgetsTableTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback:
+              ({
+                budgetItemsTableRefs = false,
+                rolloversFrom = false,
+                rolloversTo = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (budgetItemsTableRefs) db.budgetItemsTable,
+                    if (rolloversFrom) db.budgetRolloversTable,
+                    if (rolloversTo) db.budgetRolloversTable,
+                  ],
+                  addJoins: null,
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (budgetItemsTableRefs)
+                        await $_getPrefetchedData<
+                          BudgetsTableData,
+                          $BudgetsTableTable,
+                          BudgetItemsTableData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$BudgetsTableTableReferences
+                              ._budgetItemsTableRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$BudgetsTableTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).budgetItemsTableRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.budgetId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (rolloversFrom)
+                        await $_getPrefetchedData<
+                          BudgetsTableData,
+                          $BudgetsTableTable,
+                          BudgetRolloversTableData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$BudgetsTableTableReferences
+                              ._rolloversFromTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$BudgetsTableTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).rolloversFrom,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.fromBudgetId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (rolloversTo)
+                        await $_getPrefetchedData<
+                          BudgetsTableData,
+                          $BudgetsTableTable,
+                          BudgetRolloversTableData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$BudgetsTableTableReferences
+                              ._rolloversToTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$BudgetsTableTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).rolloversTo,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.toBudgetId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $$BudgetsTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $BudgetsTableTable,
+      BudgetsTableData,
+      $$BudgetsTableTableFilterComposer,
+      $$BudgetsTableTableOrderingComposer,
+      $$BudgetsTableTableAnnotationComposer,
+      $$BudgetsTableTableCreateCompanionBuilder,
+      $$BudgetsTableTableUpdateCompanionBuilder,
+      (BudgetsTableData, $$BudgetsTableTableReferences),
+      BudgetsTableData,
+      PrefetchHooks Function({
+        bool budgetItemsTableRefs,
+        bool rolloversFrom,
+        bool rolloversTo,
+      })
+    >;
+typedef $$BudgetItemsTableTableCreateCompanionBuilder =
+    BudgetItemsTableCompanion Function({
+      required String id,
+      required String budgetId,
+      required String itemType,
+      Value<String?> categoryId,
+      Value<String?> accountId,
+      Value<String?> customName,
+      required int assignedAmountMinor,
+      Value<bool> rolloverEnabled,
+      Value<int> displayOrder,
+      Value<String?> notes,
+      required DateTime createdAt,
+      required DateTime updatedAt,
+      Value<int> rowid,
+    });
+typedef $$BudgetItemsTableTableUpdateCompanionBuilder =
+    BudgetItemsTableCompanion Function({
+      Value<String> id,
+      Value<String> budgetId,
+      Value<String> itemType,
+      Value<String?> categoryId,
+      Value<String?> accountId,
+      Value<String?> customName,
+      Value<int> assignedAmountMinor,
+      Value<bool> rolloverEnabled,
+      Value<int> displayOrder,
+      Value<String?> notes,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
+
+final class $$BudgetItemsTableTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $BudgetItemsTableTable,
+          BudgetItemsTableData
+        > {
+  $$BudgetItemsTableTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $BudgetsTableTable _budgetIdTable(_$AppDatabase db) =>
+      db.budgetsTable.createAlias('budget_items__budget_id__budgets__id');
+
+  $$BudgetsTableTableProcessedTableManager get budgetId {
+    final $_column = $_itemColumn<String>('budget_id')!;
+
+    final manager = $$BudgetsTableTableTableManager(
+      $_db,
+      $_db.budgetsTable,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_budgetIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $CategoriesTableTable _categoryIdTable(_$AppDatabase db) => db
+      .categoriesTable
+      .createAlias('budget_items__category_id__categories__id');
+
+  $$CategoriesTableTableProcessedTableManager? get categoryId {
+    final $_column = $_itemColumn<String>('category_id');
+    if ($_column == null) return null;
+    final manager = $$CategoriesTableTableTableManager(
+      $_db,
+      $_db.categoriesTable,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_categoryIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $AccountsTableTable _accountIdTable(_$AppDatabase db) =>
+      db.accountsTable.createAlias('budget_items__account_id__accounts__id');
+
+  $$AccountsTableTableProcessedTableManager? get accountId {
+    final $_column = $_itemColumn<String>('account_id');
+    if ($_column == null) return null;
+    final manager = $$AccountsTableTableTableManager(
+      $_db,
+      $_db.accountsTable,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_accountIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static MultiTypedResultKey<
+    $BudgetRolloversTableTable,
+    List<BudgetRolloversTableData>
+  >
+  _rolloversFromItemTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.budgetRolloversTable,
+    aliasName: 'budget_items__id__budget_rollovers__source_budget_item_id',
+  );
+
+  $$BudgetRolloversTableTableProcessedTableManager get rolloversFromItem {
+    final manager =
+        $$BudgetRolloversTableTableTableManager(
+          $_db,
+          $_db.budgetRolloversTable,
+        ).filter(
+          (f) => f.sourceBudgetItemId.id.sqlEquals($_itemColumn<String>('id')!),
+        );
+
+    final cache = $_typedResult.readTableOrNull(_rolloversFromItemTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<
+    $BudgetRolloversTableTable,
+    List<BudgetRolloversTableData>
+  >
+  _rolloversToItemTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.budgetRolloversTable,
+    aliasName: 'budget_items__id__budget_rollovers__target_budget_item_id',
+  );
+
+  $$BudgetRolloversTableTableProcessedTableManager get rolloversToItem {
+    final manager =
+        $$BudgetRolloversTableTableTableManager(
+          $_db,
+          $_db.budgetRolloversTable,
+        ).filter(
+          (f) => f.targetBudgetItemId.id.sqlEquals($_itemColumn<String>('id')!),
+        );
+
+    final cache = $_typedResult.readTableOrNull(_rolloversToItemTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$BudgetItemsTableTableFilterComposer
+    extends Composer<_$AppDatabase, $BudgetItemsTableTable> {
+  $$BudgetItemsTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get itemType => $composableBuilder(
+    column: $table.itemType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get customName => $composableBuilder(
+    column: $table.customName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get assignedAmountMinor => $composableBuilder(
+    column: $table.assignedAmountMinor,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get rolloverEnabled => $composableBuilder(
+    column: $table.rolloverEnabled,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get displayOrder => $composableBuilder(
+    column: $table.displayOrder,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$BudgetsTableTableFilterComposer get budgetId {
+    final $$BudgetsTableTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.budgetId,
+      referencedTable: $db.budgetsTable,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BudgetsTableTableFilterComposer(
+            $db: $db,
+            $table: $db.budgetsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$CategoriesTableTableFilterComposer get categoryId {
+    final $$CategoriesTableTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.categoryId,
+      referencedTable: $db.categoriesTable,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CategoriesTableTableFilterComposer(
+            $db: $db,
+            $table: $db.categoriesTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$AccountsTableTableFilterComposer get accountId {
+    final $$AccountsTableTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.accountId,
+      referencedTable: $db.accountsTable,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AccountsTableTableFilterComposer(
+            $db: $db,
+            $table: $db.accountsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<bool> rolloversFromItem(
+    Expression<bool> Function($$BudgetRolloversTableTableFilterComposer f) f,
+  ) {
+    final $$BudgetRolloversTableTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.budgetRolloversTable,
+      getReferencedColumn: (t) => t.sourceBudgetItemId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BudgetRolloversTableTableFilterComposer(
+            $db: $db,
+            $table: $db.budgetRolloversTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> rolloversToItem(
+    Expression<bool> Function($$BudgetRolloversTableTableFilterComposer f) f,
+  ) {
+    final $$BudgetRolloversTableTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.budgetRolloversTable,
+      getReferencedColumn: (t) => t.targetBudgetItemId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BudgetRolloversTableTableFilterComposer(
+            $db: $db,
+            $table: $db.budgetRolloversTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$BudgetItemsTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $BudgetItemsTableTable> {
+  $$BudgetItemsTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get itemType => $composableBuilder(
+    column: $table.itemType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get customName => $composableBuilder(
+    column: $table.customName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get assignedAmountMinor => $composableBuilder(
+    column: $table.assignedAmountMinor,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get rolloverEnabled => $composableBuilder(
+    column: $table.rolloverEnabled,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get displayOrder => $composableBuilder(
+    column: $table.displayOrder,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$BudgetsTableTableOrderingComposer get budgetId {
+    final $$BudgetsTableTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.budgetId,
+      referencedTable: $db.budgetsTable,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BudgetsTableTableOrderingComposer(
+            $db: $db,
+            $table: $db.budgetsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$CategoriesTableTableOrderingComposer get categoryId {
+    final $$CategoriesTableTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.categoryId,
+      referencedTable: $db.categoriesTable,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CategoriesTableTableOrderingComposer(
+            $db: $db,
+            $table: $db.categoriesTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$AccountsTableTableOrderingComposer get accountId {
+    final $$AccountsTableTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.accountId,
+      referencedTable: $db.accountsTable,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AccountsTableTableOrderingComposer(
+            $db: $db,
+            $table: $db.accountsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$BudgetItemsTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $BudgetItemsTableTable> {
+  $$BudgetItemsTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get itemType =>
+      $composableBuilder(column: $table.itemType, builder: (column) => column);
+
+  GeneratedColumn<String> get customName => $composableBuilder(
+    column: $table.customName,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get assignedAmountMinor => $composableBuilder(
+    column: $table.assignedAmountMinor,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get rolloverEnabled => $composableBuilder(
+    column: $table.rolloverEnabled,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get displayOrder => $composableBuilder(
+    column: $table.displayOrder,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get notes =>
+      $composableBuilder(column: $table.notes, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  $$BudgetsTableTableAnnotationComposer get budgetId {
+    final $$BudgetsTableTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.budgetId,
+      referencedTable: $db.budgetsTable,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BudgetsTableTableAnnotationComposer(
+            $db: $db,
+            $table: $db.budgetsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$CategoriesTableTableAnnotationComposer get categoryId {
+    final $$CategoriesTableTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.categoryId,
+      referencedTable: $db.categoriesTable,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CategoriesTableTableAnnotationComposer(
+            $db: $db,
+            $table: $db.categoriesTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$AccountsTableTableAnnotationComposer get accountId {
+    final $$AccountsTableTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.accountId,
+      referencedTable: $db.accountsTable,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AccountsTableTableAnnotationComposer(
+            $db: $db,
+            $table: $db.accountsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<T> rolloversFromItem<T extends Object>(
+    Expression<T> Function($$BudgetRolloversTableTableAnnotationComposer a) f,
+  ) {
+    final $$BudgetRolloversTableTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.budgetRolloversTable,
+          getReferencedColumn: (t) => t.sourceBudgetItemId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$BudgetRolloversTableTableAnnotationComposer(
+                $db: $db,
+                $table: $db.budgetRolloversTable,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+
+  Expression<T> rolloversToItem<T extends Object>(
+    Expression<T> Function($$BudgetRolloversTableTableAnnotationComposer a) f,
+  ) {
+    final $$BudgetRolloversTableTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.budgetRolloversTable,
+          getReferencedColumn: (t) => t.targetBudgetItemId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$BudgetRolloversTableTableAnnotationComposer(
+                $db: $db,
+                $table: $db.budgetRolloversTable,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+}
+
+class $$BudgetItemsTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $BudgetItemsTableTable,
+          BudgetItemsTableData,
+          $$BudgetItemsTableTableFilterComposer,
+          $$BudgetItemsTableTableOrderingComposer,
+          $$BudgetItemsTableTableAnnotationComposer,
+          $$BudgetItemsTableTableCreateCompanionBuilder,
+          $$BudgetItemsTableTableUpdateCompanionBuilder,
+          (BudgetItemsTableData, $$BudgetItemsTableTableReferences),
+          BudgetItemsTableData,
+          PrefetchHooks Function({
+            bool budgetId,
+            bool categoryId,
+            bool accountId,
+            bool rolloversFromItem,
+            bool rolloversToItem,
+          })
+        > {
+  $$BudgetItemsTableTableTableManager(
+    _$AppDatabase db,
+    $BudgetItemsTableTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$BudgetItemsTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$BudgetItemsTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$BudgetItemsTableTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> budgetId = const Value.absent(),
+                Value<String> itemType = const Value.absent(),
+                Value<String?> categoryId = const Value.absent(),
+                Value<String?> accountId = const Value.absent(),
+                Value<String?> customName = const Value.absent(),
+                Value<int> assignedAmountMinor = const Value.absent(),
+                Value<bool> rolloverEnabled = const Value.absent(),
+                Value<int> displayOrder = const Value.absent(),
+                Value<String?> notes = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => BudgetItemsTableCompanion(
+                id: id,
+                budgetId: budgetId,
+                itemType: itemType,
+                categoryId: categoryId,
+                accountId: accountId,
+                customName: customName,
+                assignedAmountMinor: assignedAmountMinor,
+                rolloverEnabled: rolloverEnabled,
+                displayOrder: displayOrder,
+                notes: notes,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String budgetId,
+                required String itemType,
+                Value<String?> categoryId = const Value.absent(),
+                Value<String?> accountId = const Value.absent(),
+                Value<String?> customName = const Value.absent(),
+                required int assignedAmountMinor,
+                Value<bool> rolloverEnabled = const Value.absent(),
+                Value<int> displayOrder = const Value.absent(),
+                Value<String?> notes = const Value.absent(),
+                required DateTime createdAt,
+                required DateTime updatedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => BudgetItemsTableCompanion.insert(
+                id: id,
+                budgetId: budgetId,
+                itemType: itemType,
+                categoryId: categoryId,
+                accountId: accountId,
+                customName: customName,
+                assignedAmountMinor: assignedAmountMinor,
+                rolloverEnabled: rolloverEnabled,
+                displayOrder: displayOrder,
+                notes: notes,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$BudgetItemsTableTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback:
+              ({
+                budgetId = false,
+                categoryId = false,
+                accountId = false,
+                rolloversFromItem = false,
+                rolloversToItem = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (rolloversFromItem) db.budgetRolloversTable,
+                    if (rolloversToItem) db.budgetRolloversTable,
+                  ],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (budgetId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.budgetId,
+                                    referencedTable:
+                                        $$BudgetItemsTableTableReferences
+                                            ._budgetIdTable(db),
+                                    referencedColumn:
+                                        $$BudgetItemsTableTableReferences
+                                            ._budgetIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+                        if (categoryId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.categoryId,
+                                    referencedTable:
+                                        $$BudgetItemsTableTableReferences
+                                            ._categoryIdTable(db),
+                                    referencedColumn:
+                                        $$BudgetItemsTableTableReferences
+                                            ._categoryIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+                        if (accountId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.accountId,
+                                    referencedTable:
+                                        $$BudgetItemsTableTableReferences
+                                            ._accountIdTable(db),
+                                    referencedColumn:
+                                        $$BudgetItemsTableTableReferences
+                                            ._accountIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (rolloversFromItem)
+                        await $_getPrefetchedData<
+                          BudgetItemsTableData,
+                          $BudgetItemsTableTable,
+                          BudgetRolloversTableData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$BudgetItemsTableTableReferences
+                              ._rolloversFromItemTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$BudgetItemsTableTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).rolloversFromItem,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.sourceBudgetItemId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (rolloversToItem)
+                        await $_getPrefetchedData<
+                          BudgetItemsTableData,
+                          $BudgetItemsTableTable,
+                          BudgetRolloversTableData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$BudgetItemsTableTableReferences
+                              ._rolloversToItemTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$BudgetItemsTableTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).rolloversToItem,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.targetBudgetItemId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $$BudgetItemsTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $BudgetItemsTableTable,
+      BudgetItemsTableData,
+      $$BudgetItemsTableTableFilterComposer,
+      $$BudgetItemsTableTableOrderingComposer,
+      $$BudgetItemsTableTableAnnotationComposer,
+      $$BudgetItemsTableTableCreateCompanionBuilder,
+      $$BudgetItemsTableTableUpdateCompanionBuilder,
+      (BudgetItemsTableData, $$BudgetItemsTableTableReferences),
+      BudgetItemsTableData,
+      PrefetchHooks Function({
+        bool budgetId,
+        bool categoryId,
+        bool accountId,
+        bool rolloversFromItem,
+        bool rolloversToItem,
+      })
+    >;
+typedef $$BudgetRolloversTableTableCreateCompanionBuilder =
+    BudgetRolloversTableCompanion Function({
+      required String id,
+      required String fromBudgetId,
+      required String toBudgetId,
+      required String sourceBudgetItemId,
+      Value<String?> targetBudgetItemId,
+      required int amountMinor,
+      required DateTime createdAt,
+      Value<int> rowid,
+    });
+typedef $$BudgetRolloversTableTableUpdateCompanionBuilder =
+    BudgetRolloversTableCompanion Function({
+      Value<String> id,
+      Value<String> fromBudgetId,
+      Value<String> toBudgetId,
+      Value<String> sourceBudgetItemId,
+      Value<String?> targetBudgetItemId,
+      Value<int> amountMinor,
+      Value<DateTime> createdAt,
+      Value<int> rowid,
+    });
+
+final class $$BudgetRolloversTableTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $BudgetRolloversTableTable,
+          BudgetRolloversTableData
+        > {
+  $$BudgetRolloversTableTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $BudgetsTableTable _fromBudgetIdTable(_$AppDatabase db) => db
+      .budgetsTable
+      .createAlias('budget_rollovers__from_budget_id__budgets__id');
+
+  $$BudgetsTableTableProcessedTableManager get fromBudgetId {
+    final $_column = $_itemColumn<String>('from_budget_id')!;
+
+    final manager = $$BudgetsTableTableTableManager(
+      $_db,
+      $_db.budgetsTable,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_fromBudgetIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $BudgetsTableTable _toBudgetIdTable(_$AppDatabase db) => db
+      .budgetsTable
+      .createAlias('budget_rollovers__to_budget_id__budgets__id');
+
+  $$BudgetsTableTableProcessedTableManager get toBudgetId {
+    final $_column = $_itemColumn<String>('to_budget_id')!;
+
+    final manager = $$BudgetsTableTableTableManager(
+      $_db,
+      $_db.budgetsTable,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_toBudgetIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $BudgetItemsTableTable _sourceBudgetItemIdTable(_$AppDatabase db) => db
+      .budgetItemsTable
+      .createAlias('budget_rollovers__source_budget_item_id__budget_items__id');
+
+  $$BudgetItemsTableTableProcessedTableManager get sourceBudgetItemId {
+    final $_column = $_itemColumn<String>('source_budget_item_id')!;
+
+    final manager = $$BudgetItemsTableTableTableManager(
+      $_db,
+      $_db.budgetItemsTable,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_sourceBudgetItemIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $BudgetItemsTableTable _targetBudgetItemIdTable(_$AppDatabase db) => db
+      .budgetItemsTable
+      .createAlias('budget_rollovers__target_budget_item_id__budget_items__id');
+
+  $$BudgetItemsTableTableProcessedTableManager? get targetBudgetItemId {
+    final $_column = $_itemColumn<String>('target_budget_item_id');
+    if ($_column == null) return null;
+    final manager = $$BudgetItemsTableTableTableManager(
+      $_db,
+      $_db.budgetItemsTable,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_targetBudgetItemIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$BudgetRolloversTableTableFilterComposer
+    extends Composer<_$AppDatabase, $BudgetRolloversTableTable> {
+  $$BudgetRolloversTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get amountMinor => $composableBuilder(
+    column: $table.amountMinor,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$BudgetsTableTableFilterComposer get fromBudgetId {
+    final $$BudgetsTableTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.fromBudgetId,
+      referencedTable: $db.budgetsTable,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BudgetsTableTableFilterComposer(
+            $db: $db,
+            $table: $db.budgetsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$BudgetsTableTableFilterComposer get toBudgetId {
+    final $$BudgetsTableTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.toBudgetId,
+      referencedTable: $db.budgetsTable,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BudgetsTableTableFilterComposer(
+            $db: $db,
+            $table: $db.budgetsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$BudgetItemsTableTableFilterComposer get sourceBudgetItemId {
+    final $$BudgetItemsTableTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.sourceBudgetItemId,
+      referencedTable: $db.budgetItemsTable,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BudgetItemsTableTableFilterComposer(
+            $db: $db,
+            $table: $db.budgetItemsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$BudgetItemsTableTableFilterComposer get targetBudgetItemId {
+    final $$BudgetItemsTableTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.targetBudgetItemId,
+      referencedTable: $db.budgetItemsTable,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BudgetItemsTableTableFilterComposer(
+            $db: $db,
+            $table: $db.budgetItemsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$BudgetRolloversTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $BudgetRolloversTableTable> {
+  $$BudgetRolloversTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get amountMinor => $composableBuilder(
+    column: $table.amountMinor,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$BudgetsTableTableOrderingComposer get fromBudgetId {
+    final $$BudgetsTableTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.fromBudgetId,
+      referencedTable: $db.budgetsTable,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BudgetsTableTableOrderingComposer(
+            $db: $db,
+            $table: $db.budgetsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$BudgetsTableTableOrderingComposer get toBudgetId {
+    final $$BudgetsTableTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.toBudgetId,
+      referencedTable: $db.budgetsTable,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BudgetsTableTableOrderingComposer(
+            $db: $db,
+            $table: $db.budgetsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$BudgetItemsTableTableOrderingComposer get sourceBudgetItemId {
+    final $$BudgetItemsTableTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.sourceBudgetItemId,
+      referencedTable: $db.budgetItemsTable,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BudgetItemsTableTableOrderingComposer(
+            $db: $db,
+            $table: $db.budgetItemsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$BudgetItemsTableTableOrderingComposer get targetBudgetItemId {
+    final $$BudgetItemsTableTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.targetBudgetItemId,
+      referencedTable: $db.budgetItemsTable,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BudgetItemsTableTableOrderingComposer(
+            $db: $db,
+            $table: $db.budgetItemsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$BudgetRolloversTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $BudgetRolloversTableTable> {
+  $$BudgetRolloversTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get amountMinor => $composableBuilder(
+    column: $table.amountMinor,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  $$BudgetsTableTableAnnotationComposer get fromBudgetId {
+    final $$BudgetsTableTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.fromBudgetId,
+      referencedTable: $db.budgetsTable,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BudgetsTableTableAnnotationComposer(
+            $db: $db,
+            $table: $db.budgetsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$BudgetsTableTableAnnotationComposer get toBudgetId {
+    final $$BudgetsTableTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.toBudgetId,
+      referencedTable: $db.budgetsTable,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BudgetsTableTableAnnotationComposer(
+            $db: $db,
+            $table: $db.budgetsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$BudgetItemsTableTableAnnotationComposer get sourceBudgetItemId {
+    final $$BudgetItemsTableTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.sourceBudgetItemId,
+      referencedTable: $db.budgetItemsTable,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BudgetItemsTableTableAnnotationComposer(
+            $db: $db,
+            $table: $db.budgetItemsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$BudgetItemsTableTableAnnotationComposer get targetBudgetItemId {
+    final $$BudgetItemsTableTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.targetBudgetItemId,
+      referencedTable: $db.budgetItemsTable,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BudgetItemsTableTableAnnotationComposer(
+            $db: $db,
+            $table: $db.budgetItemsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$BudgetRolloversTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $BudgetRolloversTableTable,
+          BudgetRolloversTableData,
+          $$BudgetRolloversTableTableFilterComposer,
+          $$BudgetRolloversTableTableOrderingComposer,
+          $$BudgetRolloversTableTableAnnotationComposer,
+          $$BudgetRolloversTableTableCreateCompanionBuilder,
+          $$BudgetRolloversTableTableUpdateCompanionBuilder,
+          (BudgetRolloversTableData, $$BudgetRolloversTableTableReferences),
+          BudgetRolloversTableData,
+          PrefetchHooks Function({
+            bool fromBudgetId,
+            bool toBudgetId,
+            bool sourceBudgetItemId,
+            bool targetBudgetItemId,
+          })
+        > {
+  $$BudgetRolloversTableTableTableManager(
+    _$AppDatabase db,
+    $BudgetRolloversTableTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$BudgetRolloversTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$BudgetRolloversTableTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$BudgetRolloversTableTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> fromBudgetId = const Value.absent(),
+                Value<String> toBudgetId = const Value.absent(),
+                Value<String> sourceBudgetItemId = const Value.absent(),
+                Value<String?> targetBudgetItemId = const Value.absent(),
+                Value<int> amountMinor = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => BudgetRolloversTableCompanion(
+                id: id,
+                fromBudgetId: fromBudgetId,
+                toBudgetId: toBudgetId,
+                sourceBudgetItemId: sourceBudgetItemId,
+                targetBudgetItemId: targetBudgetItemId,
+                amountMinor: amountMinor,
+                createdAt: createdAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String fromBudgetId,
+                required String toBudgetId,
+                required String sourceBudgetItemId,
+                Value<String?> targetBudgetItemId = const Value.absent(),
+                required int amountMinor,
+                required DateTime createdAt,
+                Value<int> rowid = const Value.absent(),
+              }) => BudgetRolloversTableCompanion.insert(
+                id: id,
+                fromBudgetId: fromBudgetId,
+                toBudgetId: toBudgetId,
+                sourceBudgetItemId: sourceBudgetItemId,
+                targetBudgetItemId: targetBudgetItemId,
+                amountMinor: amountMinor,
+                createdAt: createdAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$BudgetRolloversTableTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback:
+              ({
+                fromBudgetId = false,
+                toBudgetId = false,
+                sourceBudgetItemId = false,
+                targetBudgetItemId = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (fromBudgetId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.fromBudgetId,
+                                    referencedTable:
+                                        $$BudgetRolloversTableTableReferences
+                                            ._fromBudgetIdTable(db),
+                                    referencedColumn:
+                                        $$BudgetRolloversTableTableReferences
+                                            ._fromBudgetIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+                        if (toBudgetId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.toBudgetId,
+                                    referencedTable:
+                                        $$BudgetRolloversTableTableReferences
+                                            ._toBudgetIdTable(db),
+                                    referencedColumn:
+                                        $$BudgetRolloversTableTableReferences
+                                            ._toBudgetIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+                        if (sourceBudgetItemId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.sourceBudgetItemId,
+                                    referencedTable:
+                                        $$BudgetRolloversTableTableReferences
+                                            ._sourceBudgetItemIdTable(db),
+                                    referencedColumn:
+                                        $$BudgetRolloversTableTableReferences
+                                            ._sourceBudgetItemIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+                        if (targetBudgetItemId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.targetBudgetItemId,
+                                    referencedTable:
+                                        $$BudgetRolloversTableTableReferences
+                                            ._targetBudgetItemIdTable(db),
+                                    referencedColumn:
+                                        $$BudgetRolloversTableTableReferences
+                                            ._targetBudgetItemIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $$BudgetRolloversTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $BudgetRolloversTableTable,
+      BudgetRolloversTableData,
+      $$BudgetRolloversTableTableFilterComposer,
+      $$BudgetRolloversTableTableOrderingComposer,
+      $$BudgetRolloversTableTableAnnotationComposer,
+      $$BudgetRolloversTableTableCreateCompanionBuilder,
+      $$BudgetRolloversTableTableUpdateCompanionBuilder,
+      (BudgetRolloversTableData, $$BudgetRolloversTableTableReferences),
+      BudgetRolloversTableData,
+      PrefetchHooks Function({
+        bool fromBudgetId,
+        bool toBudgetId,
+        bool sourceBudgetItemId,
+        bool targetBudgetItemId,
+      })
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -4762,4 +9003,10 @@ class $AppDatabaseManager {
       $$CategoriesTableTableTableManager(_db, _db.categoriesTable);
   $$TransactionsTableTableTableManager get transactionsTable =>
       $$TransactionsTableTableTableManager(_db, _db.transactionsTable);
+  $$BudgetsTableTableTableManager get budgetsTable =>
+      $$BudgetsTableTableTableManager(_db, _db.budgetsTable);
+  $$BudgetItemsTableTableTableManager get budgetItemsTable =>
+      $$BudgetItemsTableTableTableManager(_db, _db.budgetItemsTable);
+  $$BudgetRolloversTableTableTableManager get budgetRolloversTable =>
+      $$BudgetRolloversTableTableTableManager(_db, _db.budgetRolloversTable);
 }

@@ -349,6 +349,244 @@ class AppLocalizationsAr extends AppLocalizations {
   String get settingsVersion => 'الإصدار';
 
   @override
+  String get navDashboard => 'الرئيسية';
+
+  @override
+  String get navBudget => 'الميزانية';
+
+  @override
+  String get navAccounts => 'الحسابات';
+
+  @override
+  String get navSettings => 'الإعدادات';
+
+  @override
+  String get budgetTitle => 'الميزانية';
+
+  @override
+  String get budgetStatusDraft => 'مسودة';
+
+  @override
+  String get budgetStatusActive => 'نشطة';
+
+  @override
+  String get budgetStatusClosed => 'مغلقة';
+
+  @override
+  String get budgetExpectedIncome => 'الدخل المتوقع';
+
+  @override
+  String get budgetActualIncome => 'الدخل الفعلي';
+
+  @override
+  String get budgetTotalAssigned => 'إجمالي المخصص';
+
+  @override
+  String get budgetAvailableToAssign => 'المتاح للتوزيع';
+
+  @override
+  String get budgetActualExpense => 'المصروف الفعلي';
+
+  @override
+  String get budgetTotalRemaining => 'إجمالي المتبقي';
+
+  @override
+  String get budgetOverspentCount => 'الفئات المتجاوزة';
+
+  @override
+  String get budgetSectionIncomePlan => 'خطة الدخل';
+
+  @override
+  String get budgetSectionExpense => 'المصروفات';
+
+  @override
+  String get budgetSectionSavings => 'المدخرات';
+
+  @override
+  String get budgetSectionDebt => 'سداد الالتزامات';
+
+  @override
+  String get budgetItemAssigned => 'المخصص';
+
+  @override
+  String get budgetItemActual => 'الفعلي';
+
+  @override
+  String get budgetItemRemaining => 'المتبقي';
+
+  @override
+  String get budgetItemOverspentBy => 'تجاوز بمقدار';
+
+  @override
+  String get budgetItemPlanned => 'المخطط';
+
+  @override
+  String get budgetItemVariance => 'الفرق';
+
+  @override
+  String get budgetItemRolloverIn => 'مُرحّل داخل';
+
+  @override
+  String get budgetItemRolloverOut => 'مُرحّل خارج';
+
+  @override
+  String budgetItemUsage(int percent) {
+    return '$percent% مستخدَم';
+  }
+
+  @override
+  String get budgetStatusNotStarted => 'لم يبدأ';
+
+  @override
+  String get budgetStatusOnTrack => 'ضمن الخطة';
+
+  @override
+  String get budgetStatusNearLimit => 'قريب من الحد';
+
+  @override
+  String get budgetStatusOverspent => 'متجاوز';
+
+  @override
+  String get budgetEmptyTitle => 'لا توجد ميزانية لهذا الشهر';
+
+  @override
+  String get budgetEmptyMessage => 'أنشئ ميزانية شهرية لتخطيط دخلك ومصروفاتك.';
+
+  @override
+  String get budgetCreateEmpty => 'إنشاء ميزانية فارغة';
+
+  @override
+  String get budgetCopyPrevious => 'نسخ الشهر السابق';
+
+  @override
+  String get budgetCreateTitle => 'إنشاء ميزانية';
+
+  @override
+  String budgetCopiedSkipped(int count) {
+    return 'تم تجاوز $count بند لأن تصنيفه أو حسابه مؤرشف.';
+  }
+
+  @override
+  String get budgetAddItem => 'إضافة بند';
+
+  @override
+  String get budgetItemTypeExpense => 'مصروف';
+
+  @override
+  String get budgetItemTypeSaving => 'ادخار';
+
+  @override
+  String get budgetItemTypeDebt => 'سداد التزام';
+
+  @override
+  String get budgetItemTypeIncome => 'خطة دخل';
+
+  @override
+  String get budgetItemName => 'الاسم';
+
+  @override
+  String get budgetAssignedAmount => 'المبلغ المخصص';
+
+  @override
+  String get budgetExpectedAmount => 'المبلغ المتوقع';
+
+  @override
+  String get budgetPlannedPayment => 'الدفعة المخططة';
+
+  @override
+  String get budgetRolloverEnabled => 'ترحيل المبلغ غير المستخدم';
+
+  @override
+  String get budgetItemNotes => 'ملاحظات';
+
+  @override
+  String get budgetSelectExpenseCategory => 'تصنيف مصروف';
+
+  @override
+  String get budgetSelectIncomeCategory => 'تصنيف دخل';
+
+  @override
+  String get budgetSelectLiability => 'حساب التزام';
+
+  @override
+  String get budgetItemDetailsTitle => 'بند الميزانية';
+
+  @override
+  String get budgetContributingTransactions => 'العمليات المساهمة';
+
+  @override
+  String get budgetNoContributions => 'لا توجد عمليات مساهمة بعد.';
+
+  @override
+  String get budgetCloseMonth => 'إغلاق الشهر';
+
+  @override
+  String get budgetCloseTitle => 'إغلاق هذا الشهر';
+
+  @override
+  String get budgetCloseReview => 'راجع الشهر ثم اختر الفوائض التي ستُرحّل.';
+
+  @override
+  String get budgetCloseSelectRollover => 'ترحيل';
+
+  @override
+  String get budgetCloseConfirm => 'إغلاق الشهر';
+
+  @override
+  String get budgetClosedBanner =>
+      'هذا الشهر مغلق. نتائجه ما زالت تعكس أحدث العمليات.';
+
+  @override
+  String get budgetReopen => 'إعادة فتح الشهر';
+
+  @override
+  String get budgetReopenConfirm => 'إعادة فتح هذا الشهر المغلق للتعديل؟';
+
+  @override
+  String get budgetReadOnly => 'بنود الميزانية للقراءة فقط أثناء إغلاق الشهر.';
+
+  @override
+  String get budgetDeleteItem => 'حذف البند';
+
+  @override
+  String get budgetDeleteItemConfirm => 'حذف بند الميزانية هذا؟';
+
+  @override
+  String get budgetItemSaved => 'تم حفظ البند';
+
+  @override
+  String get budgetSummaryCardTitle => 'ميزانية هذا الشهر';
+
+  @override
+  String get budgetOpen => 'فتح الميزانية';
+
+  @override
+  String get budgetCreateCta => 'أنشئ ميزانية لهذا الشهر';
+
+  @override
+  String get budgetSavingPlanOnly =>
+      'مخطط (تُعرض المدخرات كخطة فقط في هذا الإصدار).';
+
+  @override
+  String insightOverspent(String category) {
+    return 'تجاوز الميزانية: $category';
+  }
+
+  @override
+  String insightHighConsumption(String category) {
+    return 'استهلاك ٨٠٪ فأكثر: $category';
+  }
+
+  @override
+  String get insightNegativeAvailable => 'خصّصت أكثر من دخلك المتوقع.';
+
+  @override
+  String get insightIncomeBelowExpected => 'الدخل الفعلي أقل من المتوقع.';
+
+  @override
+  String get insightClosedMonthChanged => 'تغيّرت نتائج شهر مغلق بعد إغلاقه.';
+
+  @override
   String get lockTitle => 'التطبيق مقفل';
 
   @override
@@ -410,6 +648,44 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get errorTransactionNotFound => 'العملية غير موجودة.';
+
+  @override
+  String get errorBudgetAssignedNegative =>
+      'لا يمكن أن يكون المبلغ المخصص سالبًا.';
+
+  @override
+  String get errorBudgetCategoryRequired => 'من فضلك اختر تصنيفًا.';
+
+  @override
+  String get errorBudgetLiabilityRequired => 'من فضلك اختر حساب التزام.';
+
+  @override
+  String get errorBudgetNotLiability =>
+      'يجب أن يستخدم سداد الالتزام حساب التزام.';
+
+  @override
+  String get errorBudgetDuplicateItem =>
+      'يوجد بند ميزانية لهذا التصنيف أو الحساب مسبقًا.';
+
+  @override
+  String get errorBudgetHierarchyConflict =>
+      'يوجد بند لتصنيف أب أو ابن مسبقًا.';
+
+  @override
+  String get errorBudgetExists => 'توجد ميزانية لهذا الشهر مسبقًا.';
+
+  @override
+  String get errorBudgetClosed => 'الشهر مغلق. أعد فتحه لإجراء تغييرات.';
+
+  @override
+  String get errorBudgetItemLinkedRollover =>
+      'هذا البند مرتبط بترحيل ولا يمكن حذفه.';
+
+  @override
+  String get errorBudgetNotFound => 'الميزانية غير موجودة.';
+
+  @override
+  String get errorBudgetItemNotFound => 'بند الميزانية غير موجود.';
 
   @override
   String get errorDatabase => 'حدث خطأ في قاعدة البيانات.';

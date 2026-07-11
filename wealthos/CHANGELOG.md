@@ -3,6 +3,35 @@
 All notable changes to WealthOS are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.2.0] — Budgeting Engine V1
+
+### Added
+- **Monthly budgets** (one per year/month/currency) with `draft | active |
+  closed` status, built on the existing ledger without changing it.
+- **Budget item types**: `expense` (expense category), `incomePlan` (income
+  category), `debtPayment` (liability account), `saving` (plan only in V1).
+- **`BudgetCalculator`** (pure, tested): expected vs. actual income, total
+  assigned, available-to-assign (account balances never leak in), per-item
+  actual spending with category **self+descendants**, remaining, overspending,
+  usage %, debt-payment actuals (repayments only, via `TransactionSemantic`).
+- **Rollover** of positive expense surpluses through an explicit, atomic
+  **close-month** flow with traceable `budget_rollovers` records; **reopen**
+  with confirmation. Closed months are read-only; live actuals still update and
+  raise a "results changed" insight.
+- **Double-counting prevention**: unique category/liability items plus a
+  parent/child hierarchy guard.
+- **Screens**: bottom-nav **Budget** tab (month navigation, KPIs, sections,
+  per-item progress + textual status), create (empty / copy previous), add/edit
+  item, item details (contributing transactions + rollovers), close-month.
+- **Dashboard** reactive **Budget Summary** card.
+- **In-app insights** (central thresholds): overspend, ≥80% usage, negative
+  available-to-assign, income below expected, closed-month changed.
+- **Database**: schema **v2** with `budgets`, `budget_items`,
+  `budget_rollovers` (FKs, unique constraints, CHECKs) and a real v1→v2
+  migration + migration test.
+- ~40 new unit/database/integration/widget tests; docs
+  `budgeting-model.md` + `budgeting-implementation-plan.md`.
+
 ## [1.1.0] — Foundation Hardening
 
 ### Added

@@ -764,6 +764,462 @@ abstract class AppLocalizations {
   /// **'Version'**
   String get settingsVersion;
 
+  /// No description provided for @navDashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get navDashboard;
+
+  /// No description provided for @navBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget'**
+  String get navBudget;
+
+  /// No description provided for @navAccounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Accounts'**
+  String get navAccounts;
+
+  /// No description provided for @navSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get navSettings;
+
+  /// No description provided for @budgetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget'**
+  String get budgetTitle;
+
+  /// No description provided for @budgetStatusDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft'**
+  String get budgetStatusDraft;
+
+  /// No description provided for @budgetStatusActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get budgetStatusActive;
+
+  /// No description provided for @budgetStatusClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed'**
+  String get budgetStatusClosed;
+
+  /// No description provided for @budgetExpectedIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected income'**
+  String get budgetExpectedIncome;
+
+  /// No description provided for @budgetActualIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Actual income'**
+  String get budgetActualIncome;
+
+  /// No description provided for @budgetTotalAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'Total assigned'**
+  String get budgetTotalAssigned;
+
+  /// No description provided for @budgetAvailableToAssign.
+  ///
+  /// In en, this message translates to:
+  /// **'Available to assign'**
+  String get budgetAvailableToAssign;
+
+  /// No description provided for @budgetActualExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Actual expense'**
+  String get budgetActualExpense;
+
+  /// No description provided for @budgetTotalRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'Total remaining'**
+  String get budgetTotalRemaining;
+
+  /// No description provided for @budgetOverspentCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Overspent categories'**
+  String get budgetOverspentCount;
+
+  /// No description provided for @budgetSectionIncomePlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Income plan'**
+  String get budgetSectionIncomePlan;
+
+  /// No description provided for @budgetSectionExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Expenses'**
+  String get budgetSectionExpense;
+
+  /// No description provided for @budgetSectionSavings.
+  ///
+  /// In en, this message translates to:
+  /// **'Savings'**
+  String get budgetSectionSavings;
+
+  /// No description provided for @budgetSectionDebt.
+  ///
+  /// In en, this message translates to:
+  /// **'Debt payments'**
+  String get budgetSectionDebt;
+
+  /// No description provided for @budgetItemAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'Assigned'**
+  String get budgetItemAssigned;
+
+  /// No description provided for @budgetItemActual.
+  ///
+  /// In en, this message translates to:
+  /// **'Actual'**
+  String get budgetItemActual;
+
+  /// No description provided for @budgetItemRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining'**
+  String get budgetItemRemaining;
+
+  /// No description provided for @budgetItemOverspentBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Overspent by'**
+  String get budgetItemOverspentBy;
+
+  /// No description provided for @budgetItemPlanned.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned'**
+  String get budgetItemPlanned;
+
+  /// No description provided for @budgetItemVariance.
+  ///
+  /// In en, this message translates to:
+  /// **'Variance'**
+  String get budgetItemVariance;
+
+  /// No description provided for @budgetItemRolloverIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Rolled in'**
+  String get budgetItemRolloverIn;
+
+  /// No description provided for @budgetItemRolloverOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Rolled out'**
+  String get budgetItemRolloverOut;
+
+  /// No description provided for @budgetItemUsage.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}% used'**
+  String budgetItemUsage(int percent);
+
+  /// No description provided for @budgetStatusNotStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Not started'**
+  String get budgetStatusNotStarted;
+
+  /// No description provided for @budgetStatusOnTrack.
+  ///
+  /// In en, this message translates to:
+  /// **'On track'**
+  String get budgetStatusOnTrack;
+
+  /// No description provided for @budgetStatusNearLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Near limit'**
+  String get budgetStatusNearLimit;
+
+  /// No description provided for @budgetStatusOverspent.
+  ///
+  /// In en, this message translates to:
+  /// **'Overspent'**
+  String get budgetStatusOverspent;
+
+  /// No description provided for @budgetEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No budget for this month'**
+  String get budgetEmptyTitle;
+
+  /// No description provided for @budgetEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a monthly budget to plan your income and spending.'**
+  String get budgetEmptyMessage;
+
+  /// No description provided for @budgetCreateEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Create empty budget'**
+  String get budgetCreateEmpty;
+
+  /// No description provided for @budgetCopyPrevious.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy previous month'**
+  String get budgetCopyPrevious;
+
+  /// No description provided for @budgetCreateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create budget'**
+  String get budgetCreateTitle;
+
+  /// No description provided for @budgetCopiedSkipped.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} item(s) were skipped because their category or account is archived.'**
+  String budgetCopiedSkipped(int count);
+
+  /// No description provided for @budgetAddItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Add item'**
+  String get budgetAddItem;
+
+  /// No description provided for @budgetItemTypeExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense'**
+  String get budgetItemTypeExpense;
+
+  /// No description provided for @budgetItemTypeSaving.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving'**
+  String get budgetItemTypeSaving;
+
+  /// No description provided for @budgetItemTypeDebt.
+  ///
+  /// In en, this message translates to:
+  /// **'Debt payment'**
+  String get budgetItemTypeDebt;
+
+  /// No description provided for @budgetItemTypeIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Income plan'**
+  String get budgetItemTypeIncome;
+
+  /// No description provided for @budgetItemName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get budgetItemName;
+
+  /// No description provided for @budgetAssignedAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Assigned amount'**
+  String get budgetAssignedAmount;
+
+  /// No description provided for @budgetExpectedAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected amount'**
+  String get budgetExpectedAmount;
+
+  /// No description provided for @budgetPlannedPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned payment'**
+  String get budgetPlannedPayment;
+
+  /// No description provided for @budgetRolloverEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Roll over unused amount'**
+  String get budgetRolloverEnabled;
+
+  /// No description provided for @budgetItemNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get budgetItemNotes;
+
+  /// No description provided for @budgetSelectExpenseCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense category'**
+  String get budgetSelectExpenseCategory;
+
+  /// No description provided for @budgetSelectIncomeCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Income category'**
+  String get budgetSelectIncomeCategory;
+
+  /// No description provided for @budgetSelectLiability.
+  ///
+  /// In en, this message translates to:
+  /// **'Liability account'**
+  String get budgetSelectLiability;
+
+  /// No description provided for @budgetItemDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget item'**
+  String get budgetItemDetailsTitle;
+
+  /// No description provided for @budgetContributingTransactions.
+  ///
+  /// In en, this message translates to:
+  /// **'Contributing transactions'**
+  String get budgetContributingTransactions;
+
+  /// No description provided for @budgetNoContributions.
+  ///
+  /// In en, this message translates to:
+  /// **'No contributing transactions yet.'**
+  String get budgetNoContributions;
+
+  /// No description provided for @budgetCloseMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Close month'**
+  String get budgetCloseMonth;
+
+  /// No description provided for @budgetCloseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Close this month'**
+  String get budgetCloseTitle;
+
+  /// No description provided for @budgetCloseReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Review the month, then choose which surpluses to carry forward.'**
+  String get budgetCloseReview;
+
+  /// No description provided for @budgetCloseSelectRollover.
+  ///
+  /// In en, this message translates to:
+  /// **'Carry forward'**
+  String get budgetCloseSelectRollover;
+
+  /// No description provided for @budgetCloseConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Close month'**
+  String get budgetCloseConfirm;
+
+  /// No description provided for @budgetClosedBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'This month is closed. Its results still reflect the latest transactions.'**
+  String get budgetClosedBanner;
+
+  /// No description provided for @budgetReopen.
+  ///
+  /// In en, this message translates to:
+  /// **'Reopen month'**
+  String get budgetReopen;
+
+  /// No description provided for @budgetReopenConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Reopen this closed month for editing?'**
+  String get budgetReopenConfirm;
+
+  /// No description provided for @budgetReadOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget items are read-only while the month is closed.'**
+  String get budgetReadOnly;
+
+  /// No description provided for @budgetDeleteItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete item'**
+  String get budgetDeleteItem;
+
+  /// No description provided for @budgetDeleteItemConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this budget item?'**
+  String get budgetDeleteItemConfirm;
+
+  /// No description provided for @budgetItemSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget item saved'**
+  String get budgetItemSaved;
+
+  /// No description provided for @budgetSummaryCardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'This month\'s budget'**
+  String get budgetSummaryCardTitle;
+
+  /// No description provided for @budgetOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open budget'**
+  String get budgetOpen;
+
+  /// No description provided for @budgetCreateCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a budget for this month'**
+  String get budgetCreateCta;
+
+  /// No description provided for @budgetSavingPlanOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned (savings are shown as a plan only in this version).'**
+  String get budgetSavingPlanOnly;
+
+  /// No description provided for @insightOverspent.
+  ///
+  /// In en, this message translates to:
+  /// **'Over budget: {category}'**
+  String insightOverspent(String category);
+
+  /// No description provided for @insightHighConsumption.
+  ///
+  /// In en, this message translates to:
+  /// **'80%+ used: {category}'**
+  String insightHighConsumption(String category);
+
+  /// No description provided for @insightNegativeAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'You have assigned more than your expected income.'**
+  String get insightNegativeAvailable;
+
+  /// No description provided for @insightIncomeBelowExpected.
+  ///
+  /// In en, this message translates to:
+  /// **'Actual income is below the expected amount.'**
+  String get insightIncomeBelowExpected;
+
+  /// No description provided for @insightClosedMonthChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'A closed month\'s results changed after closing.'**
+  String get insightClosedMonthChanged;
+
   /// No description provided for @lockTitle.
   ///
   /// In en, this message translates to:
@@ -883,6 +1339,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Transaction not found.'**
   String get errorTransactionNotFound;
+
+  /// No description provided for @errorBudgetAssignedNegative.
+  ///
+  /// In en, this message translates to:
+  /// **'The assigned amount cannot be negative.'**
+  String get errorBudgetAssignedNegative;
+
+  /// No description provided for @errorBudgetCategoryRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please choose a category.'**
+  String get errorBudgetCategoryRequired;
+
+  /// No description provided for @errorBudgetLiabilityRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please choose a liability account.'**
+  String get errorBudgetLiabilityRequired;
+
+  /// No description provided for @errorBudgetNotLiability.
+  ///
+  /// In en, this message translates to:
+  /// **'A debt payment must use a liability account.'**
+  String get errorBudgetNotLiability;
+
+  /// No description provided for @errorBudgetDuplicateItem.
+  ///
+  /// In en, this message translates to:
+  /// **'This category or account already has a budget item.'**
+  String get errorBudgetDuplicateItem;
+
+  /// No description provided for @errorBudgetHierarchyConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'A parent or child category is already budgeted.'**
+  String get errorBudgetHierarchyConflict;
+
+  /// No description provided for @errorBudgetExists.
+  ///
+  /// In en, this message translates to:
+  /// **'A budget already exists for this month.'**
+  String get errorBudgetExists;
+
+  /// No description provided for @errorBudgetClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'The month is closed. Reopen it to make changes.'**
+  String get errorBudgetClosed;
+
+  /// No description provided for @errorBudgetItemLinkedRollover.
+  ///
+  /// In en, this message translates to:
+  /// **'This item has a linked roll-over and cannot be deleted.'**
+  String get errorBudgetItemLinkedRollover;
+
+  /// No description provided for @errorBudgetNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget not found.'**
+  String get errorBudgetNotFound;
+
+  /// No description provided for @errorBudgetItemNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget item not found.'**
+  String get errorBudgetItemNotFound;
 
   /// No description provided for @errorDatabase.
   ///

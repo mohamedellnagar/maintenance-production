@@ -15,6 +15,15 @@ adjustments, transaction details/edit/delete/restore, repository-level
 integrity (archived/category-type/currency/FK), reactive providers, and a much
 larger test suite. See `docs/accounting-model.md`.
 
+## Phase 1.2 — Budgeting Engine V1 (this release) ✅
+
+Monthly budgets with expense/income-plan/saving/debt-payment items, actual vs.
+plan math, available-to-assign, category self+descendants, overspend/usage,
+debt-payment tracking (repayments only), traceable rollover via an atomic
+close-month flow, reopen, in-app insights, a Budget tab and a dashboard summary
+card. See `docs/budgeting-model.md`. Deferred to a later budgeting phase:
+actual-savings linkage, deficit carry-over, budget templates, and reports.
+
 ## Deliberately deferred
 
 Not built in this phase (only logical extension points left where useful):

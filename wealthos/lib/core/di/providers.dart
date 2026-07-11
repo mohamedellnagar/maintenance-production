@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../features/accounts/data/accounts_repository.dart';
+import '../../features/budgets/data/budgets_repository.dart';
 import '../../features/categories/data/categories_repository.dart';
 import '../../features/settings/data/settings_repository.dart';
 import '../../features/transactions/data/transactions_repository.dart';
@@ -28,6 +29,10 @@ final categoriesRepositoryProvider = Provider<CategoriesRepository>(
 
 final transactionsRepositoryProvider = Provider<TransactionsRepository>(
   (ref) => TransactionsRepository(ref.watch(appDatabaseProvider)),
+);
+
+final budgetsRepositoryProvider = Provider<BudgetsRepository>(
+  (ref) => BudgetsRepository(ref.watch(appDatabaseProvider)),
 );
 
 final biometricServiceProvider = Provider<BiometricService>(

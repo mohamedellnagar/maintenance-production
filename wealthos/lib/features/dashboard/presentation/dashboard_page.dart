@@ -8,6 +8,7 @@ import '../../../core/routing/app_router.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/money_text.dart';
+import '../../budgets/presentation/widgets/budget_summary_card.dart';
 import '../../transactions/application/transactions_providers.dart';
 import '../../transactions/presentation/widgets/transaction_tile.dart';
 import '../application/dashboard_providers.dart';
@@ -21,21 +22,7 @@ class DashboardPage extends ConsumerWidget {
     final dataAsync = ref.watch(dashboardDataProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l.dashboardTitle),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.account_balance_wallet_outlined),
-            tooltip: l.accountsTitle,
-            onPressed: () => context.push(AppRoutes.accounts),
-          ),
-          IconButton(
-            icon: const Icon(Icons.settings_outlined),
-            tooltip: l.settingsTitle,
-            onPressed: () => context.push(AppRoutes.settings),
-          ),
-        ],
-      ),
+      appBar: AppBar(title: Text(l.dashboardTitle)),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push(AppRoutes.addTransaction),
         icon: const Icon(Icons.add),
@@ -110,6 +97,8 @@ class _DashboardBody extends ConsumerWidget {
             ),
           ],
         ),
+        const SizedBox(height: AppSpacing.lg),
+        const BudgetSummaryCard(),
         const SizedBox(height: AppSpacing.xl),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
