@@ -10,3 +10,4 @@ npm-debug.log*
 *.local
 .claude/
 .deploy.env
+.deploy.demo.env
