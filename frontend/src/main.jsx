@@ -12,32 +12,52 @@ function useApi(){const token=localStorage.token;return async(path,opts={})=>{co
 async function runAction(fn,successMsg){try{await fn();if(successMsg)showToast(successMsg,'success')}catch(e){showToast(e.message||'فشلت العملية','error')}}
 
 const IS_DEV=location.hostname==='localhost';
-const LOGIN_FEATURES=[[Building2,'إدارة الفلل والشقق بشكل مركزي'],[Wrench,'تتبع كشوف الصيانة والفنيين'],[LayoutDashboard,'لوحة تحكم ومؤشرات أداء لحظية']];
+const LOGIN_FEATURES=[
+  [Building2,'الفلل والشقق','إدارة مركزية للعقارات والوحدات وحالة الإشغال'],
+  [Banknote,'العقود والإيجارات','الأقساط، التحصيل، التأمينات، والإنهاء المبكر'],
+  [Wrench,'كشوف الصيانة','تتبّع الأعطال والفنيين وقطع الغيار لكل وحدة'],
+  [Boxes,'المخزن','المشتريات، الصرف، الجرد، وتنبيهات النقص'],
+];
+const LOGIN_MODULES=['لوحة تحكم لحظية','تقارير مالية','إدارة المستأجرين','صلاحيات المستخدمين'];
 function Login({onOk}){const[form,setForm]=useState(IS_DEV?{email:'admin@maintenance.local',password:'Admin@12345'}:{email:'',password:''});const[err,setErr]=useState('');const[busy,setBusy]=useState(false);const[showPwd,setShowPwd]=useState(false);async function login(e){e.preventDefault();setErr('');setBusy(true);try{const r=await fetch(API+'/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(form)});const j=await r.json();if(!r.ok)throw new Error(j.message);localStorage.token=j.data.token;localStorage.user=JSON.stringify(j.data.user);onOk(j.data.user)}catch(e){setErr('بيانات الدخول غير صحيحة')}finally{setBusy(false)}}
 return <div className="login">
   <div className="loginShell">
     <div className="loginBrandPanel">
-      <div className="loginBrandTop"><div className="logo logoLight"><Building2 size={22}/>Maintenance<span>Pro</span></div></div>
-      <div className="loginBrandMid">
-        <h1>نظام متكامل لإدارة<br/>أعمال الصيانة اليومية</h1>
-        <p>تابع كشوف الصيانة، الفنيين، والفلل والشقق من مكان واحد، بأداء سريع وواجهة عربية كاملة.</p>
-        <ul className="loginFeatures">{LOGIN_FEATURES.map(([Icon,label],i)=><li key={i}><span className="loginFeatureIcon"><Icon size={16}/></span>{label}</li>)}</ul>
+      <div className="loginBrandTop">
+        <div className="logo logoLight"><Building2 size={22}/>Maintenance<span>Pro</span></div>
+        <span className="loginBrandTag">نظام إدارة العقارات والصيانة</span>
       </div>
-      <div className="loginBrandBottom"><ShieldCheck size={15}/> بياناتك محمية ومشفّرة</div>
+      <div className="loginBrandMid">
+        <h1>منصّة متكاملة لإدارة<br/>الفلل والصيانة والإيجارات</h1>
+        <p>تحكّم كامل في عقاراتك من مكان واحد — العقود، الدفعات، الصيانة، والمخزن — بأداء سريع وواجهة عربية بالكامل.</p>
+        <ul className="loginFeatures">{LOGIN_FEATURES.map(([Icon,title,desc],i)=><li key={i}>
+          <span className="loginFeatureIcon"><Icon size={17}/></span>
+          <div className="loginFeatureText"><strong>{title}</strong><span>{desc}</span></div>
+        </li>)}</ul>
+      </div>
+      <div className="loginBrandBottom">
+        <div className="loginModules">{LOGIN_MODULES.map((m,i)=><span key={i} className="loginModuleChip"><CheckCircle2 size={12}/>{m}</span>)}</div>
+        <div className="loginBrandSecure"><ShieldCheck size={14}/> بياناتك محمية ومشفّرة بالكامل</div>
+      </div>
     </div>
     <div className="loginFormPanel">
       <form onSubmit={login} className="loginCard">
-        <h2>تسجيل الدخول</h2>
-        <small className="loginSub">أدخل بياناتك للوصول إلى لوحة التحكم</small>
+        <div className="loginCardHead">
+          <div className="loginCardLogo"><Building2 size={20}/></div>
+          <h2>مرحباً بعودتك 👋</h2>
+          <small className="loginSub">سجّل دخولك للوصول إلى لوحة التحكم</small>
+        </div>
         <Field label="البريد الإلكتروني" required>
           <div className="inputIcon"><Mail size={16}/><input required type="email" placeholder="name@company.com" value={form.email} onChange={e=>setForm({...form,email:e.target.value})}/></div>
         </Field>
         <Field label="كلمة المرور" required>
           <div className="inputIcon"><Lock size={16}/><input required type={showPwd?'text':'password'} placeholder="••••••••" value={form.password} onChange={e=>setForm({...form,password:e.target.value})}/><button type="button" className="pwdToggle" onClick={()=>setShowPwd(s=>!s)} aria-label="إظهار كلمة المرور">{showPwd?<EyeOff size={16}/>:<Eye size={16}/>}</button></div>
         </Field>
-        {err&&<p className="err">{err}</p>}
-        <button disabled={busy}>{busy?<><Loader2 size={16} className="spin"/>جارٍ الدخول...</>:'دخول النظام'}</button>
-        {IS_DEV&&<div className="demoHint">Demo: admin@maintenance.local / Admin@12345</div>}
+        <label className="loginRemember"><input type="checkbox" defaultChecked/><span>تذكّرني على هذا الجهاز</span></label>
+        {err&&<p className="err"><AlertCircle size={14}/>{err}</p>}
+        <button disabled={busy}>{busy?<><Loader2 size={16} className="spin"/>جارٍ الدخول...</>:<><Lock size={15}/>دخول النظام</>}</button>
+        {IS_DEV&&<div className="demoHint"><KeyRound size={13}/>حساب تجريبي: admin@maintenance.local / Admin@12345</div>}
+        <div className="loginFoot">© {new Date().getFullYear()} MaintenancePro — جميع الحقوق محفوظة</div>
       </form>
     </div>
   </div>
