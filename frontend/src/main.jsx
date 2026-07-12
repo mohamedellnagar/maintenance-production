@@ -21,7 +21,8 @@ const LOGIN_FEATURES=[
 const LOGIN_MODULES=['لوحة تحكم لحظية','تقارير مالية','إدارة المستأجرين','صلاحيات المستخدمين'];
 function Login({onOk}){const[form,setForm]=useState(IS_DEV?{email:'admin@maintenance.local',password:'Admin@12345'}:{email:'',password:''});const[err,setErr]=useState('');const[busy,setBusy]=useState(false);const[showPwd,setShowPwd]=useState(false);async function login(e){e.preventDefault();setErr('');setBusy(true);try{const r=await fetch(API+'/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(form)});const j=await r.json();if(!r.ok)throw new Error(j.message);localStorage.token=j.data.token;localStorage.user=JSON.stringify(j.data.user);onOk(j.data.user)}catch(e){setErr('بيانات الدخول غير صحيحة')}finally{setBusy(false)}}
 return <div className="login">
-  <div className="loginShell">
+  <div className="loginOrb loginOrb1"/><div className="loginOrb loginOrb2"/><div className="loginOrb loginOrb3"/>
+  <div className="loginShell loginGlass">
     <div className="loginBrandPanel">
       <div className="loginBrandTop">
         <div className="logo logoLight"><Building2 size={22}/>Maintenance<span>Pro</span></div>
