@@ -1,7 +1,21 @@
 # Database
 
-Local storage is **SQLite** via [Drift]. Schema version **4**. Foreign keys are
+Local storage is **SQLite** via [Drift]. Schema version **5**. Foreign keys are
 enabled (`PRAGMA foreign_keys = ON`). All money is stored as integer minor units.
+
+## Goal transfer pairing (v5)
+
+`goal_fund_entries` gains **`transfer_group_id`** (nullable): the two legs of an
+inter-goal transfer share one group id so they are always soft-deleted /
+restored **together** (a single leg can never be removed, which would make the
+two funds diverge). `onUpgrade` adds the column when upgrading from v4; a v1–v3
+upgrade creates `goal_fund_entries` already including it. Covered by a v4→v5
+migration test and a paired delete/restore test in `test/database/goals_test.dart`.
+
+The goal fund cache (`goal_funds.current_allocated_minor`) is reconciled with
+the ledger at startup (`GoalsRepository.repairAllFunds`) and can be audited with
+`verifyFunds`; `test/database/integrity_test.dart` asserts cache == ledger on a
+seeded database along with `PRAGMA foreign_key_check` / `integrity_check`.
 
 ## Goals tables (v4)
 

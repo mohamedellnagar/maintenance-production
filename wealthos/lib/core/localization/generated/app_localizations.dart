@@ -794,6 +794,24 @@ abstract class AppLocalizations {
   /// **'Settings'**
   String get navSettings;
 
+  /// No description provided for @navMore.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get navMore;
+
+  /// No description provided for @moreTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get moreTitle;
+
+  /// No description provided for @moreSectionTools.
+  ///
+  /// In en, this message translates to:
+  /// **'Tools'**
+  String get moreSectionTools;
+
   /// No description provided for @recurringTitle.
   ///
   /// In en, this message translates to:

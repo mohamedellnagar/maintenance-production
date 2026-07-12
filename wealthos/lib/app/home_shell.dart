@@ -3,7 +3,9 @@ import 'package:go_router/go_router.dart';
 
 import '../core/localization/generated/app_localizations.dart';
 
-/// Bottom-navigation shell hosting the four main tabs.
+/// Bottom-navigation shell hosting the five main tabs (Dashboard, Budget,
+/// Goals, Accounts, More). Secondary tools (Recurring, Settings) live under
+/// the More tab to keep the bar readable in Arabic and at large text scales.
 class HomeShell extends StatelessWidget {
   const HomeShell({required this.navigationShell, super.key});
 
@@ -32,11 +34,6 @@ class HomeShell extends StatelessWidget {
             label: l.navBudget,
           ),
           NavigationDestination(
-            icon: const Icon(Icons.event_repeat_outlined),
-            selectedIcon: const Icon(Icons.event_repeat),
-            label: l.navRecurring,
-          ),
-          NavigationDestination(
             icon: const Icon(Icons.flag_outlined),
             selectedIcon: const Icon(Icons.flag),
             label: l.navGoals,
@@ -47,9 +44,9 @@ class HomeShell extends StatelessWidget {
             label: l.navAccounts,
           ),
           NavigationDestination(
-            icon: const Icon(Icons.settings_outlined),
-            selectedIcon: const Icon(Icons.settings),
-            label: l.navSettings,
+            icon: const Icon(Icons.more_horiz),
+            selectedIcon: const Icon(Icons.more_horiz),
+            label: l.navMore,
           ),
         ],
       ),

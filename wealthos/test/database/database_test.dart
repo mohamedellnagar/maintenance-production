@@ -48,8 +48,8 @@ void main() {
   }
 
   group('migrations & schema', () {
-    test('schema version is 4 and all tables are queryable', () async {
-      expect(db.schemaVersion, 4);
+    test('schema version is 5 and all tables are queryable', () async {
+      expect(db.schemaVersion, 5);
       await db.select(db.accountsTable).get();
       await db.select(db.transactionsTable).get();
       await db.select(db.categoriesTable).get();

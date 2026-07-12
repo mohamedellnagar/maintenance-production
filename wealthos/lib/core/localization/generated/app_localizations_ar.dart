@@ -364,6 +364,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get navSettings => 'الإعدادات';
 
   @override
+  String get navMore => 'المزيد';
+
+  @override
+  String get moreTitle => 'المزيد';
+
+  @override
+  String get moreSectionTools => 'أدوات';
+
+  @override
   String get recurringTitle => 'المتكررات';
 
   @override

@@ -94,7 +94,7 @@ void main() {
         final version = await db
             .customSelect('PRAGMA user_version')
             .getSingle();
-        expect(version.read<int>('user_version'), 4);
+        expect(version.read<int>('user_version'), 5);
       },
     );
   });

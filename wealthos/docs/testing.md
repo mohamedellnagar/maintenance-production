@@ -188,6 +188,32 @@ test/
 - goals empty state + add CTA; an active goal card renders; goal-form validation
   on empty submit; dashboard goals card hidden with no goals.
 
+## Device QA & integrity tests
+
+`test/database/goals_test.dart` (added)
+- **v4→v5 migration** (`transfer_group_id`); deleting one leg of a transfer
+  deletes both atomically and restore re-applies both; `verifyFunds` detects a
+  corrupted cache and `repairAllFunds` fixes it.
+
+`test/database/integrity_test.dart`
+- on a fully-seeded v5 database: `PRAGMA foreign_key_check` empty and
+  `integrity_check` = ok; goal fund cache == ledger; no paid occurrence without
+  a live transaction; no transaction over-allocated to goals; no budget item
+  linked to a missing goal; both legs of every transfer group consistent.
+
+`test/integration/persistence_test.dart`
+- data survives an app restart (same on-disk SQLite file across two
+  `AppDatabase` instances); the cache still matches the ledger; the recurrence
+  generator resumes and produces occurrences on reopen.
+
+`test/widget/qa_test.dart`
+- the More tab exposes Recurring + Settings in Arabic; goals home renders in
+  Arabic at 2.0 text scale with no overflow; dark-mode smoke; RTL layout.
+
+Migration coverage across the suite: **v1→v5, v2→v5, v3→v5, v4→v5** and a fresh
+v5 install (`budget_test.dart`, `recurring_test.dart`, `goals_test.dart`,
+`database_test.dart`).
+
 ## Quality gate
 
 ```bash

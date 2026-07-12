@@ -51,7 +51,7 @@ class UpcomingBillsCard extends ConsumerWidget {
                   ),
                 ),
                 TextButton(
-                  onPressed: () => context.go(AppRoutes.recurring),
+                  onPressed: () => context.push(AppRoutes.recurring),
                   child: Text(l.recurringViewAll),
                 ),
               ],

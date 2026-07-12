@@ -65,8 +65,12 @@ class GoalCard extends StatelessWidget {
                 backgroundColor: theme.colorScheme.surfaceContainerHighest,
               ),
               const SizedBox(height: AppSpacing.sm),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              // Wrap (not Row) so long currency values / large text scales
+              // reflow instead of overflowing.
+              Wrap(
+                spacing: AppSpacing.md,
+                runSpacing: AppSpacing.xs,
+                crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   MoneyText(
                     money(view.fundedMinor),

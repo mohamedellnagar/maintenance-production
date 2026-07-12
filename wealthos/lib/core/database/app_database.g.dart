@@ -8600,6 +8600,17 @@ class $GoalFundEntriesTableTable extends GoalFundEntriesTable
       'REFERENCES financial_goals (id)',
     ),
   );
+  static const VerificationMeta _transferGroupIdMeta = const VerificationMeta(
+    'transferGroupId',
+  );
+  @override
+  late final GeneratedColumn<String> transferGroupId = GeneratedColumn<String>(
+    'transfer_group_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _entryDateMeta = const VerificationMeta(
     'entryDate',
   );
@@ -8651,6 +8662,7 @@ class $GoalFundEntriesTableTable extends GoalFundEntriesTable
     amountMinor,
     linkedTransactionId,
     relatedGoalId,
+    transferGroupId,
     entryDate,
     note,
     createdAt,
@@ -8724,6 +8736,15 @@ class $GoalFundEntriesTableTable extends GoalFundEntriesTable
         ),
       );
     }
+    if (data.containsKey('transfer_group_id')) {
+      context.handle(
+        _transferGroupIdMeta,
+        transferGroupId.isAcceptableOrUnknown(
+          data['transfer_group_id']!,
+          _transferGroupIdMeta,
+        ),
+      );
+    }
     if (data.containsKey('entry_date')) {
       context.handle(
         _entryDateMeta,
@@ -8792,6 +8813,10 @@ class $GoalFundEntriesTableTable extends GoalFundEntriesTable
         DriftSqlType.string,
         data['${effectivePrefix}related_goal_id'],
       ),
+      transferGroupId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}transfer_group_id'],
+      ),
       entryDate: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}entry_date'],
@@ -8826,6 +8851,7 @@ class GoalFundEntriesTableData extends DataClass
   final int amountMinor;
   final String? linkedTransactionId;
   final String? relatedGoalId;
+  final String? transferGroupId;
   final int entryDate;
   final String? note;
   final DateTime createdAt;
@@ -8838,6 +8864,7 @@ class GoalFundEntriesTableData extends DataClass
     required this.amountMinor,
     this.linkedTransactionId,
     this.relatedGoalId,
+    this.transferGroupId,
     required this.entryDate,
     this.note,
     required this.createdAt,
@@ -8858,6 +8885,9 @@ class GoalFundEntriesTableData extends DataClass
     }
     if (!nullToAbsent || relatedGoalId != null) {
       map['related_goal_id'] = Variable<String>(relatedGoalId);
+    }
+    if (!nullToAbsent || transferGroupId != null) {
+      map['transfer_group_id'] = Variable<String>(transferGroupId);
     }
     map['entry_date'] = Variable<int>(entryDate);
     if (!nullToAbsent || note != null) {
@@ -8885,6 +8915,9 @@ class GoalFundEntriesTableData extends DataClass
       relatedGoalId: relatedGoalId == null && nullToAbsent
           ? const Value.absent()
           : Value(relatedGoalId),
+      transferGroupId: transferGroupId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(transferGroupId),
       entryDate: Value(entryDate),
       note: note == null && nullToAbsent ? const Value.absent() : Value(note),
       createdAt: Value(createdAt),
@@ -8909,6 +8942,7 @@ class GoalFundEntriesTableData extends DataClass
         json['linkedTransactionId'],
       ),
       relatedGoalId: serializer.fromJson<String?>(json['relatedGoalId']),
+      transferGroupId: serializer.fromJson<String?>(json['transferGroupId']),
       entryDate: serializer.fromJson<int>(json['entryDate']),
       note: serializer.fromJson<String?>(json['note']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
@@ -8926,6 +8960,7 @@ class GoalFundEntriesTableData extends DataClass
       'amountMinor': serializer.toJson<int>(amountMinor),
       'linkedTransactionId': serializer.toJson<String?>(linkedTransactionId),
       'relatedGoalId': serializer.toJson<String?>(relatedGoalId),
+      'transferGroupId': serializer.toJson<String?>(transferGroupId),
       'entryDate': serializer.toJson<int>(entryDate),
       'note': serializer.toJson<String?>(note),
       'createdAt': serializer.toJson<DateTime>(createdAt),
@@ -8941,6 +8976,7 @@ class GoalFundEntriesTableData extends DataClass
     int? amountMinor,
     Value<String?> linkedTransactionId = const Value.absent(),
     Value<String?> relatedGoalId = const Value.absent(),
+    Value<String?> transferGroupId = const Value.absent(),
     int? entryDate,
     Value<String?> note = const Value.absent(),
     DateTime? createdAt,
@@ -8957,6 +8993,9 @@ class GoalFundEntriesTableData extends DataClass
     relatedGoalId: relatedGoalId.present
         ? relatedGoalId.value
         : this.relatedGoalId,
+    transferGroupId: transferGroupId.present
+        ? transferGroupId.value
+        : this.transferGroupId,
     entryDate: entryDate ?? this.entryDate,
     note: note.present ? note.value : this.note,
     createdAt: createdAt ?? this.createdAt,
@@ -8979,6 +9018,9 @@ class GoalFundEntriesTableData extends DataClass
       relatedGoalId: data.relatedGoalId.present
           ? data.relatedGoalId.value
           : this.relatedGoalId,
+      transferGroupId: data.transferGroupId.present
+          ? data.transferGroupId.value
+          : this.transferGroupId,
       entryDate: data.entryDate.present ? data.entryDate.value : this.entryDate,
       note: data.note.present ? data.note.value : this.note,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
@@ -8996,6 +9038,7 @@ class GoalFundEntriesTableData extends DataClass
           ..write('amountMinor: $amountMinor, ')
           ..write('linkedTransactionId: $linkedTransactionId, ')
           ..write('relatedGoalId: $relatedGoalId, ')
+          ..write('transferGroupId: $transferGroupId, ')
           ..write('entryDate: $entryDate, ')
           ..write('note: $note, ')
           ..write('createdAt: $createdAt, ')
@@ -9013,6 +9056,7 @@ class GoalFundEntriesTableData extends DataClass
     amountMinor,
     linkedTransactionId,
     relatedGoalId,
+    transferGroupId,
     entryDate,
     note,
     createdAt,
@@ -9029,6 +9073,7 @@ class GoalFundEntriesTableData extends DataClass
           other.amountMinor == this.amountMinor &&
           other.linkedTransactionId == this.linkedTransactionId &&
           other.relatedGoalId == this.relatedGoalId &&
+          other.transferGroupId == this.transferGroupId &&
           other.entryDate == this.entryDate &&
           other.note == this.note &&
           other.createdAt == this.createdAt &&
@@ -9044,6 +9089,7 @@ class GoalFundEntriesTableCompanion
   final Value<int> amountMinor;
   final Value<String?> linkedTransactionId;
   final Value<String?> relatedGoalId;
+  final Value<String?> transferGroupId;
   final Value<int> entryDate;
   final Value<String?> note;
   final Value<DateTime> createdAt;
@@ -9057,6 +9103,7 @@ class GoalFundEntriesTableCompanion
     this.amountMinor = const Value.absent(),
     this.linkedTransactionId = const Value.absent(),
     this.relatedGoalId = const Value.absent(),
+    this.transferGroupId = const Value.absent(),
     this.entryDate = const Value.absent(),
     this.note = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -9071,6 +9118,7 @@ class GoalFundEntriesTableCompanion
     required int amountMinor,
     this.linkedTransactionId = const Value.absent(),
     this.relatedGoalId = const Value.absent(),
+    this.transferGroupId = const Value.absent(),
     required int entryDate,
     this.note = const Value.absent(),
     required DateTime createdAt,
@@ -9090,6 +9138,7 @@ class GoalFundEntriesTableCompanion
     Expression<int>? amountMinor,
     Expression<String>? linkedTransactionId,
     Expression<String>? relatedGoalId,
+    Expression<String>? transferGroupId,
     Expression<int>? entryDate,
     Expression<String>? note,
     Expression<DateTime>? createdAt,
@@ -9105,6 +9154,7 @@ class GoalFundEntriesTableCompanion
       if (linkedTransactionId != null)
         'linked_transaction_id': linkedTransactionId,
       if (relatedGoalId != null) 'related_goal_id': relatedGoalId,
+      if (transferGroupId != null) 'transfer_group_id': transferGroupId,
       if (entryDate != null) 'entry_date': entryDate,
       if (note != null) 'note': note,
       if (createdAt != null) 'created_at': createdAt,
@@ -9121,6 +9171,7 @@ class GoalFundEntriesTableCompanion
     Value<int>? amountMinor,
     Value<String?>? linkedTransactionId,
     Value<String?>? relatedGoalId,
+    Value<String?>? transferGroupId,
     Value<int>? entryDate,
     Value<String?>? note,
     Value<DateTime>? createdAt,
@@ -9135,6 +9186,7 @@ class GoalFundEntriesTableCompanion
       amountMinor: amountMinor ?? this.amountMinor,
       linkedTransactionId: linkedTransactionId ?? this.linkedTransactionId,
       relatedGoalId: relatedGoalId ?? this.relatedGoalId,
+      transferGroupId: transferGroupId ?? this.transferGroupId,
       entryDate: entryDate ?? this.entryDate,
       note: note ?? this.note,
       createdAt: createdAt ?? this.createdAt,
@@ -9169,6 +9221,9 @@ class GoalFundEntriesTableCompanion
     if (relatedGoalId.present) {
       map['related_goal_id'] = Variable<String>(relatedGoalId.value);
     }
+    if (transferGroupId.present) {
+      map['transfer_group_id'] = Variable<String>(transferGroupId.value);
+    }
     if (entryDate.present) {
       map['entry_date'] = Variable<int>(entryDate.value);
     }
@@ -9197,6 +9252,7 @@ class GoalFundEntriesTableCompanion
           ..write('amountMinor: $amountMinor, ')
           ..write('linkedTransactionId: $linkedTransactionId, ')
           ..write('relatedGoalId: $relatedGoalId, ')
+          ..write('transferGroupId: $transferGroupId, ')
           ..write('entryDate: $entryDate, ')
           ..write('note: $note, ')
           ..write('createdAt: $createdAt, ')
@@ -18251,6 +18307,7 @@ typedef $$GoalFundEntriesTableTableCreateCompanionBuilder =
       required int amountMinor,
       Value<String?> linkedTransactionId,
       Value<String?> relatedGoalId,
+      Value<String?> transferGroupId,
       required int entryDate,
       Value<String?> note,
       required DateTime createdAt,
@@ -18266,6 +18323,7 @@ typedef $$GoalFundEntriesTableTableUpdateCompanionBuilder =
       Value<int> amountMinor,
       Value<String?> linkedTransactionId,
       Value<String?> relatedGoalId,
+      Value<String?> transferGroupId,
       Value<int> entryDate,
       Value<String?> note,
       Value<DateTime> createdAt,
@@ -18368,6 +18426,11 @@ class $$GoalFundEntriesTableTableFilterComposer
 
   ColumnFilters<int> get amountMinor => $composableBuilder(
     column: $table.amountMinor,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get transferGroupId => $composableBuilder(
+    column: $table.transferGroupId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -18490,6 +18553,11 @@ class $$GoalFundEntriesTableTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get transferGroupId => $composableBuilder(
+    column: $table.transferGroupId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get entryDate => $composableBuilder(
     column: $table.entryDate,
     builder: (column) => ColumnOrderings(column),
@@ -18602,6 +18670,11 @@ class $$GoalFundEntriesTableTableAnnotationComposer
 
   GeneratedColumn<int> get amountMinor => $composableBuilder(
     column: $table.amountMinor,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get transferGroupId => $composableBuilder(
+    column: $table.transferGroupId,
     builder: (column) => column,
   );
 
@@ -18737,6 +18810,7 @@ class $$GoalFundEntriesTableTableTableManager
                 Value<int> amountMinor = const Value.absent(),
                 Value<String?> linkedTransactionId = const Value.absent(),
                 Value<String?> relatedGoalId = const Value.absent(),
+                Value<String?> transferGroupId = const Value.absent(),
                 Value<int> entryDate = const Value.absent(),
                 Value<String?> note = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
@@ -18750,6 +18824,7 @@ class $$GoalFundEntriesTableTableTableManager
                 amountMinor: amountMinor,
                 linkedTransactionId: linkedTransactionId,
                 relatedGoalId: relatedGoalId,
+                transferGroupId: transferGroupId,
                 entryDate: entryDate,
                 note: note,
                 createdAt: createdAt,
@@ -18765,6 +18840,7 @@ class $$GoalFundEntriesTableTableTableManager
                 required int amountMinor,
                 Value<String?> linkedTransactionId = const Value.absent(),
                 Value<String?> relatedGoalId = const Value.absent(),
+                Value<String?> transferGroupId = const Value.absent(),
                 required int entryDate,
                 Value<String?> note = const Value.absent(),
                 required DateTime createdAt,
@@ -18778,6 +18854,7 @@ class $$GoalFundEntriesTableTableTableManager
                 amountMinor: amountMinor,
                 linkedTransactionId: linkedTransactionId,
                 relatedGoalId: relatedGoalId,
+                transferGroupId: transferGroupId,
                 entryDate: entryDate,
                 note: note,
                 createdAt: createdAt,

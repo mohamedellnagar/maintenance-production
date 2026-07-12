@@ -31,7 +31,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -67,6 +67,15 @@ class AppDatabase extends _$AppDatabase {
         if (from >= 2) {
           await m.addColumn(budgetItemsTable, budgetItemsTable.linkedGoalId);
         }
+      }
+      // v4 → v5: pair the two legs of a goal transfer via a shared group id.
+      // Only add the column when goal_fund_entries pre-existed (from v4); a
+      // < 4 upgrade creates the table above already including the column.
+      if (from < 5 && from >= 4) {
+        await m.addColumn(
+          goalFundEntriesTable,
+          goalFundEntriesTable.transferGroupId,
+        );
       }
     },
     beforeOpen: (OpeningDetails details) async {

@@ -391,6 +391,9 @@ class GoalFundEntriesTable extends Table {
   @ReferenceName('goalFundEntriesRelated')
   TextColumn get relatedGoalId =>
       text().nullable().references(FinancialGoalsTable, #id)();
+  // Ties the two legs of an inter-goal transfer together so they are always
+  // deleted / restored as one unit (added in v5).
+  TextColumn get transferGroupId => text().nullable()();
   IntColumn get entryDate => integer()(); // epoch day
   TextColumn get note => text().nullable()();
   DateTimeColumn get createdAt => dateTime()();

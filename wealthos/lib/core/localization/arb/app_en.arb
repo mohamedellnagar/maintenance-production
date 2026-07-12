@@ -124,6 +124,9 @@
   "navRecurring": "Recurring",
   "navAccounts": "Accounts",
   "navSettings": "Settings",
+  "navMore": "More",
+  "moreTitle": "More",
+  "moreSectionTools": "Tools",
 
   "recurringTitle": "Recurring",
   "recurringDueToday": "Due today",

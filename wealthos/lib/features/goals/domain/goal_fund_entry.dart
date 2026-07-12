@@ -15,6 +15,7 @@ class GoalFundEntry {
     this.direction,
     this.linkedTransactionId,
     this.relatedGoalId,
+    this.transferGroupId,
     this.note,
     this.deletedAt,
   });
@@ -30,12 +31,17 @@ class GoalFundEntry {
 
   /// The other goal in a transfer (cross-linked both ways).
   final String? relatedGoalId;
+
+  /// Groups the two legs of an inter-goal transfer; both share this id and are
+  /// always deleted / restored together.
+  final String? transferGroupId;
   final LocalDate entryDate;
   final String? note;
   final DateTime createdAt;
   final DateTime? deletedAt;
 
   bool get isDeleted => deletedAt != null;
+  bool get isTransferLeg => transferGroupId != null;
 
   /// The signed effect this entry has on the fund balance (0 when deleted).
   int get signedEffectMinor {

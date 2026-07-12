@@ -302,6 +302,7 @@ class GoalsRepository {
       throw const _Failed(ValidationFailure(FailureCodes.goalInsufficientFund));
     }
     final entryDate = date ?? LocalDate.fromDateTime(_now());
+    final groupId = _uuid.v4();
     await _insertEntry(
       goalId: fromGoalId,
       type: GoalFundEntryType.transferOut,
@@ -309,6 +310,7 @@ class GoalsRepository {
       date: entryDate,
       note: note,
       relatedGoalId: toGoalId,
+      transferGroupId: groupId,
     );
     await _insertEntry(
       goalId: toGoalId,
@@ -317,6 +319,7 @@ class GoalsRepository {
       date: entryDate,
       note: note,
       relatedGoalId: fromGoalId,
+      transferGroupId: groupId,
     );
     await _applyDelta(fromGoalId, -amountMinor);
     await _applyDelta(toGoalId, amountMinor);
@@ -356,39 +359,99 @@ class GoalsRepository {
     await _applyDelta(goalId, delta);
   });
 
+  /// Soft-deletes an entry. A transfer leg deletes **both** legs atomically so
+  /// the two goals never diverge.
   Future<Result<void>> softDeleteEntry(String entryId) => _run(() async {
     final row = await _entryRow(entryId);
     if (row == null || row.deletedAt != null) {
       throw const _Failed(NotFoundFailure(FailureCodes.goalEntryNotFound));
     }
-    final effect = _entryToDomain(row).signedEffectMinor;
-    await (_db.update(_db.goalFundEntriesTable)
-          ..where((e) => e.id.equals(entryId)))
-        .write(GoalFundEntriesTableCompanion(deletedAt: Value(_now())));
-    await _applyDelta(row.goalId, -effect);
+    for (final leg in await _groupRows(row)) {
+      if (leg.deletedAt != null) continue;
+      final effect = _entryToDomain(leg).signedEffectMinor;
+      await (_db.update(_db.goalFundEntriesTable)
+            ..where((e) => e.id.equals(leg.id)))
+          .write(GoalFundEntriesTableCompanion(deletedAt: Value(_now())));
+      await _applyDelta(leg.goalId, -effect);
+    }
   });
 
+  /// Restores an entry (and the paired transfer leg, if any) atomically.
   Future<Result<void>> restoreEntry(String entryId) => _run(() async {
     final row = await _entryRow(entryId);
     if (row == null || row.deletedAt == null) {
       throw const _Failed(NotFoundFailure(FailureCodes.goalEntryNotFound));
     }
-    await (_db.update(_db.goalFundEntriesTable)
-          ..where((e) => e.id.equals(entryId)))
-        .write(const GoalFundEntriesTableCompanion(deletedAt: Value(null)));
-    // Recompute the signed effect as if live.
-    final restored = _entryToDomain(row);
-    final liveEffect = GoalFundEntry(
-      id: restored.id,
-      goalId: restored.goalId,
-      type: restored.type,
-      amountMinor: restored.amountMinor,
-      entryDate: restored.entryDate,
-      createdAt: restored.createdAt,
-      direction: restored.direction,
-    ).signedEffectMinor;
-    await _applyDelta(row.goalId, liveEffect);
+    for (final leg in await _groupRows(row)) {
+      if (leg.deletedAt == null) continue;
+      await (_db.update(_db.goalFundEntriesTable)
+            ..where((e) => e.id.equals(leg.id)))
+          .write(const GoalFundEntriesTableCompanion(deletedAt: Value(null)));
+      await _applyDelta(leg.goalId, _liveEffectOf(leg));
+    }
   });
+
+  /// Both legs of a transfer group, or just [row] for a standalone entry.
+  Future<List<GoalFundEntriesTableData>> _groupRows(
+    GoalFundEntriesTableData row,
+  ) async {
+    final groupId = row.transferGroupId;
+    if (groupId == null) return [row];
+    return (_db.select(
+      _db.goalFundEntriesTable,
+    )..where((e) => e.transferGroupId.equals(groupId))).get();
+  }
+
+  /// The signed effect a (possibly deleted) row would have if it were live.
+  int _liveEffectOf(GoalFundEntriesTableData row) {
+    final e = _entryToDomain(row);
+    return GoalFundEntry(
+      id: e.id,
+      goalId: e.goalId,
+      type: e.type,
+      amountMinor: e.amountMinor,
+      entryDate: e.entryDate,
+      createdAt: e.createdAt,
+      direction: e.direction,
+    ).signedEffectMinor;
+  }
+
+  // --- cache integrity ---
+
+  /// A goal whose cached fund balance disagrees with its ledger.
+  Future<List<GoalFundMismatch>> verifyFunds() async {
+    final funds = await _db.select(_db.goalFundsTable).get();
+    final mismatches = <GoalFundMismatch>[];
+    for (final fund in funds) {
+      final entries = await getEntriesForGoal(fund.goalId);
+      final ledger = GoalFund.balanceFromEntries(entries);
+      if (ledger != fund.currentAllocatedMinor) {
+        mismatches.add(
+          GoalFundMismatch(
+            goalId: fund.goalId,
+            cachedMinor: fund.currentAllocatedMinor,
+            ledgerMinor: ledger,
+          ),
+        );
+      }
+    }
+    return mismatches;
+  }
+
+  /// Rebuilds every fund's cached balance from its ledger (repair path).
+  Future<int> repairAllFunds() async {
+    final funds = await _db.select(_db.goalFundsTable).get();
+    var repaired = 0;
+    for (final fund in funds) {
+      final entries = await getEntriesForGoal(fund.goalId);
+      final ledger = GoalFund.balanceFromEntries(entries);
+      if (ledger != fund.currentAllocatedMinor) {
+        await recomputeFund(fund.goalId);
+        repaired++;
+      }
+    }
+    return repaired;
+  }
 
   // --- internals ---
 
@@ -455,6 +518,7 @@ class GoalsRepository {
     String? note,
     String? linkedTransactionId,
     String? relatedGoalId,
+    String? transferGroupId,
     AdjustmentDirection? direction,
   }) => _db
       .into(_db.goalFundEntriesTable)
@@ -470,6 +534,7 @@ class GoalsRepository {
           note: Value(note),
           linkedTransactionId: Value(linkedTransactionId),
           relatedGoalId: Value(relatedGoalId),
+          transferGroupId: Value(transferGroupId),
         ),
       );
 
@@ -606,6 +671,7 @@ class GoalsRepository {
     amountMinor: r.amountMinor,
     linkedTransactionId: r.linkedTransactionId,
     relatedGoalId: r.relatedGoalId,
+    transferGroupId: r.transferGroupId,
     entryDate: LocalDate.fromEpochDay(r.entryDate),
     note: r.note,
     createdAt: r.createdAt,
@@ -616,4 +682,17 @@ class GoalsRepository {
 class _Failed implements Exception {
   const _Failed(this.failure);
   final Failure failure;
+}
+
+/// A goal whose cached fund balance disagrees with the ledger (source of truth).
+class GoalFundMismatch {
+  const GoalFundMismatch({
+    required this.goalId,
+    required this.cachedMinor,
+    required this.ledgerMinor,
+  });
+
+  final String goalId;
+  final int cachedMinor;
+  final int ledgerMinor;
 }

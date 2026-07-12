@@ -366,6 +366,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navSettings => 'Settings';
 
   @override
+  String get navMore => 'More';
+
+  @override
+  String get moreTitle => 'More';
+
+  @override
+  String get moreSectionTools => 'Tools';
+
+  @override
   String get recurringTitle => 'Recurring';
 
   @override

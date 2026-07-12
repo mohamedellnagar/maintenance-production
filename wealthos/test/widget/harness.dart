@@ -50,6 +50,8 @@ class TestHarness {
     List<FinancialGoal> goals = const [],
     List<GoalFund> goalFunds = const [],
     List<Override> extraOverrides = const [],
+    Brightness brightness = Brightness.light,
+    double textScale = 1.0,
   }) {
     final overrides = <Override>[
       appDatabaseProvider.overrideWithValue(database),
@@ -79,6 +81,7 @@ class TestHarness {
         allGoalsProvider.overrideWith((ref) => Stream.value(goals)),
         allFundsProvider.overrideWith((ref) => Stream.value(goalFunds)),
         allGoalEntriesProvider.overrideWith((ref) => Stream.value(const [])),
+        goalsIntegrityBootstrapProvider.overrideWith((ref) async => 0),
       ],
       ...extraOverrides,
     ];
@@ -87,6 +90,7 @@ class TestHarness {
       overrides: overrides,
       child: MaterialApp(
         locale: locale,
+        theme: ThemeData(brightness: brightness),
         supportedLocales: AppLocalizations.supportedLocales,
         localizationsDelegates: const [
           AppLocalizations.delegate,
@@ -94,6 +98,12 @@ class TestHarness {
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
         ],
+        builder: (context, widget) => MediaQuery(
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: TextScaler.linear(textScale)),
+          child: widget!,
+        ),
         home: child,
       ),
     );

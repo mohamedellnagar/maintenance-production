@@ -48,6 +48,17 @@ delete; a Goals tab, dashboard card, insights, and budget saving-item linkage.
 Schema **v4**. See `docs/goals-model.md`. Deferred to a later goals phase:
 recurring auto-contributions, planning-only over-allocation, and forecasting.
 
+## Phase 1.5 — Device QA & Release Readiness (this release) ✅
+
+Hardened the app for a real Android release after schema v5: a data-safety fix
+pairing goal-transfer legs (`transfer_group_id`) with atomic delete/restore, a
+goal fund cache verify/repair path reconciled at startup, a 5-tab + More
+navigation that keeps Arabic labels legible, a `FLAG_SECURE` privacy screen with
+backups disabled and no network permission, conditional release signing with no
+secrets in the repo, and migration/integrity/persistence/QA test suites. APK/AAB
+builds are documented for local runs (Android SDK unavailable in CI). See
+`docs/release-readiness.md`, `docs/device-qa-plan.md`, `docs/qa-checklist.md`.
+
 ## Deliberately deferred
 
 Not built in this phase (only logical extension points left where useful):

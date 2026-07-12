@@ -59,9 +59,11 @@ thin projection of the database.
 [GoRouter] with a single redirect: until `onboarding_completed` is true the app
 is pinned to `/onboarding`; afterwards `/onboarding` redirects home. The router
 refreshes when settings change. Main navigation is a `StatefulShellRoute`
-bottom-nav shell with six tabs — Dashboard, **Budget**, **Recurring**,
-**Goals**, Accounts, Settings — and detail/form screens push full-screen above
-the shell (root navigator).
+bottom-nav shell with five tabs — Dashboard, **Budget**, **Goals**, Accounts,
+**More** — chosen to keep Arabic labels legible at large text scales. The
+**More** tab hosts the secondary tools (**Recurring**, **Settings**), which
+push full-screen over the shell; all other detail/form screens push above the
+shell too (root navigator).
 
 The **budgets** feature adds `BudgetCalculator` (pure month math),
 `BudgetInsightBuilder`, a `BudgetsRepository` (one-per-month, integrity, atomic
@@ -86,7 +88,10 @@ inter-goal transfers, transaction-allocation limits), and `GoalInsightBuilder`.
 A Savings Fund is a **virtual** allocation bucket — allocating money writes only
 a ledger entry, so accounts, balances and net worth are untouched. Goal views,
 the goals summary and the Allocation Shortfall warning are all derived reactively
-from goals + funds + entries + accounts + transactions. See `goals-model.md`.
+from goals + funds + entries + accounts + transactions. Inter-goal transfers are
+a paired unit (`transfer_group_id`) so both legs delete/restore together, and the
+cached fund balance is reconciled with the ledger at startup
+(`repairAllFunds`). See `goals-model.md`.
 
 ## Error handling
 

@@ -61,9 +61,23 @@ Soft-deleted entries (`deleted_at`) contribute zero.
 ## Transfers between goals
 
 `transferOut` from the source + `transferIn` to the destination in **one DB
-transaction**, cross-linked via `related_goal_id`. Source ≠ destination, bounded
-by the source balance. Total allocated is unchanged; no account or net-worth
-effect.
+transaction**, cross-linked via `related_goal_id` and sharing a
+**`transfer_group_id`** (schema v5). Source ≠ destination, bounded by the source
+balance. Total allocated is unchanged; no account or net-worth effect.
+
+Because the two legs share a group id, soft-deleting **or** restoring either leg
+acts on the **whole group** atomically — a single leg can never be removed on
+its own, so the two funds can never diverge. Editing a transfer amount is done
+by reversing (delete) and creating a new transfer.
+
+## Fund cache integrity
+
+`goal_funds.current_allocated_minor` is a cache; the ledger is the source of
+truth. It is kept in sync on every write, **reconciled with the ledger at app
+startup** (`repairAllFunds`, so no screen ever reads a stale number), and can be
+audited any time with `verifyFunds` (returns funds whose cache ≠ ledger). If a
+mismatch is ever found it is repaired by recomputing from the ledger; a database
+integrity test asserts cache == ledger on a seeded database.
 
 ## Available for allocation & Allocation Shortfall
 

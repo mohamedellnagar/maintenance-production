@@ -3,6 +3,45 @@
 All notable changes to WealthOS are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.5.0] — Device QA & Release Readiness
+
+### Added
+- **Migration/integrity tests**: real v1→v5, v2→v5, v3→v5, v4→v5 upgrades plus
+  `PRAGMA foreign_key_check` / `integrity_check` and cross-feature invariant
+  checks (cache==ledger, no orphan paid occurrence, no over-allocated
+  transaction, no budget item → missing goal, transfer-group consistency) on a
+  seeded database (`test/database/integrity_test.dart`).
+- **Restart persistence** test over a real on-disk SQLite file, including the
+  recurrence generator resuming on reopen (`test/integration/persistence_test.dart`).
+- **QA widget tests**: Arabic More-tab access, goals home at 2.0 text scale with
+  no overflow, dark-mode smoke, RTL layout (`test/widget/qa_test.dart`).
+- Docs: `device-qa-plan.md`, `device-smoke-test.md`, `android-build-setup.md`,
+  `qa-checklist.md`, `release-readiness.md`.
+
+### Changed
+- **Navigation**: the bottom bar is now **5 tabs** (Dashboard, Budget, Goals,
+  Accounts, **More**) instead of 6, keeping Arabic labels legible at large text
+  scales. Recurring and Settings moved under a new **More** tab with full access
+  preserved.
+- **Schema v5**: goal transfers are a paired unit via `transfer_group_id` —
+  deleting/restoring one leg now moves **both** legs atomically (fixes a data
+  divergence risk). Real v4→v5 migration + regression tests.
+- **Goal fund cache integrity**: `verifyFunds` / `repairAllFunds` plus a startup
+  reconcile so no screen reads a stale allocation; the ledger stays the source
+  of truth.
+- **Responsive**: goal card money row and summary pills use `Wrap` so long
+  values / 2.0 text scale reflow instead of overflowing.
+
+### Security / release
+- **Privacy screen**: `FLAG_SECURE` hides content in recents and blocks
+  screenshots/recording.
+- **Backups off**: `allowBackup=false` + data-extraction rules keep the local
+  financial DB off cloud/device-transfer backups; `usesCleartextTraffic=false`.
+- App label set to **WealthOS**; conditional release signing from a gitignored
+  `android/key.properties` (no secrets in the repo).
+- **Not Executed**: APK/AAB builds and on-device steps — the environment has no
+  Android SDK and the download host is blocked by network policy (documented).
+
 ## [1.4.0] — Financial Goals & Savings Funds V1
 
 ### Added

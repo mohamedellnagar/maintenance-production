@@ -27,6 +27,14 @@ final baseCurrencyForGoalsProvider = Provider<String>(
       Currencies.defaultCurrency.code,
 );
 
+/// Reconciles every goal fund's cached balance with its ledger once per app
+/// launch, so no screen ever reads a stale allocation. The ledger is the source
+/// of truth; this only rewrites the cache when it drifted. Returns how many
+/// funds were repaired.
+final goalsIntegrityBootstrapProvider = FutureProvider<int>(
+  (ref) => ref.read(goalsRepositoryProvider).repairAllFunds(),
+);
+
 final allGoalsProvider = StreamProvider<List<FinancialGoal>>(
   (ref) => ref.watch(goalsRepositoryProvider).watchGoals(),
 );

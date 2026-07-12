@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart' show Value;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqlite3/sqlite3.dart';
@@ -74,7 +75,7 @@ void main() {
         final version = await db
             .customSelect('PRAGMA user_version')
             .getSingle();
-        expect(version.read<int>('user_version'), 4);
+        expect(version.read<int>('user_version'), 5);
       },
     );
   });
@@ -348,6 +349,96 @@ void main() {
         (over.failureOrNull as ValidationFailure).code,
         FailureCodes.goalAllocationExceedsTransaction,
       );
+    });
+
+    test('deleting one leg of a transfer deletes both atomically', () async {
+      await bank();
+      final a = (await goals.createGoal(input())).valueOrNull!.id;
+      final b = (await goals.createGoal(input())).valueOrNull!.id;
+      await goals.contribute(a, 200000);
+      await goals.transferBetweenGoals(a, b, 80000);
+      expect((await goals.getFund(a))!.currentAllocatedMinor, 120000);
+      expect((await goals.getFund(b))!.currentAllocatedMinor, 80000);
+
+      // Delete the transferIn leg on b — both legs must reverse.
+      final legB = (await goals.getEntriesForGoal(
+        b,
+      )).firstWhere((e) => e.isTransferLeg);
+      await goals.softDeleteEntry(legB.id);
+      expect((await goals.getFund(a))!.currentAllocatedMinor, 200000);
+      expect((await goals.getFund(b))!.currentAllocatedMinor, 0);
+
+      // Restoring re-applies both legs.
+      await goals.restoreEntry(legB.id);
+      expect((await goals.getFund(a))!.currentAllocatedMinor, 120000);
+      expect((await goals.getFund(b))!.currentAllocatedMinor, 80000);
+    });
+
+    test(
+      'verifyFunds detects a corrupted cache and repairAllFunds fixes it',
+      () async {
+        final id = await createGoal();
+        await goals.contribute(id, 100000);
+        // Corrupt the cached balance directly, bypassing the ledger.
+        await (db.update(
+          db.goalFundsTable,
+        )..where((f) => f.goalId.equals(id))).write(
+          const GoalFundsTableCompanion(currentAllocatedMinor: Value(999999)),
+        );
+
+        final mismatches = await goals.verifyFunds();
+        expect(mismatches.length, 1);
+        expect(mismatches.single.cachedMinor, 999999);
+        expect(mismatches.single.ledgerMinor, 100000);
+
+        final repaired = await goals.repairAllFunds();
+        expect(repaired, 1);
+        expect((await goals.getFund(id))!.currentAllocatedMinor, 100000);
+        expect(await goals.verifyFunds(), isEmpty);
+      },
+    );
+  });
+
+  group('migration v4 → v5', () {
+    test('adds transfer_group_id to goal_fund_entries', () async {
+      final raw = sqlite3.openInMemory();
+      raw.execute('''
+        CREATE TABLE categories (
+          id TEXT NOT NULL PRIMARY KEY, name_ar TEXT NOT NULL,
+          name_en TEXT NOT NULL, category_type TEXT NOT NULL, parent_id TEXT,
+          icon TEXT, is_system INTEGER NOT NULL DEFAULT 0,
+          is_archived INTEGER NOT NULL DEFAULT 0, created_at INTEGER NOT NULL,
+          updated_at INTEGER NOT NULL
+        );
+      ''');
+      raw.execute('CREATE TABLE accounts (id TEXT NOT NULL PRIMARY KEY);');
+      raw.execute('CREATE TABLE transactions (id TEXT NOT NULL PRIMARY KEY);');
+      raw.execute(
+        'CREATE TABLE financial_goals (id TEXT NOT NULL PRIMARY KEY);',
+      );
+      // A v4 goal_fund_entries table WITHOUT transfer_group_id.
+      raw.execute('''
+        CREATE TABLE goal_fund_entries (
+          id TEXT NOT NULL PRIMARY KEY, goal_id TEXT NOT NULL,
+          entry_type TEXT NOT NULL, direction TEXT, amount_minor INTEGER NOT NULL,
+          linked_transaction_id TEXT, related_goal_id TEXT,
+          entry_date INTEGER NOT NULL, note TEXT, created_at INTEGER NOT NULL,
+          deleted_at INTEGER
+        );
+      ''');
+      raw.execute('PRAGMA user_version = 4;');
+
+      final db = AppDatabase.forTesting(NativeDatabase.opened(raw));
+      addTearDown(db.close);
+      await db.customSelect('SELECT 1').get();
+
+      final cols =
+          (await db.customSelect('PRAGMA table_info(goal_fund_entries)').get())
+              .map((r) => r.read<String>('name'))
+              .toSet();
+      expect(cols, contains('transfer_group_id'));
+      final version = await db.customSelect('PRAGMA user_version').getSingle();
+      expect(version.read<int>('user_version'), 5);
     });
   });
 }

@@ -124,6 +124,9 @@
   "navRecurring": "المتكررات",
   "navAccounts": "الحسابات",
   "navSettings": "الإعدادات",
+  "navMore": "المزيد",
+  "moreTitle": "المزيد",
+  "moreSectionTools": "أدوات",
 
   "recurringTitle": "المتكررات",
   "recurringDueToday": "مستحق اليوم",

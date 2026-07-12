@@ -21,6 +21,7 @@ import '../../features/recurring/presentation/recurring_home_page.dart';
 import '../../features/recurring/presentation/recurring_rule_details_page.dart';
 import '../../features/recurring/presentation/recurring_rule_form_page.dart';
 import '../../features/settings/application/settings_providers.dart';
+import '../../features/settings/presentation/more_page.dart';
 import '../../features/settings/presentation/settings_page.dart';
 import '../../features/transactions/presentation/transaction_details_page.dart';
 import '../../features/transactions/presentation/transaction_form_page.dart';
@@ -32,6 +33,7 @@ abstract final class AppRoutes {
   static const String recurring = '/recurring';
   static const String goals = '/goals';
   static const String accounts = '/accounts';
+  static const String more = '/more';
   static const String settings = '/settings';
 
   static const String addAccount = '/accounts/add';
@@ -155,34 +157,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: AppRoutes.recurring,
-                builder: (_, _) => const RecurringHomePage(),
-                routes: [
-                  pushRoute('add', (_) => const RecurringRuleFormPage()),
-                  pushRoute(
-                    'rules/:id/edit',
-                    (s) =>
-                        RecurringRuleFormPage(ruleId: s.pathParameters['id']),
-                  ),
-                  pushRoute(
-                    'rules/:id',
-                    (s) => RecurringRuleDetailsPage(
-                      ruleId: s.pathParameters['id']!,
-                    ),
-                  ),
-                  pushRoute(
-                    'occurrences/:id',
-                    (s) => OccurrenceDetailsPage(
-                      occurrenceId: s.pathParameters['id']!,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
                 path: AppRoutes.goals,
                 builder: (_, _) => const GoalsHomePage(),
                 routes: [
@@ -218,13 +192,31 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: AppRoutes.settings,
-                builder: (_, _) => const SettingsPage(),
+                path: AppRoutes.more,
+                builder: (_, _) => const MorePage(),
               ),
             ],
           ),
         ],
       ),
+      // Secondary destinations reached from the More tab (and dashboard/budget
+      // shortcuts). They push full-screen over the shell so the back button
+      // returns to where they were opened from.
+      pushRoute(AppRoutes.recurring, (_) => const RecurringHomePage()),
+      pushRoute(AppRoutes.recurringAdd, (_) => const RecurringRuleFormPage()),
+      pushRoute(
+        AppRoutes.recurringRuleEdit,
+        (s) => RecurringRuleFormPage(ruleId: s.pathParameters['id']),
+      ),
+      pushRoute(
+        AppRoutes.recurringRuleDetail,
+        (s) => RecurringRuleDetailsPage(ruleId: s.pathParameters['id']!),
+      ),
+      pushRoute(
+        AppRoutes.occurrenceDetail,
+        (s) => OccurrenceDetailsPage(occurrenceId: s.pathParameters['id']!),
+      ),
+      pushRoute(AppRoutes.settings, (_) => const SettingsPage()),
     ],
   );
 });

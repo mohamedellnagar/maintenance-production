@@ -19,6 +19,8 @@ class GoalsHomePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context);
+    // Reconcile cached fund balances with the ledger on open (runs once).
+    ref.watch(goalsIntegrityBootstrapProvider);
     final views = ref.watch(goalViewsProvider);
 
     return Scaffold(
@@ -150,10 +152,11 @@ class _SummaryCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: AppSpacing.md),
-            Row(
+            Wrap(
+              spacing: AppSpacing.sm,
+              runSpacing: AppSpacing.sm,
               children: [
                 _Pill(label: '${l.goalsSummaryActive}: ${summary.activeCount}'),
-                const SizedBox(width: AppSpacing.sm),
                 if (summary.behindCount > 0)
                   _Pill(
                     label: '${l.goalsSummaryBehind}: ${summary.behindCount}',

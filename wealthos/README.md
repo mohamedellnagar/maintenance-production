@@ -41,8 +41,9 @@ The first release works **fully offline**: no account, no internet, no cloud.
   text.
 - 🎨 **Material 3** — light/dark themes, accessible gain/loss cues (never
   color-only).
-- 🔐 **Private by design** — biometric app-lock, secure storage, dev-only logs,
-  zero network/analytics.
+- 🔐 **Private by design** — biometric app-lock, a `FLAG_SECURE` privacy screen
+  (no content in recents/screenshots), on-device backups disabled, secure
+  storage, dev-only logs, and zero network permission or analytics.
 
 ## Tech stack
 
@@ -126,6 +127,9 @@ push/device notifications, PDF/Excel export, cloud backup. See
   recurrence math, generation, posting, auto-create, insights
 - `docs/goals-model.md` — goal vs. fund vs. account, the fund ledger,
   available-to-allocate, allocation shortfall, progress/projection, debt goals
+- `docs/device-qa-plan.md` · `docs/device-smoke-test.md` ·
+  `docs/qa-checklist.md` · `docs/release-readiness.md` — QA & release readiness
+- `docs/android-build-setup.md` — exact macOS/Windows build & signing steps
 - `docs/database.md` — schema, constraints, migrations, seeding, integrity
 - `docs/business-rules.md` — money, accounts, transactions, net worth rules
 - `docs/testing.md` — what is tested and how
