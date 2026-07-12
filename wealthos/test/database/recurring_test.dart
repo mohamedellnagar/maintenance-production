@@ -72,10 +72,21 @@ void main() {
           ]),
         );
 
+        // Migrating a v2 database now lands at the latest version (4), which
+        // also creates the goals tables.
+        expect(
+          names,
+          containsAll([
+            'financial_goals',
+            'goal_funds',
+            'goal_fund_entries',
+            'goal_transaction_allocations',
+          ]),
+        );
         final version = await db
             .customSelect('PRAGMA user_version')
             .getSingle();
-        expect(version.read<int>('user_version'), 3);
+        expect(version.read<int>('user_version'), 4);
       },
     );
   });

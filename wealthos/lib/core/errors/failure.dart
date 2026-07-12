@@ -91,6 +91,23 @@ abstract final class FailureCodes {
   static const String occurrenceNotOpen = 'validation.occurrence_not_open';
   static const String ruleNotFound = 'error.rule_not_found';
   static const String occurrenceNotFound = 'error.occurrence_not_found';
+  // Goals & savings funds.
+  static const String goalTargetInvalid = 'validation.goal_target_invalid';
+  static const String goalLiabilityNotAllowed =
+      'validation.goal_liability_not_allowed';
+  static const String goalNotLiability = 'validation.goal_not_liability';
+  static const String goalNotActive = 'validation.goal_not_active';
+  static const String goalInsufficientFund =
+      'validation.goal_insufficient_fund';
+  static const String goalExceedsAvailable =
+      'validation.goal_exceeds_available';
+  static const String goalSameTransfer = 'validation.goal_same_transfer';
+  static const String goalHasLedger = 'validation.goal_has_ledger';
+  static const String goalAllocationExceedsTransaction =
+      'validation.goal_allocation_exceeds_transaction';
+  static const String goalAmountInvalid = 'validation.goal_amount_invalid';
+  static const String goalNotFound = 'error.goal_not_found';
+  static const String goalEntryNotFound = 'error.goal_entry_not_found';
   static const String database = 'error.database';
   static const String unexpected = 'error.unexpected';
 }

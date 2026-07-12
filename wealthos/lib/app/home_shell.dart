@@ -37,6 +37,11 @@ class HomeShell extends StatelessWidget {
             label: l.navRecurring,
           ),
           NavigationDestination(
+            icon: const Icon(Icons.flag_outlined),
+            selectedIcon: const Icon(Icons.flag),
+            label: l.navGoals,
+          ),
+          NavigationDestination(
             icon: const Icon(Icons.account_balance_wallet_outlined),
             selectedIcon: const Icon(Icons.account_balance_wallet),
             label: l.navAccounts,

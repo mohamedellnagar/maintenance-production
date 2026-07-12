@@ -2,6 +2,7 @@ import '../../features/accounts/domain/account_type.dart';
 import '../../features/budgets/domain/budget.dart';
 import '../../features/budgets/domain/budget_calculator.dart';
 import '../../features/budgets/domain/budget_item.dart';
+import '../../features/goals/domain/goal_type.dart';
 import '../../features/recurring/domain/recurring_type.dart';
 import '../../features/transactions/domain/transaction_semantic.dart';
 import '../../features/transactions/domain/transaction_type.dart';
@@ -90,6 +91,41 @@ extension OccurrenceDisplayStatusLabel on OccurrenceDisplayStatus {
     OccurrenceDisplayStatus.paid => l.occStatusPaid,
     OccurrenceDisplayStatus.skipped => l.occStatusSkipped,
     OccurrenceDisplayStatus.cancelled => l.occStatusCancelled,
+  };
+}
+
+extension GoalTypeLabel on GoalType {
+  String label(AppLocalizations l) => switch (this) {
+    GoalType.emergencyFund => l.goalTypeEmergencyFund,
+    GoalType.home => l.goalTypeHome,
+    GoalType.car => l.goalTypeCar,
+    GoalType.travel => l.goalTypeTravel,
+    GoalType.education => l.goalTypeEducation,
+    GoalType.wedding => l.goalTypeWedding,
+    GoalType.retirement => l.goalTypeRetirement,
+    GoalType.debtPayoff => l.goalTypeDebtPayoff,
+    GoalType.purchase => l.goalTypePurchase,
+    GoalType.custom => l.goalTypeCustom,
+  };
+}
+
+extension GoalPriorityLabel on GoalPriority {
+  String label(AppLocalizations l) => switch (this) {
+    GoalPriority.low => l.goalPriorityLow,
+    GoalPriority.medium => l.goalPriorityMedium,
+    GoalPriority.high => l.goalPriorityHigh,
+    GoalPriority.critical => l.goalPriorityCritical,
+  };
+}
+
+extension GoalTrackStatusLabel on GoalTrackStatus {
+  String label(AppLocalizations l) => switch (this) {
+    GoalTrackStatus.completed => l.goalTrackCompleted,
+    GoalTrackStatus.noTargetDate => l.goalTrackNoTargetDate,
+    GoalTrackStatus.noContributionHistory => l.goalTrackNoHistory,
+    GoalTrackStatus.ahead => l.goalTrackAhead,
+    GoalTrackStatus.onTrack => l.goalTrackOnTrack,
+    GoalTrackStatus.behind => l.goalTrackBehind,
   };
 }
 

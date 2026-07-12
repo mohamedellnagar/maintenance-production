@@ -1074,6 +1074,389 @@ class AppLocalizationsAr extends AppLocalizations {
   String get errorOccurrenceNotFound => 'الاستحقاق غير موجود.';
 
   @override
+  String get navGoals => 'الأهداف';
+
+  @override
+  String get goalsTitle => 'الأهداف المالية';
+
+  @override
+  String get goalsEmptyTitle => 'لا توجد أهداف بعد';
+
+  @override
+  String get goalsEmptyMessage => 'أنشئ هدفًا لتبدأ الادخار نحو ما يهمك.';
+
+  @override
+  String get goalAdd => 'هدف جديد';
+
+  @override
+  String get goalsSummaryTotalTarget => 'إجمالي المستهدف';
+
+  @override
+  String get goalsSummaryAllocated => 'المخصص';
+
+  @override
+  String get goalsSummaryRemaining => 'المتبقي';
+
+  @override
+  String get goalsSummaryUnallocated => 'غير المخصص';
+
+  @override
+  String get goalsSummaryActive => 'الأهداف النشطة';
+
+  @override
+  String get goalsSummaryBehind => 'متأخرة عن الخطة';
+
+  @override
+  String get goalsSummaryNearest => 'الأقرب للإنجاز';
+
+  @override
+  String get goalsShortfallWarning =>
+      'الأموال المخصصة تجاوزت رصيدك السائل المؤهل.';
+
+  @override
+  String get goalsShortfallNote => 'التخصيص افتراضي ولا يحجز الأموال في البنك.';
+
+  @override
+  String get goalsSectionActive => 'نشطة';
+
+  @override
+  String get goalsSectionPaused => 'متوقفة';
+
+  @override
+  String get goalsSectionCompleted => 'مكتملة';
+
+  @override
+  String get goalsSectionArchived => 'مؤرشفة';
+
+  @override
+  String get goalTarget => 'المستهدف';
+
+  @override
+  String get goalFunded => 'المموّل';
+
+  @override
+  String get goalRemaining => 'المتبقي';
+
+  @override
+  String get goalOverfunded => 'الزيادة';
+
+  @override
+  String get goalRequiredMonthly => 'المطلوب شهريًا';
+
+  @override
+  String get goalProjectedCompletion => 'الإنجاز المتوقع';
+
+  @override
+  String get goalProjectionUnavailable => 'لا يمكن التقدير بعد';
+
+  @override
+  String get goalPriority => 'الأولوية';
+
+  @override
+  String get goalTargetDate => 'التاريخ المستهدف';
+
+  @override
+  String get goalNoTargetDate => 'بلا تاريخ مستهدف';
+
+  @override
+  String get goalSavedForRepayment => 'المدّخر للسداد';
+
+  @override
+  String get goalActualDebtReduced => 'الدين المسدّد فعليًا';
+
+  @override
+  String get goalName => 'الاسم';
+
+  @override
+  String get goalType => 'النوع';
+
+  @override
+  String get goalAmount => 'المبلغ المستهدف';
+
+  @override
+  String get goalLinkedLiability => 'الدين المراد سداده';
+
+  @override
+  String get goalSelectLiability => 'اختر حساب التزام';
+
+  @override
+  String get goalInitialAllocation => 'تخصيص أولي';
+
+  @override
+  String get goalNotes => 'ملاحظات';
+
+  @override
+  String get goalReview => 'مراجعة';
+
+  @override
+  String get goalContribution => 'مساهمة';
+
+  @override
+  String get goalContributionAmount => 'المبلغ المراد تخصيصه';
+
+  @override
+  String get goalWithdrawAmount => 'المبلغ المراد سحبه';
+
+  @override
+  String get goalTransferAmount => 'المبلغ المراد نقله';
+
+  @override
+  String get goalTransferTo => 'نقل إلى';
+
+  @override
+  String get goalReason => 'ملاحظة (اختياري)';
+
+  @override
+  String get goalAvailableToAllocate => 'المتاح للتخصيص';
+
+  @override
+  String get goalAddContribution => 'إضافة مساهمة';
+
+  @override
+  String get goalWithdraw => 'سحب';
+
+  @override
+  String get goalTransfer => 'نقل';
+
+  @override
+  String get goalPause => 'إيقاف';
+
+  @override
+  String get goalResume => 'استئناف';
+
+  @override
+  String get goalComplete => 'وضع كمكتمل';
+
+  @override
+  String get goalCancel => 'إلغاء الهدف';
+
+  @override
+  String get goalArchive => 'أرشفة';
+
+  @override
+  String get goalConfirmComplete => 'هل تريد وضع هذا الهدف كمكتمل؟';
+
+  @override
+  String get goalConfirmCancelWithBalance =>
+      'لا يزال هذا الهدف يحتفظ بأموال مخصصة. اختر ما تفعله بها.';
+
+  @override
+  String get goalCancelUnallocate => 'فك تخصيص الرصيد وإلغاء الهدف';
+
+  @override
+  String get goalCancelKeep => 'الإبقاء عليه مؤرشفًا برصيده';
+
+  @override
+  String get goalConfirmDelete =>
+      'هل تريد حذف هذا الهدف نهائيًا؟ لا يمكن حذف إلا الأهداف بلا سجل.';
+
+  @override
+  String get goalConfirmCancelSimple =>
+      'هل تريد إلغاء هذا الهدف؟ يُحتفظ بسجله.';
+
+  @override
+  String get goalLedger => 'حركة الصندوق';
+
+  @override
+  String get goalNoActivity => 'لا توجد حركة بعد.';
+
+  @override
+  String get goalEntryDeleted => 'محذوف';
+
+  @override
+  String get goalEntryDelete => 'حذف الحركة';
+
+  @override
+  String get goalEntryRestore => 'استعادة';
+
+  @override
+  String get goalContributions => 'المساهمات';
+
+  @override
+  String get goalWithdrawals => 'السحوبات';
+
+  @override
+  String get goalTransfers => 'التحويلات';
+
+  @override
+  String get goalDetailsTitle => 'تفاصيل الهدف';
+
+  @override
+  String get goalSaved => 'تم حفظ الهدف';
+
+  @override
+  String get goalContributed => 'تمت إضافة المساهمة';
+
+  @override
+  String get goalWithdrew => 'تم تسجيل السحب';
+
+  @override
+  String get goalTransferred => 'تم النقل';
+
+  @override
+  String get goalStatusUpdated => 'تم تحديث الهدف';
+
+  @override
+  String get goalTypeEmergencyFund => 'صندوق الطوارئ';
+
+  @override
+  String get goalTypeHome => 'منزل';
+
+  @override
+  String get goalTypeCar => 'سيارة';
+
+  @override
+  String get goalTypeTravel => 'سفر';
+
+  @override
+  String get goalTypeEducation => 'تعليم';
+
+  @override
+  String get goalTypeWedding => 'زواج';
+
+  @override
+  String get goalTypeRetirement => 'تقاعد';
+
+  @override
+  String get goalTypeDebtPayoff => 'سداد دين';
+
+  @override
+  String get goalTypePurchase => 'شراء';
+
+  @override
+  String get goalTypeCustom => 'مخصص';
+
+  @override
+  String get goalPriorityLow => 'منخفضة';
+
+  @override
+  String get goalPriorityMedium => 'متوسطة';
+
+  @override
+  String get goalPriorityHigh => 'عالية';
+
+  @override
+  String get goalPriorityCritical => 'حرجة';
+
+  @override
+  String get goalTrackCompleted => 'مكتمل';
+
+  @override
+  String get goalTrackNoTargetDate => 'بلا موعد';
+
+  @override
+  String get goalTrackNoHistory => 'لم يبدأ';
+
+  @override
+  String get goalTrackAhead => 'متقدم عن الخطة';
+
+  @override
+  String get goalTrackOnTrack => 'على المسار';
+
+  @override
+  String get goalTrackBehind => 'متأخر عن الخطة';
+
+  @override
+  String get dashboardGoals => 'الأهداف';
+
+  @override
+  String get goalsViewAll => 'عرض الكل';
+
+  @override
+  String get budgetLinkedGoal => 'الهدف المرتبط';
+
+  @override
+  String get budgetLinkGoalNone => 'بدون هدف مرتبط';
+
+  @override
+  String get budgetGoalContributed => 'المساهَم به هذا الشهر';
+
+  @override
+  String get budgetGoalWithdrawn => 'المسحوب هذا الشهر';
+
+  @override
+  String get budgetGoalRemainingPlanned => 'المساهمة المخططة المتبقية';
+
+  @override
+  String get goalInsightShortfall =>
+      'الأموال المخصصة تتجاوز رصيدك السائل المؤهل.';
+
+  @override
+  String goalInsightBehind(String name) {
+    return 'الهدف $name متأخر عن خطته.';
+  }
+
+  @override
+  String goalInsightNearCompletion(String name) {
+    return 'الهدف $name أوشك على الاكتمال.';
+  }
+
+  @override
+  String goalInsightCompleted(String name) {
+    return 'الهدف $name تم تمويله بالكامل.';
+  }
+
+  @override
+  String goalInsightStalled(String name) {
+    return 'الهدف $name لم يتلقَّ مساهمة منذ فترة.';
+  }
+
+  @override
+  String goalInsightDeadlineSoon(String name) {
+    return 'اقترب التاريخ المستهدف للهدف $name مع بقاء مبلغ كبير.';
+  }
+
+  @override
+  String goalInsightOverfunded(String name) {
+    return 'الهدف $name تجاوز تمويله المستهدف.';
+  }
+
+  @override
+  String get goalInsightEmergencyLow =>
+      'صندوق الطوارئ أقل من المستوى المستهدف.';
+
+  @override
+  String get errorGoalTargetInvalid =>
+      'يجب أن يكون المبلغ المستهدف أكبر من صفر.';
+
+  @override
+  String get errorGoalLiabilityNotAllowed =>
+      'يمكن فقط لهدف سداد الدين ربط حساب التزام.';
+
+  @override
+  String get errorGoalNotLiability => 'يجب أن يكون الحساب المرتبط التزامًا.';
+
+  @override
+  String get errorGoalNotActive =>
+      'الأهداف النشطة فقط يمكنها استقبال المساهمات.';
+
+  @override
+  String get errorGoalInsufficientFund => 'لا يملك الهدف أموالًا مخصصة كافية.';
+
+  @override
+  String get errorGoalExceedsAvailable => 'هذا يتجاوز أموالك المتاحة للتخصيص.';
+
+  @override
+  String get errorGoalSameTransfer => 'اختر هدفين مختلفين للنقل بينهما.';
+
+  @override
+  String get errorGoalHasLedger =>
+      'لهذا الهدف حركة ولا يمكن حذفه. ألغِه أو أرشفه بدلًا من ذلك.';
+
+  @override
+  String get errorGoalAllocationExceedsTransaction =>
+      'المبلغ المرتبط يتجاوز قيمة المعاملة.';
+
+  @override
+  String get errorGoalAmountInvalid => 'أدخل مبلغًا أكبر من صفر.';
+
+  @override
+  String get errorGoalNotFound => 'الهدف غير موجود.';
+
+  @override
+  String get errorGoalEntryNotFound => 'حركة الصندوق غير موجودة.';
+
+  @override
   String get errorDatabase => 'حدث خطأ في قاعدة البيانات.';
 
   @override

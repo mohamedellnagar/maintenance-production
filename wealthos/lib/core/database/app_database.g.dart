@@ -3470,6 +3470,856 @@ class BudgetsTableCompanion extends UpdateCompanion<BudgetsTableData> {
   }
 }
 
+class $FinancialGoalsTableTable extends FinancialGoalsTable
+    with TableInfo<$FinancialGoalsTableTable, FinancialGoalsTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $FinancialGoalsTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 1,
+      maxTextLength: 100,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _goalTypeMeta = const VerificationMeta(
+    'goalType',
+  );
+  @override
+  late final GeneratedColumn<String> goalType = GeneratedColumn<String>(
+    'goal_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _targetAmountMinorMeta = const VerificationMeta(
+    'targetAmountMinor',
+  );
+  @override
+  late final GeneratedColumn<int> targetAmountMinor = GeneratedColumn<int>(
+    'target_amount_minor',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _currencyCodeMeta = const VerificationMeta(
+    'currencyCode',
+  );
+  @override
+  late final GeneratedColumn<String> currencyCode = GeneratedColumn<String>(
+    'currency_code',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 3,
+      maxTextLength: 3,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _targetDateMeta = const VerificationMeta(
+    'targetDate',
+  );
+  @override
+  late final GeneratedColumn<int> targetDate = GeneratedColumn<int>(
+    'target_date',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _priorityMeta = const VerificationMeta(
+    'priority',
+  );
+  @override
+  late final GeneratedColumn<String> priority = GeneratedColumn<String>(
+    'priority',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('medium'),
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('active'),
+  );
+  static const VerificationMeta _linkedLiabilityAccountIdMeta =
+      const VerificationMeta('linkedLiabilityAccountId');
+  @override
+  late final GeneratedColumn<String> linkedLiabilityAccountId =
+      GeneratedColumn<String>(
+        'linked_liability_account_id',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES accounts (id)',
+        ),
+      );
+  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  @override
+  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
+    'notes',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _completedAtMeta = const VerificationMeta(
+    'completedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> completedAt = GeneratedColumn<DateTime>(
+    'completed_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _cancelledAtMeta = const VerificationMeta(
+    'cancelledAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> cancelledAt = GeneratedColumn<DateTime>(
+    'cancelled_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    name,
+    goalType,
+    targetAmountMinor,
+    currencyCode,
+    targetDate,
+    priority,
+    status,
+    linkedLiabilityAccountId,
+    notes,
+    createdAt,
+    updatedAt,
+    completedAt,
+    cancelledAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'financial_goals';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<FinancialGoalsTableData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('goal_type')) {
+      context.handle(
+        _goalTypeMeta,
+        goalType.isAcceptableOrUnknown(data['goal_type']!, _goalTypeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_goalTypeMeta);
+    }
+    if (data.containsKey('target_amount_minor')) {
+      context.handle(
+        _targetAmountMinorMeta,
+        targetAmountMinor.isAcceptableOrUnknown(
+          data['target_amount_minor']!,
+          _targetAmountMinorMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_targetAmountMinorMeta);
+    }
+    if (data.containsKey('currency_code')) {
+      context.handle(
+        _currencyCodeMeta,
+        currencyCode.isAcceptableOrUnknown(
+          data['currency_code']!,
+          _currencyCodeMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_currencyCodeMeta);
+    }
+    if (data.containsKey('target_date')) {
+      context.handle(
+        _targetDateMeta,
+        targetDate.isAcceptableOrUnknown(data['target_date']!, _targetDateMeta),
+      );
+    }
+    if (data.containsKey('priority')) {
+      context.handle(
+        _priorityMeta,
+        priority.isAcceptableOrUnknown(data['priority']!, _priorityMeta),
+      );
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    }
+    if (data.containsKey('linked_liability_account_id')) {
+      context.handle(
+        _linkedLiabilityAccountIdMeta,
+        linkedLiabilityAccountId.isAcceptableOrUnknown(
+          data['linked_liability_account_id']!,
+          _linkedLiabilityAccountIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('notes')) {
+      context.handle(
+        _notesMeta,
+        notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('completed_at')) {
+      context.handle(
+        _completedAtMeta,
+        completedAt.isAcceptableOrUnknown(
+          data['completed_at']!,
+          _completedAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('cancelled_at')) {
+      context.handle(
+        _cancelledAtMeta,
+        cancelledAt.isAcceptableOrUnknown(
+          data['cancelled_at']!,
+          _cancelledAtMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  FinancialGoalsTableData map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return FinancialGoalsTableData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      goalType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}goal_type'],
+      )!,
+      targetAmountMinor: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}target_amount_minor'],
+      )!,
+      currencyCode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}currency_code'],
+      )!,
+      targetDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}target_date'],
+      ),
+      priority: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}priority'],
+      )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      linkedLiabilityAccountId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}linked_liability_account_id'],
+      ),
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      completedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}completed_at'],
+      ),
+      cancelledAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}cancelled_at'],
+      ),
+    );
+  }
+
+  @override
+  $FinancialGoalsTableTable createAlias(String alias) {
+    return $FinancialGoalsTableTable(attachedDatabase, alias);
+  }
+}
+
+class FinancialGoalsTableData extends DataClass
+    implements Insertable<FinancialGoalsTableData> {
+  final String id;
+  final String name;
+  final String goalType;
+  final int targetAmountMinor;
+  final String currencyCode;
+  final int? targetDate;
+  final String priority;
+  final String status;
+  final String? linkedLiabilityAccountId;
+  final String? notes;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final DateTime? completedAt;
+  final DateTime? cancelledAt;
+  const FinancialGoalsTableData({
+    required this.id,
+    required this.name,
+    required this.goalType,
+    required this.targetAmountMinor,
+    required this.currencyCode,
+    this.targetDate,
+    required this.priority,
+    required this.status,
+    this.linkedLiabilityAccountId,
+    this.notes,
+    required this.createdAt,
+    required this.updatedAt,
+    this.completedAt,
+    this.cancelledAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['name'] = Variable<String>(name);
+    map['goal_type'] = Variable<String>(goalType);
+    map['target_amount_minor'] = Variable<int>(targetAmountMinor);
+    map['currency_code'] = Variable<String>(currencyCode);
+    if (!nullToAbsent || targetDate != null) {
+      map['target_date'] = Variable<int>(targetDate);
+    }
+    map['priority'] = Variable<String>(priority);
+    map['status'] = Variable<String>(status);
+    if (!nullToAbsent || linkedLiabilityAccountId != null) {
+      map['linked_liability_account_id'] = Variable<String>(
+        linkedLiabilityAccountId,
+      );
+    }
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || completedAt != null) {
+      map['completed_at'] = Variable<DateTime>(completedAt);
+    }
+    if (!nullToAbsent || cancelledAt != null) {
+      map['cancelled_at'] = Variable<DateTime>(cancelledAt);
+    }
+    return map;
+  }
+
+  FinancialGoalsTableCompanion toCompanion(bool nullToAbsent) {
+    return FinancialGoalsTableCompanion(
+      id: Value(id),
+      name: Value(name),
+      goalType: Value(goalType),
+      targetAmountMinor: Value(targetAmountMinor),
+      currencyCode: Value(currencyCode),
+      targetDate: targetDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(targetDate),
+      priority: Value(priority),
+      status: Value(status),
+      linkedLiabilityAccountId: linkedLiabilityAccountId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(linkedLiabilityAccountId),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      completedAt: completedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(completedAt),
+      cancelledAt: cancelledAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(cancelledAt),
+    );
+  }
+
+  factory FinancialGoalsTableData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return FinancialGoalsTableData(
+      id: serializer.fromJson<String>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      goalType: serializer.fromJson<String>(json['goalType']),
+      targetAmountMinor: serializer.fromJson<int>(json['targetAmountMinor']),
+      currencyCode: serializer.fromJson<String>(json['currencyCode']),
+      targetDate: serializer.fromJson<int?>(json['targetDate']),
+      priority: serializer.fromJson<String>(json['priority']),
+      status: serializer.fromJson<String>(json['status']),
+      linkedLiabilityAccountId: serializer.fromJson<String?>(
+        json['linkedLiabilityAccountId'],
+      ),
+      notes: serializer.fromJson<String?>(json['notes']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      completedAt: serializer.fromJson<DateTime?>(json['completedAt']),
+      cancelledAt: serializer.fromJson<DateTime?>(json['cancelledAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'name': serializer.toJson<String>(name),
+      'goalType': serializer.toJson<String>(goalType),
+      'targetAmountMinor': serializer.toJson<int>(targetAmountMinor),
+      'currencyCode': serializer.toJson<String>(currencyCode),
+      'targetDate': serializer.toJson<int?>(targetDate),
+      'priority': serializer.toJson<String>(priority),
+      'status': serializer.toJson<String>(status),
+      'linkedLiabilityAccountId': serializer.toJson<String?>(
+        linkedLiabilityAccountId,
+      ),
+      'notes': serializer.toJson<String?>(notes),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'completedAt': serializer.toJson<DateTime?>(completedAt),
+      'cancelledAt': serializer.toJson<DateTime?>(cancelledAt),
+    };
+  }
+
+  FinancialGoalsTableData copyWith({
+    String? id,
+    String? name,
+    String? goalType,
+    int? targetAmountMinor,
+    String? currencyCode,
+    Value<int?> targetDate = const Value.absent(),
+    String? priority,
+    String? status,
+    Value<String?> linkedLiabilityAccountId = const Value.absent(),
+    Value<String?> notes = const Value.absent(),
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    Value<DateTime?> completedAt = const Value.absent(),
+    Value<DateTime?> cancelledAt = const Value.absent(),
+  }) => FinancialGoalsTableData(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    goalType: goalType ?? this.goalType,
+    targetAmountMinor: targetAmountMinor ?? this.targetAmountMinor,
+    currencyCode: currencyCode ?? this.currencyCode,
+    targetDate: targetDate.present ? targetDate.value : this.targetDate,
+    priority: priority ?? this.priority,
+    status: status ?? this.status,
+    linkedLiabilityAccountId: linkedLiabilityAccountId.present
+        ? linkedLiabilityAccountId.value
+        : this.linkedLiabilityAccountId,
+    notes: notes.present ? notes.value : this.notes,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    completedAt: completedAt.present ? completedAt.value : this.completedAt,
+    cancelledAt: cancelledAt.present ? cancelledAt.value : this.cancelledAt,
+  );
+  FinancialGoalsTableData copyWithCompanion(FinancialGoalsTableCompanion data) {
+    return FinancialGoalsTableData(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      goalType: data.goalType.present ? data.goalType.value : this.goalType,
+      targetAmountMinor: data.targetAmountMinor.present
+          ? data.targetAmountMinor.value
+          : this.targetAmountMinor,
+      currencyCode: data.currencyCode.present
+          ? data.currencyCode.value
+          : this.currencyCode,
+      targetDate: data.targetDate.present
+          ? data.targetDate.value
+          : this.targetDate,
+      priority: data.priority.present ? data.priority.value : this.priority,
+      status: data.status.present ? data.status.value : this.status,
+      linkedLiabilityAccountId: data.linkedLiabilityAccountId.present
+          ? data.linkedLiabilityAccountId.value
+          : this.linkedLiabilityAccountId,
+      notes: data.notes.present ? data.notes.value : this.notes,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      completedAt: data.completedAt.present
+          ? data.completedAt.value
+          : this.completedAt,
+      cancelledAt: data.cancelledAt.present
+          ? data.cancelledAt.value
+          : this.cancelledAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FinancialGoalsTableData(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('goalType: $goalType, ')
+          ..write('targetAmountMinor: $targetAmountMinor, ')
+          ..write('currencyCode: $currencyCode, ')
+          ..write('targetDate: $targetDate, ')
+          ..write('priority: $priority, ')
+          ..write('status: $status, ')
+          ..write('linkedLiabilityAccountId: $linkedLiabilityAccountId, ')
+          ..write('notes: $notes, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('completedAt: $completedAt, ')
+          ..write('cancelledAt: $cancelledAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    name,
+    goalType,
+    targetAmountMinor,
+    currencyCode,
+    targetDate,
+    priority,
+    status,
+    linkedLiabilityAccountId,
+    notes,
+    createdAt,
+    updatedAt,
+    completedAt,
+    cancelledAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is FinancialGoalsTableData &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.goalType == this.goalType &&
+          other.targetAmountMinor == this.targetAmountMinor &&
+          other.currencyCode == this.currencyCode &&
+          other.targetDate == this.targetDate &&
+          other.priority == this.priority &&
+          other.status == this.status &&
+          other.linkedLiabilityAccountId == this.linkedLiabilityAccountId &&
+          other.notes == this.notes &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.completedAt == this.completedAt &&
+          other.cancelledAt == this.cancelledAt);
+}
+
+class FinancialGoalsTableCompanion
+    extends UpdateCompanion<FinancialGoalsTableData> {
+  final Value<String> id;
+  final Value<String> name;
+  final Value<String> goalType;
+  final Value<int> targetAmountMinor;
+  final Value<String> currencyCode;
+  final Value<int?> targetDate;
+  final Value<String> priority;
+  final Value<String> status;
+  final Value<String?> linkedLiabilityAccountId;
+  final Value<String?> notes;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<DateTime?> completedAt;
+  final Value<DateTime?> cancelledAt;
+  final Value<int> rowid;
+  const FinancialGoalsTableCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.goalType = const Value.absent(),
+    this.targetAmountMinor = const Value.absent(),
+    this.currencyCode = const Value.absent(),
+    this.targetDate = const Value.absent(),
+    this.priority = const Value.absent(),
+    this.status = const Value.absent(),
+    this.linkedLiabilityAccountId = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.completedAt = const Value.absent(),
+    this.cancelledAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  FinancialGoalsTableCompanion.insert({
+    required String id,
+    required String name,
+    required String goalType,
+    required int targetAmountMinor,
+    required String currencyCode,
+    this.targetDate = const Value.absent(),
+    this.priority = const Value.absent(),
+    this.status = const Value.absent(),
+    this.linkedLiabilityAccountId = const Value.absent(),
+    this.notes = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    this.completedAt = const Value.absent(),
+    this.cancelledAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       name = Value(name),
+       goalType = Value(goalType),
+       targetAmountMinor = Value(targetAmountMinor),
+       currencyCode = Value(currencyCode),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<FinancialGoalsTableData> custom({
+    Expression<String>? id,
+    Expression<String>? name,
+    Expression<String>? goalType,
+    Expression<int>? targetAmountMinor,
+    Expression<String>? currencyCode,
+    Expression<int>? targetDate,
+    Expression<String>? priority,
+    Expression<String>? status,
+    Expression<String>? linkedLiabilityAccountId,
+    Expression<String>? notes,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<DateTime>? completedAt,
+    Expression<DateTime>? cancelledAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (goalType != null) 'goal_type': goalType,
+      if (targetAmountMinor != null) 'target_amount_minor': targetAmountMinor,
+      if (currencyCode != null) 'currency_code': currencyCode,
+      if (targetDate != null) 'target_date': targetDate,
+      if (priority != null) 'priority': priority,
+      if (status != null) 'status': status,
+      if (linkedLiabilityAccountId != null)
+        'linked_liability_account_id': linkedLiabilityAccountId,
+      if (notes != null) 'notes': notes,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (completedAt != null) 'completed_at': completedAt,
+      if (cancelledAt != null) 'cancelled_at': cancelledAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  FinancialGoalsTableCompanion copyWith({
+    Value<String>? id,
+    Value<String>? name,
+    Value<String>? goalType,
+    Value<int>? targetAmountMinor,
+    Value<String>? currencyCode,
+    Value<int?>? targetDate,
+    Value<String>? priority,
+    Value<String>? status,
+    Value<String?>? linkedLiabilityAccountId,
+    Value<String?>? notes,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<DateTime?>? completedAt,
+    Value<DateTime?>? cancelledAt,
+    Value<int>? rowid,
+  }) {
+    return FinancialGoalsTableCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      goalType: goalType ?? this.goalType,
+      targetAmountMinor: targetAmountMinor ?? this.targetAmountMinor,
+      currencyCode: currencyCode ?? this.currencyCode,
+      targetDate: targetDate ?? this.targetDate,
+      priority: priority ?? this.priority,
+      status: status ?? this.status,
+      linkedLiabilityAccountId:
+          linkedLiabilityAccountId ?? this.linkedLiabilityAccountId,
+      notes: notes ?? this.notes,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      completedAt: completedAt ?? this.completedAt,
+      cancelledAt: cancelledAt ?? this.cancelledAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (goalType.present) {
+      map['goal_type'] = Variable<String>(goalType.value);
+    }
+    if (targetAmountMinor.present) {
+      map['target_amount_minor'] = Variable<int>(targetAmountMinor.value);
+    }
+    if (currencyCode.present) {
+      map['currency_code'] = Variable<String>(currencyCode.value);
+    }
+    if (targetDate.present) {
+      map['target_date'] = Variable<int>(targetDate.value);
+    }
+    if (priority.present) {
+      map['priority'] = Variable<String>(priority.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (linkedLiabilityAccountId.present) {
+      map['linked_liability_account_id'] = Variable<String>(
+        linkedLiabilityAccountId.value,
+      );
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (completedAt.present) {
+      map['completed_at'] = Variable<DateTime>(completedAt.value);
+    }
+    if (cancelledAt.present) {
+      map['cancelled_at'] = Variable<DateTime>(cancelledAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FinancialGoalsTableCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('goalType: $goalType, ')
+          ..write('targetAmountMinor: $targetAmountMinor, ')
+          ..write('currencyCode: $currencyCode, ')
+          ..write('targetDate: $targetDate, ')
+          ..write('priority: $priority, ')
+          ..write('status: $status, ')
+          ..write('linkedLiabilityAccountId: $linkedLiabilityAccountId, ')
+          ..write('notes: $notes, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('completedAt: $completedAt, ')
+          ..write('cancelledAt: $cancelledAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $BudgetItemsTableTable extends BudgetItemsTable
     with TableInfo<$BudgetItemsTableTable, BudgetItemsTableData> {
   @override
@@ -3595,6 +4445,20 @@ class $BudgetItemsTableTable extends BudgetItemsTable
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _linkedGoalIdMeta = const VerificationMeta(
+    'linkedGoalId',
+  );
+  @override
+  late final GeneratedColumn<String> linkedGoalId = GeneratedColumn<String>(
+    'linked_goal_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES financial_goals (id)',
+    ),
+  );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
   );
@@ -3629,6 +4493,7 @@ class $BudgetItemsTableTable extends BudgetItemsTable
     rolloverEnabled,
     displayOrder,
     notes,
+    linkedGoalId,
     createdAt,
     updatedAt,
   ];
@@ -3718,6 +4583,15 @@ class $BudgetItemsTableTable extends BudgetItemsTable
         notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
       );
     }
+    if (data.containsKey('linked_goal_id')) {
+      context.handle(
+        _linkedGoalIdMeta,
+        linkedGoalId.isAcceptableOrUnknown(
+          data['linked_goal_id']!,
+          _linkedGoalIdMeta,
+        ),
+      );
+    }
     if (data.containsKey('created_at')) {
       context.handle(
         _createdAtMeta,
@@ -3783,6 +4657,10 @@ class $BudgetItemsTableTable extends BudgetItemsTable
         DriftSqlType.string,
         data['${effectivePrefix}notes'],
       ),
+      linkedGoalId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}linked_goal_id'],
+      ),
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
@@ -3812,6 +4690,7 @@ class BudgetItemsTableData extends DataClass
   final bool rolloverEnabled;
   final int displayOrder;
   final String? notes;
+  final String? linkedGoalId;
   final DateTime createdAt;
   final DateTime updatedAt;
   const BudgetItemsTableData({
@@ -3825,6 +4704,7 @@ class BudgetItemsTableData extends DataClass
     required this.rolloverEnabled,
     required this.displayOrder,
     this.notes,
+    this.linkedGoalId,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -3848,6 +4728,9 @@ class BudgetItemsTableData extends DataClass
     map['display_order'] = Variable<int>(displayOrder);
     if (!nullToAbsent || notes != null) {
       map['notes'] = Variable<String>(notes);
+    }
+    if (!nullToAbsent || linkedGoalId != null) {
+      map['linked_goal_id'] = Variable<String>(linkedGoalId);
     }
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
@@ -3874,6 +4757,9 @@ class BudgetItemsTableData extends DataClass
       notes: notes == null && nullToAbsent
           ? const Value.absent()
           : Value(notes),
+      linkedGoalId: linkedGoalId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(linkedGoalId),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
     );
@@ -3897,6 +4783,7 @@ class BudgetItemsTableData extends DataClass
       rolloverEnabled: serializer.fromJson<bool>(json['rolloverEnabled']),
       displayOrder: serializer.fromJson<int>(json['displayOrder']),
       notes: serializer.fromJson<String?>(json['notes']),
+      linkedGoalId: serializer.fromJson<String?>(json['linkedGoalId']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
     );
@@ -3915,6 +4802,7 @@ class BudgetItemsTableData extends DataClass
       'rolloverEnabled': serializer.toJson<bool>(rolloverEnabled),
       'displayOrder': serializer.toJson<int>(displayOrder),
       'notes': serializer.toJson<String?>(notes),
+      'linkedGoalId': serializer.toJson<String?>(linkedGoalId),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
     };
@@ -3931,6 +4819,7 @@ class BudgetItemsTableData extends DataClass
     bool? rolloverEnabled,
     int? displayOrder,
     Value<String?> notes = const Value.absent(),
+    Value<String?> linkedGoalId = const Value.absent(),
     DateTime? createdAt,
     DateTime? updatedAt,
   }) => BudgetItemsTableData(
@@ -3944,6 +4833,7 @@ class BudgetItemsTableData extends DataClass
     rolloverEnabled: rolloverEnabled ?? this.rolloverEnabled,
     displayOrder: displayOrder ?? this.displayOrder,
     notes: notes.present ? notes.value : this.notes,
+    linkedGoalId: linkedGoalId.present ? linkedGoalId.value : this.linkedGoalId,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
   );
@@ -3969,6 +4859,9 @@ class BudgetItemsTableData extends DataClass
           ? data.displayOrder.value
           : this.displayOrder,
       notes: data.notes.present ? data.notes.value : this.notes,
+      linkedGoalId: data.linkedGoalId.present
+          ? data.linkedGoalId.value
+          : this.linkedGoalId,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
@@ -3987,6 +4880,7 @@ class BudgetItemsTableData extends DataClass
           ..write('rolloverEnabled: $rolloverEnabled, ')
           ..write('displayOrder: $displayOrder, ')
           ..write('notes: $notes, ')
+          ..write('linkedGoalId: $linkedGoalId, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -4005,6 +4899,7 @@ class BudgetItemsTableData extends DataClass
     rolloverEnabled,
     displayOrder,
     notes,
+    linkedGoalId,
     createdAt,
     updatedAt,
   );
@@ -4022,6 +4917,7 @@ class BudgetItemsTableData extends DataClass
           other.rolloverEnabled == this.rolloverEnabled &&
           other.displayOrder == this.displayOrder &&
           other.notes == this.notes &&
+          other.linkedGoalId == this.linkedGoalId &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt);
 }
@@ -4037,6 +4933,7 @@ class BudgetItemsTableCompanion extends UpdateCompanion<BudgetItemsTableData> {
   final Value<bool> rolloverEnabled;
   final Value<int> displayOrder;
   final Value<String?> notes;
+  final Value<String?> linkedGoalId;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
   final Value<int> rowid;
@@ -4051,6 +4948,7 @@ class BudgetItemsTableCompanion extends UpdateCompanion<BudgetItemsTableData> {
     this.rolloverEnabled = const Value.absent(),
     this.displayOrder = const Value.absent(),
     this.notes = const Value.absent(),
+    this.linkedGoalId = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -4066,6 +4964,7 @@ class BudgetItemsTableCompanion extends UpdateCompanion<BudgetItemsTableData> {
     this.rolloverEnabled = const Value.absent(),
     this.displayOrder = const Value.absent(),
     this.notes = const Value.absent(),
+    this.linkedGoalId = const Value.absent(),
     required DateTime createdAt,
     required DateTime updatedAt,
     this.rowid = const Value.absent(),
@@ -4086,6 +4985,7 @@ class BudgetItemsTableCompanion extends UpdateCompanion<BudgetItemsTableData> {
     Expression<bool>? rolloverEnabled,
     Expression<int>? displayOrder,
     Expression<String>? notes,
+    Expression<String>? linkedGoalId,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
     Expression<int>? rowid,
@@ -4102,6 +5002,7 @@ class BudgetItemsTableCompanion extends UpdateCompanion<BudgetItemsTableData> {
       if (rolloverEnabled != null) 'rollover_enabled': rolloverEnabled,
       if (displayOrder != null) 'display_order': displayOrder,
       if (notes != null) 'notes': notes,
+      if (linkedGoalId != null) 'linked_goal_id': linkedGoalId,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (rowid != null) 'rowid': rowid,
@@ -4119,6 +5020,7 @@ class BudgetItemsTableCompanion extends UpdateCompanion<BudgetItemsTableData> {
     Value<bool>? rolloverEnabled,
     Value<int>? displayOrder,
     Value<String?>? notes,
+    Value<String?>? linkedGoalId,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
     Value<int>? rowid,
@@ -4134,6 +5036,7 @@ class BudgetItemsTableCompanion extends UpdateCompanion<BudgetItemsTableData> {
       rolloverEnabled: rolloverEnabled ?? this.rolloverEnabled,
       displayOrder: displayOrder ?? this.displayOrder,
       notes: notes ?? this.notes,
+      linkedGoalId: linkedGoalId ?? this.linkedGoalId,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       rowid: rowid ?? this.rowid,
@@ -4173,6 +5076,9 @@ class BudgetItemsTableCompanion extends UpdateCompanion<BudgetItemsTableData> {
     if (notes.present) {
       map['notes'] = Variable<String>(notes.value);
     }
+    if (linkedGoalId.present) {
+      map['linked_goal_id'] = Variable<String>(linkedGoalId.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
@@ -4198,6 +5104,7 @@ class BudgetItemsTableCompanion extends UpdateCompanion<BudgetItemsTableData> {
           ..write('rolloverEnabled: $rolloverEnabled, ')
           ..write('displayOrder: $displayOrder, ')
           ..write('notes: $notes, ')
+          ..write('linkedGoalId: $linkedGoalId, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('rowid: $rowid')
@@ -7232,6 +8139,1463 @@ class RecurringOccurrencesTableCompanion
   }
 }
 
+class $GoalFundsTableTable extends GoalFundsTable
+    with TableInfo<$GoalFundsTableTable, GoalFundsTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $GoalFundsTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _goalIdMeta = const VerificationMeta('goalId');
+  @override
+  late final GeneratedColumn<String> goalId = GeneratedColumn<String>(
+    'goal_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES financial_goals (id)',
+    ),
+  );
+  static const VerificationMeta _currentAllocatedMinorMeta =
+      const VerificationMeta('currentAllocatedMinor');
+  @override
+  late final GeneratedColumn<int> currentAllocatedMinor = GeneratedColumn<int>(
+    'current_allocated_minor',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    goalId,
+    currentAllocatedMinor,
+    createdAt,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'goal_funds';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<GoalFundsTableData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('goal_id')) {
+      context.handle(
+        _goalIdMeta,
+        goalId.isAcceptableOrUnknown(data['goal_id']!, _goalIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_goalIdMeta);
+    }
+    if (data.containsKey('current_allocated_minor')) {
+      context.handle(
+        _currentAllocatedMinorMeta,
+        currentAllocatedMinor.isAcceptableOrUnknown(
+          data['current_allocated_minor']!,
+          _currentAllocatedMinorMeta,
+        ),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  GoalFundsTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return GoalFundsTableData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      goalId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}goal_id'],
+      )!,
+      currentAllocatedMinor: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}current_allocated_minor'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $GoalFundsTableTable createAlias(String alias) {
+    return $GoalFundsTableTable(attachedDatabase, alias);
+  }
+}
+
+class GoalFundsTableData extends DataClass
+    implements Insertable<GoalFundsTableData> {
+  final String id;
+  final String goalId;
+  final int currentAllocatedMinor;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  const GoalFundsTableData({
+    required this.id,
+    required this.goalId,
+    required this.currentAllocatedMinor,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['goal_id'] = Variable<String>(goalId);
+    map['current_allocated_minor'] = Variable<int>(currentAllocatedMinor);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  GoalFundsTableCompanion toCompanion(bool nullToAbsent) {
+    return GoalFundsTableCompanion(
+      id: Value(id),
+      goalId: Value(goalId),
+      currentAllocatedMinor: Value(currentAllocatedMinor),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory GoalFundsTableData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return GoalFundsTableData(
+      id: serializer.fromJson<String>(json['id']),
+      goalId: serializer.fromJson<String>(json['goalId']),
+      currentAllocatedMinor: serializer.fromJson<int>(
+        json['currentAllocatedMinor'],
+      ),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'goalId': serializer.toJson<String>(goalId),
+      'currentAllocatedMinor': serializer.toJson<int>(currentAllocatedMinor),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  GoalFundsTableData copyWith({
+    String? id,
+    String? goalId,
+    int? currentAllocatedMinor,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) => GoalFundsTableData(
+    id: id ?? this.id,
+    goalId: goalId ?? this.goalId,
+    currentAllocatedMinor: currentAllocatedMinor ?? this.currentAllocatedMinor,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  GoalFundsTableData copyWithCompanion(GoalFundsTableCompanion data) {
+    return GoalFundsTableData(
+      id: data.id.present ? data.id.value : this.id,
+      goalId: data.goalId.present ? data.goalId.value : this.goalId,
+      currentAllocatedMinor: data.currentAllocatedMinor.present
+          ? data.currentAllocatedMinor.value
+          : this.currentAllocatedMinor,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('GoalFundsTableData(')
+          ..write('id: $id, ')
+          ..write('goalId: $goalId, ')
+          ..write('currentAllocatedMinor: $currentAllocatedMinor, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, goalId, currentAllocatedMinor, createdAt, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is GoalFundsTableData &&
+          other.id == this.id &&
+          other.goalId == this.goalId &&
+          other.currentAllocatedMinor == this.currentAllocatedMinor &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class GoalFundsTableCompanion extends UpdateCompanion<GoalFundsTableData> {
+  final Value<String> id;
+  final Value<String> goalId;
+  final Value<int> currentAllocatedMinor;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const GoalFundsTableCompanion({
+    this.id = const Value.absent(),
+    this.goalId = const Value.absent(),
+    this.currentAllocatedMinor = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  GoalFundsTableCompanion.insert({
+    required String id,
+    required String goalId,
+    this.currentAllocatedMinor = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       goalId = Value(goalId),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<GoalFundsTableData> custom({
+    Expression<String>? id,
+    Expression<String>? goalId,
+    Expression<int>? currentAllocatedMinor,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (goalId != null) 'goal_id': goalId,
+      if (currentAllocatedMinor != null)
+        'current_allocated_minor': currentAllocatedMinor,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  GoalFundsTableCompanion copyWith({
+    Value<String>? id,
+    Value<String>? goalId,
+    Value<int>? currentAllocatedMinor,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return GoalFundsTableCompanion(
+      id: id ?? this.id,
+      goalId: goalId ?? this.goalId,
+      currentAllocatedMinor:
+          currentAllocatedMinor ?? this.currentAllocatedMinor,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (goalId.present) {
+      map['goal_id'] = Variable<String>(goalId.value);
+    }
+    if (currentAllocatedMinor.present) {
+      map['current_allocated_minor'] = Variable<int>(
+        currentAllocatedMinor.value,
+      );
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('GoalFundsTableCompanion(')
+          ..write('id: $id, ')
+          ..write('goalId: $goalId, ')
+          ..write('currentAllocatedMinor: $currentAllocatedMinor, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $GoalFundEntriesTableTable extends GoalFundEntriesTable
+    with TableInfo<$GoalFundEntriesTableTable, GoalFundEntriesTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $GoalFundEntriesTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _goalIdMeta = const VerificationMeta('goalId');
+  @override
+  late final GeneratedColumn<String> goalId = GeneratedColumn<String>(
+    'goal_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES financial_goals (id)',
+    ),
+  );
+  static const VerificationMeta _entryTypeMeta = const VerificationMeta(
+    'entryType',
+  );
+  @override
+  late final GeneratedColumn<String> entryType = GeneratedColumn<String>(
+    'entry_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _directionMeta = const VerificationMeta(
+    'direction',
+  );
+  @override
+  late final GeneratedColumn<String> direction = GeneratedColumn<String>(
+    'direction',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _amountMinorMeta = const VerificationMeta(
+    'amountMinor',
+  );
+  @override
+  late final GeneratedColumn<int> amountMinor = GeneratedColumn<int>(
+    'amount_minor',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _linkedTransactionIdMeta =
+      const VerificationMeta('linkedTransactionId');
+  @override
+  late final GeneratedColumn<String> linkedTransactionId =
+      GeneratedColumn<String>(
+        'linked_transaction_id',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES transactions (id)',
+        ),
+      );
+  static const VerificationMeta _relatedGoalIdMeta = const VerificationMeta(
+    'relatedGoalId',
+  );
+  @override
+  late final GeneratedColumn<String> relatedGoalId = GeneratedColumn<String>(
+    'related_goal_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES financial_goals (id)',
+    ),
+  );
+  static const VerificationMeta _entryDateMeta = const VerificationMeta(
+    'entryDate',
+  );
+  @override
+  late final GeneratedColumn<int> entryDate = GeneratedColumn<int>(
+    'entry_date',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _noteMeta = const VerificationMeta('note');
+  @override
+  late final GeneratedColumn<String> note = GeneratedColumn<String>(
+    'note',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    goalId,
+    entryType,
+    direction,
+    amountMinor,
+    linkedTransactionId,
+    relatedGoalId,
+    entryDate,
+    note,
+    createdAt,
+    deletedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'goal_fund_entries';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<GoalFundEntriesTableData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('goal_id')) {
+      context.handle(
+        _goalIdMeta,
+        goalId.isAcceptableOrUnknown(data['goal_id']!, _goalIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_goalIdMeta);
+    }
+    if (data.containsKey('entry_type')) {
+      context.handle(
+        _entryTypeMeta,
+        entryType.isAcceptableOrUnknown(data['entry_type']!, _entryTypeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_entryTypeMeta);
+    }
+    if (data.containsKey('direction')) {
+      context.handle(
+        _directionMeta,
+        direction.isAcceptableOrUnknown(data['direction']!, _directionMeta),
+      );
+    }
+    if (data.containsKey('amount_minor')) {
+      context.handle(
+        _amountMinorMeta,
+        amountMinor.isAcceptableOrUnknown(
+          data['amount_minor']!,
+          _amountMinorMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_amountMinorMeta);
+    }
+    if (data.containsKey('linked_transaction_id')) {
+      context.handle(
+        _linkedTransactionIdMeta,
+        linkedTransactionId.isAcceptableOrUnknown(
+          data['linked_transaction_id']!,
+          _linkedTransactionIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('related_goal_id')) {
+      context.handle(
+        _relatedGoalIdMeta,
+        relatedGoalId.isAcceptableOrUnknown(
+          data['related_goal_id']!,
+          _relatedGoalIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('entry_date')) {
+      context.handle(
+        _entryDateMeta,
+        entryDate.isAcceptableOrUnknown(data['entry_date']!, _entryDateMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_entryDateMeta);
+    }
+    if (data.containsKey('note')) {
+      context.handle(
+        _noteMeta,
+        note.isAcceptableOrUnknown(data['note']!, _noteMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  GoalFundEntriesTableData map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return GoalFundEntriesTableData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      goalId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}goal_id'],
+      )!,
+      entryType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}entry_type'],
+      )!,
+      direction: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}direction'],
+      ),
+      amountMinor: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}amount_minor'],
+      )!,
+      linkedTransactionId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}linked_transaction_id'],
+      ),
+      relatedGoalId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}related_goal_id'],
+      ),
+      entryDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}entry_date'],
+      )!,
+      note: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}note'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}deleted_at'],
+      ),
+    );
+  }
+
+  @override
+  $GoalFundEntriesTableTable createAlias(String alias) {
+    return $GoalFundEntriesTableTable(attachedDatabase, alias);
+  }
+}
+
+class GoalFundEntriesTableData extends DataClass
+    implements Insertable<GoalFundEntriesTableData> {
+  final String id;
+  final String goalId;
+  final String entryType;
+  final String? direction;
+  final int amountMinor;
+  final String? linkedTransactionId;
+  final String? relatedGoalId;
+  final int entryDate;
+  final String? note;
+  final DateTime createdAt;
+  final DateTime? deletedAt;
+  const GoalFundEntriesTableData({
+    required this.id,
+    required this.goalId,
+    required this.entryType,
+    this.direction,
+    required this.amountMinor,
+    this.linkedTransactionId,
+    this.relatedGoalId,
+    required this.entryDate,
+    this.note,
+    required this.createdAt,
+    this.deletedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['goal_id'] = Variable<String>(goalId);
+    map['entry_type'] = Variable<String>(entryType);
+    if (!nullToAbsent || direction != null) {
+      map['direction'] = Variable<String>(direction);
+    }
+    map['amount_minor'] = Variable<int>(amountMinor);
+    if (!nullToAbsent || linkedTransactionId != null) {
+      map['linked_transaction_id'] = Variable<String>(linkedTransactionId);
+    }
+    if (!nullToAbsent || relatedGoalId != null) {
+      map['related_goal_id'] = Variable<String>(relatedGoalId);
+    }
+    map['entry_date'] = Variable<int>(entryDate);
+    if (!nullToAbsent || note != null) {
+      map['note'] = Variable<String>(note);
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
+    return map;
+  }
+
+  GoalFundEntriesTableCompanion toCompanion(bool nullToAbsent) {
+    return GoalFundEntriesTableCompanion(
+      id: Value(id),
+      goalId: Value(goalId),
+      entryType: Value(entryType),
+      direction: direction == null && nullToAbsent
+          ? const Value.absent()
+          : Value(direction),
+      amountMinor: Value(amountMinor),
+      linkedTransactionId: linkedTransactionId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(linkedTransactionId),
+      relatedGoalId: relatedGoalId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(relatedGoalId),
+      entryDate: Value(entryDate),
+      note: note == null && nullToAbsent ? const Value.absent() : Value(note),
+      createdAt: Value(createdAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+    );
+  }
+
+  factory GoalFundEntriesTableData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return GoalFundEntriesTableData(
+      id: serializer.fromJson<String>(json['id']),
+      goalId: serializer.fromJson<String>(json['goalId']),
+      entryType: serializer.fromJson<String>(json['entryType']),
+      direction: serializer.fromJson<String?>(json['direction']),
+      amountMinor: serializer.fromJson<int>(json['amountMinor']),
+      linkedTransactionId: serializer.fromJson<String?>(
+        json['linkedTransactionId'],
+      ),
+      relatedGoalId: serializer.fromJson<String?>(json['relatedGoalId']),
+      entryDate: serializer.fromJson<int>(json['entryDate']),
+      note: serializer.fromJson<String?>(json['note']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'goalId': serializer.toJson<String>(goalId),
+      'entryType': serializer.toJson<String>(entryType),
+      'direction': serializer.toJson<String?>(direction),
+      'amountMinor': serializer.toJson<int>(amountMinor),
+      'linkedTransactionId': serializer.toJson<String?>(linkedTransactionId),
+      'relatedGoalId': serializer.toJson<String?>(relatedGoalId),
+      'entryDate': serializer.toJson<int>(entryDate),
+      'note': serializer.toJson<String?>(note),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
+    };
+  }
+
+  GoalFundEntriesTableData copyWith({
+    String? id,
+    String? goalId,
+    String? entryType,
+    Value<String?> direction = const Value.absent(),
+    int? amountMinor,
+    Value<String?> linkedTransactionId = const Value.absent(),
+    Value<String?> relatedGoalId = const Value.absent(),
+    int? entryDate,
+    Value<String?> note = const Value.absent(),
+    DateTime? createdAt,
+    Value<DateTime?> deletedAt = const Value.absent(),
+  }) => GoalFundEntriesTableData(
+    id: id ?? this.id,
+    goalId: goalId ?? this.goalId,
+    entryType: entryType ?? this.entryType,
+    direction: direction.present ? direction.value : this.direction,
+    amountMinor: amountMinor ?? this.amountMinor,
+    linkedTransactionId: linkedTransactionId.present
+        ? linkedTransactionId.value
+        : this.linkedTransactionId,
+    relatedGoalId: relatedGoalId.present
+        ? relatedGoalId.value
+        : this.relatedGoalId,
+    entryDate: entryDate ?? this.entryDate,
+    note: note.present ? note.value : this.note,
+    createdAt: createdAt ?? this.createdAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+  );
+  GoalFundEntriesTableData copyWithCompanion(
+    GoalFundEntriesTableCompanion data,
+  ) {
+    return GoalFundEntriesTableData(
+      id: data.id.present ? data.id.value : this.id,
+      goalId: data.goalId.present ? data.goalId.value : this.goalId,
+      entryType: data.entryType.present ? data.entryType.value : this.entryType,
+      direction: data.direction.present ? data.direction.value : this.direction,
+      amountMinor: data.amountMinor.present
+          ? data.amountMinor.value
+          : this.amountMinor,
+      linkedTransactionId: data.linkedTransactionId.present
+          ? data.linkedTransactionId.value
+          : this.linkedTransactionId,
+      relatedGoalId: data.relatedGoalId.present
+          ? data.relatedGoalId.value
+          : this.relatedGoalId,
+      entryDate: data.entryDate.present ? data.entryDate.value : this.entryDate,
+      note: data.note.present ? data.note.value : this.note,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('GoalFundEntriesTableData(')
+          ..write('id: $id, ')
+          ..write('goalId: $goalId, ')
+          ..write('entryType: $entryType, ')
+          ..write('direction: $direction, ')
+          ..write('amountMinor: $amountMinor, ')
+          ..write('linkedTransactionId: $linkedTransactionId, ')
+          ..write('relatedGoalId: $relatedGoalId, ')
+          ..write('entryDate: $entryDate, ')
+          ..write('note: $note, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('deletedAt: $deletedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    goalId,
+    entryType,
+    direction,
+    amountMinor,
+    linkedTransactionId,
+    relatedGoalId,
+    entryDate,
+    note,
+    createdAt,
+    deletedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is GoalFundEntriesTableData &&
+          other.id == this.id &&
+          other.goalId == this.goalId &&
+          other.entryType == this.entryType &&
+          other.direction == this.direction &&
+          other.amountMinor == this.amountMinor &&
+          other.linkedTransactionId == this.linkedTransactionId &&
+          other.relatedGoalId == this.relatedGoalId &&
+          other.entryDate == this.entryDate &&
+          other.note == this.note &&
+          other.createdAt == this.createdAt &&
+          other.deletedAt == this.deletedAt);
+}
+
+class GoalFundEntriesTableCompanion
+    extends UpdateCompanion<GoalFundEntriesTableData> {
+  final Value<String> id;
+  final Value<String> goalId;
+  final Value<String> entryType;
+  final Value<String?> direction;
+  final Value<int> amountMinor;
+  final Value<String?> linkedTransactionId;
+  final Value<String?> relatedGoalId;
+  final Value<int> entryDate;
+  final Value<String?> note;
+  final Value<DateTime> createdAt;
+  final Value<DateTime?> deletedAt;
+  final Value<int> rowid;
+  const GoalFundEntriesTableCompanion({
+    this.id = const Value.absent(),
+    this.goalId = const Value.absent(),
+    this.entryType = const Value.absent(),
+    this.direction = const Value.absent(),
+    this.amountMinor = const Value.absent(),
+    this.linkedTransactionId = const Value.absent(),
+    this.relatedGoalId = const Value.absent(),
+    this.entryDate = const Value.absent(),
+    this.note = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  GoalFundEntriesTableCompanion.insert({
+    required String id,
+    required String goalId,
+    required String entryType,
+    this.direction = const Value.absent(),
+    required int amountMinor,
+    this.linkedTransactionId = const Value.absent(),
+    this.relatedGoalId = const Value.absent(),
+    required int entryDate,
+    this.note = const Value.absent(),
+    required DateTime createdAt,
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       goalId = Value(goalId),
+       entryType = Value(entryType),
+       amountMinor = Value(amountMinor),
+       entryDate = Value(entryDate),
+       createdAt = Value(createdAt);
+  static Insertable<GoalFundEntriesTableData> custom({
+    Expression<String>? id,
+    Expression<String>? goalId,
+    Expression<String>? entryType,
+    Expression<String>? direction,
+    Expression<int>? amountMinor,
+    Expression<String>? linkedTransactionId,
+    Expression<String>? relatedGoalId,
+    Expression<int>? entryDate,
+    Expression<String>? note,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? deletedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (goalId != null) 'goal_id': goalId,
+      if (entryType != null) 'entry_type': entryType,
+      if (direction != null) 'direction': direction,
+      if (amountMinor != null) 'amount_minor': amountMinor,
+      if (linkedTransactionId != null)
+        'linked_transaction_id': linkedTransactionId,
+      if (relatedGoalId != null) 'related_goal_id': relatedGoalId,
+      if (entryDate != null) 'entry_date': entryDate,
+      if (note != null) 'note': note,
+      if (createdAt != null) 'created_at': createdAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  GoalFundEntriesTableCompanion copyWith({
+    Value<String>? id,
+    Value<String>? goalId,
+    Value<String>? entryType,
+    Value<String?>? direction,
+    Value<int>? amountMinor,
+    Value<String?>? linkedTransactionId,
+    Value<String?>? relatedGoalId,
+    Value<int>? entryDate,
+    Value<String?>? note,
+    Value<DateTime>? createdAt,
+    Value<DateTime?>? deletedAt,
+    Value<int>? rowid,
+  }) {
+    return GoalFundEntriesTableCompanion(
+      id: id ?? this.id,
+      goalId: goalId ?? this.goalId,
+      entryType: entryType ?? this.entryType,
+      direction: direction ?? this.direction,
+      amountMinor: amountMinor ?? this.amountMinor,
+      linkedTransactionId: linkedTransactionId ?? this.linkedTransactionId,
+      relatedGoalId: relatedGoalId ?? this.relatedGoalId,
+      entryDate: entryDate ?? this.entryDate,
+      note: note ?? this.note,
+      createdAt: createdAt ?? this.createdAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (goalId.present) {
+      map['goal_id'] = Variable<String>(goalId.value);
+    }
+    if (entryType.present) {
+      map['entry_type'] = Variable<String>(entryType.value);
+    }
+    if (direction.present) {
+      map['direction'] = Variable<String>(direction.value);
+    }
+    if (amountMinor.present) {
+      map['amount_minor'] = Variable<int>(amountMinor.value);
+    }
+    if (linkedTransactionId.present) {
+      map['linked_transaction_id'] = Variable<String>(
+        linkedTransactionId.value,
+      );
+    }
+    if (relatedGoalId.present) {
+      map['related_goal_id'] = Variable<String>(relatedGoalId.value);
+    }
+    if (entryDate.present) {
+      map['entry_date'] = Variable<int>(entryDate.value);
+    }
+    if (note.present) {
+      map['note'] = Variable<String>(note.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('GoalFundEntriesTableCompanion(')
+          ..write('id: $id, ')
+          ..write('goalId: $goalId, ')
+          ..write('entryType: $entryType, ')
+          ..write('direction: $direction, ')
+          ..write('amountMinor: $amountMinor, ')
+          ..write('linkedTransactionId: $linkedTransactionId, ')
+          ..write('relatedGoalId: $relatedGoalId, ')
+          ..write('entryDate: $entryDate, ')
+          ..write('note: $note, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $GoalTransactionAllocationsTableTable
+    extends GoalTransactionAllocationsTable
+    with
+        TableInfo<
+          $GoalTransactionAllocationsTableTable,
+          GoalTransactionAllocationsTableData
+        > {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $GoalTransactionAllocationsTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _goalIdMeta = const VerificationMeta('goalId');
+  @override
+  late final GeneratedColumn<String> goalId = GeneratedColumn<String>(
+    'goal_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES financial_goals (id)',
+    ),
+  );
+  static const VerificationMeta _transactionIdMeta = const VerificationMeta(
+    'transactionId',
+  );
+  @override
+  late final GeneratedColumn<String> transactionId = GeneratedColumn<String>(
+    'transaction_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES transactions (id)',
+    ),
+  );
+  static const VerificationMeta _amountMinorMeta = const VerificationMeta(
+    'amountMinor',
+  );
+  @override
+  late final GeneratedColumn<int> amountMinor = GeneratedColumn<int>(
+    'amount_minor',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    goalId,
+    transactionId,
+    amountMinor,
+    createdAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'goal_transaction_allocations';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<GoalTransactionAllocationsTableData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('goal_id')) {
+      context.handle(
+        _goalIdMeta,
+        goalId.isAcceptableOrUnknown(data['goal_id']!, _goalIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_goalIdMeta);
+    }
+    if (data.containsKey('transaction_id')) {
+      context.handle(
+        _transactionIdMeta,
+        transactionId.isAcceptableOrUnknown(
+          data['transaction_id']!,
+          _transactionIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_transactionIdMeta);
+    }
+    if (data.containsKey('amount_minor')) {
+      context.handle(
+        _amountMinorMeta,
+        amountMinor.isAcceptableOrUnknown(
+          data['amount_minor']!,
+          _amountMinorMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_amountMinorMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  GoalTransactionAllocationsTableData map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return GoalTransactionAllocationsTableData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      goalId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}goal_id'],
+      )!,
+      transactionId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}transaction_id'],
+      )!,
+      amountMinor: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}amount_minor'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+    );
+  }
+
+  @override
+  $GoalTransactionAllocationsTableTable createAlias(String alias) {
+    return $GoalTransactionAllocationsTableTable(attachedDatabase, alias);
+  }
+}
+
+class GoalTransactionAllocationsTableData extends DataClass
+    implements Insertable<GoalTransactionAllocationsTableData> {
+  final String id;
+  final String goalId;
+  final String transactionId;
+  final int amountMinor;
+  final DateTime createdAt;
+  const GoalTransactionAllocationsTableData({
+    required this.id,
+    required this.goalId,
+    required this.transactionId,
+    required this.amountMinor,
+    required this.createdAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['goal_id'] = Variable<String>(goalId);
+    map['transaction_id'] = Variable<String>(transactionId);
+    map['amount_minor'] = Variable<int>(amountMinor);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    return map;
+  }
+
+  GoalTransactionAllocationsTableCompanion toCompanion(bool nullToAbsent) {
+    return GoalTransactionAllocationsTableCompanion(
+      id: Value(id),
+      goalId: Value(goalId),
+      transactionId: Value(transactionId),
+      amountMinor: Value(amountMinor),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory GoalTransactionAllocationsTableData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return GoalTransactionAllocationsTableData(
+      id: serializer.fromJson<String>(json['id']),
+      goalId: serializer.fromJson<String>(json['goalId']),
+      transactionId: serializer.fromJson<String>(json['transactionId']),
+      amountMinor: serializer.fromJson<int>(json['amountMinor']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'goalId': serializer.toJson<String>(goalId),
+      'transactionId': serializer.toJson<String>(transactionId),
+      'amountMinor': serializer.toJson<int>(amountMinor),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+    };
+  }
+
+  GoalTransactionAllocationsTableData copyWith({
+    String? id,
+    String? goalId,
+    String? transactionId,
+    int? amountMinor,
+    DateTime? createdAt,
+  }) => GoalTransactionAllocationsTableData(
+    id: id ?? this.id,
+    goalId: goalId ?? this.goalId,
+    transactionId: transactionId ?? this.transactionId,
+    amountMinor: amountMinor ?? this.amountMinor,
+    createdAt: createdAt ?? this.createdAt,
+  );
+  GoalTransactionAllocationsTableData copyWithCompanion(
+    GoalTransactionAllocationsTableCompanion data,
+  ) {
+    return GoalTransactionAllocationsTableData(
+      id: data.id.present ? data.id.value : this.id,
+      goalId: data.goalId.present ? data.goalId.value : this.goalId,
+      transactionId: data.transactionId.present
+          ? data.transactionId.value
+          : this.transactionId,
+      amountMinor: data.amountMinor.present
+          ? data.amountMinor.value
+          : this.amountMinor,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('GoalTransactionAllocationsTableData(')
+          ..write('id: $id, ')
+          ..write('goalId: $goalId, ')
+          ..write('transactionId: $transactionId, ')
+          ..write('amountMinor: $amountMinor, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, goalId, transactionId, amountMinor, createdAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is GoalTransactionAllocationsTableData &&
+          other.id == this.id &&
+          other.goalId == this.goalId &&
+          other.transactionId == this.transactionId &&
+          other.amountMinor == this.amountMinor &&
+          other.createdAt == this.createdAt);
+}
+
+class GoalTransactionAllocationsTableCompanion
+    extends UpdateCompanion<GoalTransactionAllocationsTableData> {
+  final Value<String> id;
+  final Value<String> goalId;
+  final Value<String> transactionId;
+  final Value<int> amountMinor;
+  final Value<DateTime> createdAt;
+  final Value<int> rowid;
+  const GoalTransactionAllocationsTableCompanion({
+    this.id = const Value.absent(),
+    this.goalId = const Value.absent(),
+    this.transactionId = const Value.absent(),
+    this.amountMinor = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  GoalTransactionAllocationsTableCompanion.insert({
+    required String id,
+    required String goalId,
+    required String transactionId,
+    required int amountMinor,
+    required DateTime createdAt,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       goalId = Value(goalId),
+       transactionId = Value(transactionId),
+       amountMinor = Value(amountMinor),
+       createdAt = Value(createdAt);
+  static Insertable<GoalTransactionAllocationsTableData> custom({
+    Expression<String>? id,
+    Expression<String>? goalId,
+    Expression<String>? transactionId,
+    Expression<int>? amountMinor,
+    Expression<DateTime>? createdAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (goalId != null) 'goal_id': goalId,
+      if (transactionId != null) 'transaction_id': transactionId,
+      if (amountMinor != null) 'amount_minor': amountMinor,
+      if (createdAt != null) 'created_at': createdAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  GoalTransactionAllocationsTableCompanion copyWith({
+    Value<String>? id,
+    Value<String>? goalId,
+    Value<String>? transactionId,
+    Value<int>? amountMinor,
+    Value<DateTime>? createdAt,
+    Value<int>? rowid,
+  }) {
+    return GoalTransactionAllocationsTableCompanion(
+      id: id ?? this.id,
+      goalId: goalId ?? this.goalId,
+      transactionId: transactionId ?? this.transactionId,
+      amountMinor: amountMinor ?? this.amountMinor,
+      createdAt: createdAt ?? this.createdAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (goalId.present) {
+      map['goal_id'] = Variable<String>(goalId.value);
+    }
+    if (transactionId.present) {
+      map['transaction_id'] = Variable<String>(transactionId.value);
+    }
+    if (amountMinor.present) {
+      map['amount_minor'] = Variable<int>(amountMinor.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('GoalTransactionAllocationsTableCompanion(')
+          ..write('id: $id, ')
+          ..write('goalId: $goalId, ')
+          ..write('transactionId: $transactionId, ')
+          ..write('amountMinor: $amountMinor, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -7245,6 +9609,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $TransactionsTableTable transactionsTable =
       $TransactionsTableTable(this);
   late final $BudgetsTableTable budgetsTable = $BudgetsTableTable(this);
+  late final $FinancialGoalsTableTable financialGoalsTable =
+      $FinancialGoalsTableTable(this);
   late final $BudgetItemsTableTable budgetItemsTable = $BudgetItemsTableTable(
     this,
   );
@@ -7256,6 +9622,11 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $RecurringRuleWeekdaysTableTable(this);
   late final $RecurringOccurrencesTableTable recurringOccurrencesTable =
       $RecurringOccurrencesTableTable(this);
+  late final $GoalFundsTableTable goalFundsTable = $GoalFundsTableTable(this);
+  late final $GoalFundEntriesTableTable goalFundEntriesTable =
+      $GoalFundEntriesTableTable(this);
+  late final $GoalTransactionAllocationsTableTable
+  goalTransactionAllocationsTable = $GoalTransactionAllocationsTableTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -7266,11 +9637,15 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     categoriesTable,
     transactionsTable,
     budgetsTable,
+    financialGoalsTable,
     budgetItemsTable,
     budgetRolloversTable,
     recurringRulesTable,
     recurringRuleWeekdaysTable,
     recurringOccurrencesTable,
+    goalFundsTable,
+    goalFundEntriesTable,
+    goalTransactionAllocationsTable,
   ];
 }
 
@@ -7658,6 +10033,35 @@ final class $$AccountsTableTableReferences
     );
   }
 
+  static MultiTypedResultKey<
+    $FinancialGoalsTableTable,
+    List<FinancialGoalsTableData>
+  >
+  _financialGoalsTableRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.financialGoalsTable,
+        aliasName: 'accounts__id__financial_goals__linked_liability_account_id',
+      );
+
+  $$FinancialGoalsTableTableProcessedTableManager get financialGoalsTableRefs {
+    final manager =
+        $$FinancialGoalsTableTableTableManager(
+          $_db,
+          $_db.financialGoalsTable,
+        ).filter(
+          (f) => f.linkedLiabilityAccountId.id.sqlEquals(
+            $_itemColumn<String>('id')!,
+          ),
+        );
+
+    final cache = $_typedResult.readTableOrNull(
+      _financialGoalsTableRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
   static MultiTypedResultKey<$BudgetItemsTableTable, List<BudgetItemsTableData>>
   _budgetItemsTableRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.budgetItemsTable,
@@ -7845,6 +10249,31 @@ class $$AccountsTableTableFilterComposer
           }) => $$TransactionsTableTableFilterComposer(
             $db: $db,
             $table: $db.transactionsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> financialGoalsTableRefs(
+    Expression<bool> Function($$FinancialGoalsTableTableFilterComposer f) f,
+  ) {
+    final $$FinancialGoalsTableTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.financialGoalsTable,
+      getReferencedColumn: (t) => t.linkedLiabilityAccountId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FinancialGoalsTableTableFilterComposer(
+            $db: $db,
+            $table: $db.financialGoalsTable,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -8121,6 +10550,32 @@ class $$AccountsTableTableAnnotationComposer
     return f(composer);
   }
 
+  Expression<T> financialGoalsTableRefs<T extends Object>(
+    Expression<T> Function($$FinancialGoalsTableTableAnnotationComposer a) f,
+  ) {
+    final $$FinancialGoalsTableTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.financialGoalsTable,
+          getReferencedColumn: (t) => t.linkedLiabilityAccountId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$FinancialGoalsTableTableAnnotationComposer(
+                $db: $db,
+                $table: $db.financialGoalsTable,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+
   Expression<T> budgetItemsTableRefs<T extends Object>(
     Expression<T> Function($$BudgetItemsTableTableAnnotationComposer a) f,
   ) {
@@ -8215,6 +10670,7 @@ class $$AccountsTableTableTableManager
           PrefetchHooks Function({
             bool outgoingTransactions,
             bool incomingTransactions,
+            bool financialGoalsTableRefs,
             bool budgetItemsTableRefs,
             bool recurringRulesTableRefs,
             bool recurringDestination,
@@ -8307,6 +10763,7 @@ class $$AccountsTableTableTableManager
               ({
                 outgoingTransactions = false,
                 incomingTransactions = false,
+                financialGoalsTableRefs = false,
                 budgetItemsTableRefs = false,
                 recurringRulesTableRefs = false,
                 recurringDestination = false,
@@ -8316,6 +10773,7 @@ class $$AccountsTableTableTableManager
                   explicitlyWatchedTables: [
                     if (outgoingTransactions) db.transactionsTable,
                     if (incomingTransactions) db.transactionsTable,
+                    if (financialGoalsTableRefs) db.financialGoalsTable,
                     if (budgetItemsTableRefs) db.budgetItemsTable,
                     if (recurringRulesTableRefs) db.recurringRulesTable,
                     if (recurringDestination) db.recurringRulesTable,
@@ -8362,6 +10820,27 @@ class $$AccountsTableTableTableManager
                           referencedItemsForCurrentItem:
                               (item, referencedItems) => referencedItems.where(
                                 (e) => e.destinationAccountId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (financialGoalsTableRefs)
+                        await $_getPrefetchedData<
+                          AccountsTableData,
+                          $AccountsTableTable,
+                          FinancialGoalsTableData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$AccountsTableTableReferences
+                              ._financialGoalsTableRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$AccountsTableTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).financialGoalsTableRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.linkedLiabilityAccountId == item.id,
                               ),
                           typedResults: items,
                         ),
@@ -8451,6 +10930,7 @@ typedef $$AccountsTableTableProcessedTableManager =
       PrefetchHooks Function({
         bool outgoingTransactions,
         bool incomingTransactions,
+        bool financialGoalsTableRefs,
         bool budgetItemsTableRefs,
         bool recurringRulesTableRefs,
         bool recurringDestination,
@@ -9213,6 +11693,61 @@ final class $$TransactionsTableTableReferences
       manager.$state.copyWith(prefetchedData: cache),
     );
   }
+
+  static MultiTypedResultKey<
+    $GoalFundEntriesTableTable,
+    List<GoalFundEntriesTableData>
+  >
+  _goalFundEntriesTableRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.goalFundEntriesTable,
+        aliasName: 'transactions__id__goal_fund_entries__linked_transaction_id',
+      );
+
+  $$GoalFundEntriesTableTableProcessedTableManager
+  get goalFundEntriesTableRefs {
+    final manager =
+        $$GoalFundEntriesTableTableTableManager(
+          $_db,
+          $_db.goalFundEntriesTable,
+        ).filter(
+          (f) =>
+              f.linkedTransactionId.id.sqlEquals($_itemColumn<String>('id')!),
+        );
+
+    final cache = $_typedResult.readTableOrNull(
+      _goalFundEntriesTableRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<
+    $GoalTransactionAllocationsTableTable,
+    List<GoalTransactionAllocationsTableData>
+  >
+  _goalTransactionAllocationsTableRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.goalTransactionAllocationsTable,
+        aliasName:
+            'transactions__id__goal_transaction_allocations__transaction_id',
+      );
+
+  $$GoalTransactionAllocationsTableTableProcessedTableManager
+  get goalTransactionAllocationsTableRefs {
+    final manager = $$GoalTransactionAllocationsTableTableTableManager(
+      $_db,
+      $_db.goalTransactionAllocationsTable,
+    ).filter((f) => f.transactionId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _goalTransactionAllocationsTableRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$TransactionsTableTableFilterComposer
@@ -9361,6 +11896,60 @@ class $$TransactionsTableTableFilterComposer
               }) => $$RecurringOccurrencesTableTableFilterComposer(
                 $db: $db,
                 $table: $db.recurringOccurrencesTable,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+
+  Expression<bool> goalFundEntriesTableRefs(
+    Expression<bool> Function($$GoalFundEntriesTableTableFilterComposer f) f,
+  ) {
+    final $$GoalFundEntriesTableTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.goalFundEntriesTable,
+      getReferencedColumn: (t) => t.linkedTransactionId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$GoalFundEntriesTableTableFilterComposer(
+            $db: $db,
+            $table: $db.goalFundEntriesTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> goalTransactionAllocationsTableRefs(
+    Expression<bool> Function(
+      $$GoalTransactionAllocationsTableTableFilterComposer f,
+    )
+    f,
+  ) {
+    final $$GoalTransactionAllocationsTableTableFilterComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.goalTransactionAllocationsTable,
+          getReferencedColumn: (t) => t.transactionId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$GoalTransactionAllocationsTableTableFilterComposer(
+                $db: $db,
+                $table: $db.goalTransactionAllocationsTable,
                 $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
                 joinBuilder: joinBuilder,
                 $removeJoinBuilderFromRootComposer:
@@ -9644,6 +12233,61 @@ class $$TransactionsTableTableAnnotationComposer
         );
     return f(composer);
   }
+
+  Expression<T> goalFundEntriesTableRefs<T extends Object>(
+    Expression<T> Function($$GoalFundEntriesTableTableAnnotationComposer a) f,
+  ) {
+    final $$GoalFundEntriesTableTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.goalFundEntriesTable,
+          getReferencedColumn: (t) => t.linkedTransactionId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$GoalFundEntriesTableTableAnnotationComposer(
+                $db: $db,
+                $table: $db.goalFundEntriesTable,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+
+  Expression<T> goalTransactionAllocationsTableRefs<T extends Object>(
+    Expression<T> Function(
+      $$GoalTransactionAllocationsTableTableAnnotationComposer a,
+    )
+    f,
+  ) {
+    final $$GoalTransactionAllocationsTableTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.goalTransactionAllocationsTable,
+          getReferencedColumn: (t) => t.transactionId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$GoalTransactionAllocationsTableTableAnnotationComposer(
+                $db: $db,
+                $table: $db.goalTransactionAllocationsTable,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
 }
 
 class $$TransactionsTableTableTableManager
@@ -9664,6 +12308,8 @@ class $$TransactionsTableTableTableManager
             bool destinationAccountId,
             bool categoryId,
             bool recurringOccurrencesTableRefs,
+            bool goalFundEntriesTableRefs,
+            bool goalTransactionAllocationsTableRefs,
           })
         > {
   $$TransactionsTableTableTableManager(
@@ -9760,12 +12406,17 @@ class $$TransactionsTableTableTableManager
                 destinationAccountId = false,
                 categoryId = false,
                 recurringOccurrencesTableRefs = false,
+                goalFundEntriesTableRefs = false,
+                goalTransactionAllocationsTableRefs = false,
               }) {
                 return PrefetchHooks(
                   db: db,
                   explicitlyWatchedTables: [
                     if (recurringOccurrencesTableRefs)
                       db.recurringOccurrencesTable,
+                    if (goalFundEntriesTableRefs) db.goalFundEntriesTable,
+                    if (goalTransactionAllocationsTableRefs)
+                      db.goalTransactionAllocationsTable,
                   ],
                   addJoins:
                       <
@@ -9854,6 +12505,48 @@ class $$TransactionsTableTableTableManager
                               ),
                           typedResults: items,
                         ),
+                      if (goalFundEntriesTableRefs)
+                        await $_getPrefetchedData<
+                          TransactionsTableData,
+                          $TransactionsTableTable,
+                          GoalFundEntriesTableData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$TransactionsTableTableReferences
+                              ._goalFundEntriesTableRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$TransactionsTableTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).goalFundEntriesTableRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.linkedTransactionId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (goalTransactionAllocationsTableRefs)
+                        await $_getPrefetchedData<
+                          TransactionsTableData,
+                          $TransactionsTableTable,
+                          GoalTransactionAllocationsTableData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$TransactionsTableTableReferences
+                              ._goalTransactionAllocationsTableRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$TransactionsTableTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).goalTransactionAllocationsTableRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.transactionId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
                     ];
                   },
                 );
@@ -9879,6 +12572,8 @@ typedef $$TransactionsTableTableProcessedTableManager =
         bool destinationAccountId,
         bool categoryId,
         bool recurringOccurrencesTableRefs,
+        bool goalFundEntriesTableRefs,
+        bool goalTransactionAllocationsTableRefs,
       })
     >;
 typedef $$BudgetsTableTableCreateCompanionBuilder =
@@ -10491,6 +13186,1031 @@ typedef $$BudgetsTableTableProcessedTableManager =
         bool rolloversTo,
       })
     >;
+typedef $$FinancialGoalsTableTableCreateCompanionBuilder =
+    FinancialGoalsTableCompanion Function({
+      required String id,
+      required String name,
+      required String goalType,
+      required int targetAmountMinor,
+      required String currencyCode,
+      Value<int?> targetDate,
+      Value<String> priority,
+      Value<String> status,
+      Value<String?> linkedLiabilityAccountId,
+      Value<String?> notes,
+      required DateTime createdAt,
+      required DateTime updatedAt,
+      Value<DateTime?> completedAt,
+      Value<DateTime?> cancelledAt,
+      Value<int> rowid,
+    });
+typedef $$FinancialGoalsTableTableUpdateCompanionBuilder =
+    FinancialGoalsTableCompanion Function({
+      Value<String> id,
+      Value<String> name,
+      Value<String> goalType,
+      Value<int> targetAmountMinor,
+      Value<String> currencyCode,
+      Value<int?> targetDate,
+      Value<String> priority,
+      Value<String> status,
+      Value<String?> linkedLiabilityAccountId,
+      Value<String?> notes,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<DateTime?> completedAt,
+      Value<DateTime?> cancelledAt,
+      Value<int> rowid,
+    });
+
+final class $$FinancialGoalsTableTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $FinancialGoalsTableTable,
+          FinancialGoalsTableData
+        > {
+  $$FinancialGoalsTableTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $AccountsTableTable _linkedLiabilityAccountIdTable(_$AppDatabase db) =>
+      db.accountsTable.createAlias(
+        'financial_goals__linked_liability_account_id__accounts__id',
+      );
+
+  $$AccountsTableTableProcessedTableManager? get linkedLiabilityAccountId {
+    final $_column = $_itemColumn<String>('linked_liability_account_id');
+    if ($_column == null) return null;
+    final manager = $$AccountsTableTableTableManager(
+      $_db,
+      $_db.accountsTable,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(
+      _linkedLiabilityAccountIdTable($_db),
+    );
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static MultiTypedResultKey<$BudgetItemsTableTable, List<BudgetItemsTableData>>
+  _budgetItemsTableRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.budgetItemsTable,
+    aliasName: 'financial_goals__id__budget_items__linked_goal_id',
+  );
+
+  $$BudgetItemsTableTableProcessedTableManager get budgetItemsTableRefs {
+    final manager = $$BudgetItemsTableTableTableManager(
+      $_db,
+      $_db.budgetItemsTable,
+    ).filter((f) => f.linkedGoalId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _budgetItemsTableRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$GoalFundsTableTable, List<GoalFundsTableData>>
+  _goalFundsTableRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.goalFundsTable,
+    aliasName: 'financial_goals__id__goal_funds__goal_id',
+  );
+
+  $$GoalFundsTableTableProcessedTableManager get goalFundsTableRefs {
+    final manager = $$GoalFundsTableTableTableManager(
+      $_db,
+      $_db.goalFundsTable,
+    ).filter((f) => f.goalId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_goalFundsTableRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<
+    $GoalFundEntriesTableTable,
+    List<GoalFundEntriesTableData>
+  >
+  _goalFundEntriesTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.goalFundEntriesTable,
+    aliasName: 'financial_goals__id__goal_fund_entries__goal_id',
+  );
+
+  $$GoalFundEntriesTableTableProcessedTableManager get goalFundEntries {
+    final manager = $$GoalFundEntriesTableTableTableManager(
+      $_db,
+      $_db.goalFundEntriesTable,
+    ).filter((f) => f.goalId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_goalFundEntriesTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<
+    $GoalFundEntriesTableTable,
+    List<GoalFundEntriesTableData>
+  >
+  _goalFundEntriesRelatedTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.goalFundEntriesTable,
+        aliasName: 'financial_goals__id__goal_fund_entries__related_goal_id',
+      );
+
+  $$GoalFundEntriesTableTableProcessedTableManager get goalFundEntriesRelated {
+    final manager = $$GoalFundEntriesTableTableTableManager(
+      $_db,
+      $_db.goalFundEntriesTable,
+    ).filter((f) => f.relatedGoalId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _goalFundEntriesRelatedTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<
+    $GoalTransactionAllocationsTableTable,
+    List<GoalTransactionAllocationsTableData>
+  >
+  _goalTransactionAllocationsTableRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.goalTransactionAllocationsTable,
+        aliasName: 'financial_goals__id__goal_transaction_allocations__goal_id',
+      );
+
+  $$GoalTransactionAllocationsTableTableProcessedTableManager
+  get goalTransactionAllocationsTableRefs {
+    final manager = $$GoalTransactionAllocationsTableTableTableManager(
+      $_db,
+      $_db.goalTransactionAllocationsTable,
+    ).filter((f) => f.goalId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _goalTransactionAllocationsTableRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$FinancialGoalsTableTableFilterComposer
+    extends Composer<_$AppDatabase, $FinancialGoalsTableTable> {
+  $$FinancialGoalsTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get goalType => $composableBuilder(
+    column: $table.goalType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get targetAmountMinor => $composableBuilder(
+    column: $table.targetAmountMinor,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get currencyCode => $composableBuilder(
+    column: $table.currencyCode,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get targetDate => $composableBuilder(
+    column: $table.targetDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get priority => $composableBuilder(
+    column: $table.priority,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get completedAt => $composableBuilder(
+    column: $table.completedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get cancelledAt => $composableBuilder(
+    column: $table.cancelledAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$AccountsTableTableFilterComposer get linkedLiabilityAccountId {
+    final $$AccountsTableTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.linkedLiabilityAccountId,
+      referencedTable: $db.accountsTable,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AccountsTableTableFilterComposer(
+            $db: $db,
+            $table: $db.accountsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<bool> budgetItemsTableRefs(
+    Expression<bool> Function($$BudgetItemsTableTableFilterComposer f) f,
+  ) {
+    final $$BudgetItemsTableTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.budgetItemsTable,
+      getReferencedColumn: (t) => t.linkedGoalId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BudgetItemsTableTableFilterComposer(
+            $db: $db,
+            $table: $db.budgetItemsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> goalFundsTableRefs(
+    Expression<bool> Function($$GoalFundsTableTableFilterComposer f) f,
+  ) {
+    final $$GoalFundsTableTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.goalFundsTable,
+      getReferencedColumn: (t) => t.goalId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$GoalFundsTableTableFilterComposer(
+            $db: $db,
+            $table: $db.goalFundsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> goalFundEntries(
+    Expression<bool> Function($$GoalFundEntriesTableTableFilterComposer f) f,
+  ) {
+    final $$GoalFundEntriesTableTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.goalFundEntriesTable,
+      getReferencedColumn: (t) => t.goalId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$GoalFundEntriesTableTableFilterComposer(
+            $db: $db,
+            $table: $db.goalFundEntriesTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> goalFundEntriesRelated(
+    Expression<bool> Function($$GoalFundEntriesTableTableFilterComposer f) f,
+  ) {
+    final $$GoalFundEntriesTableTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.goalFundEntriesTable,
+      getReferencedColumn: (t) => t.relatedGoalId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$GoalFundEntriesTableTableFilterComposer(
+            $db: $db,
+            $table: $db.goalFundEntriesTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> goalTransactionAllocationsTableRefs(
+    Expression<bool> Function(
+      $$GoalTransactionAllocationsTableTableFilterComposer f,
+    )
+    f,
+  ) {
+    final $$GoalTransactionAllocationsTableTableFilterComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.goalTransactionAllocationsTable,
+          getReferencedColumn: (t) => t.goalId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$GoalTransactionAllocationsTableTableFilterComposer(
+                $db: $db,
+                $table: $db.goalTransactionAllocationsTable,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+}
+
+class $$FinancialGoalsTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $FinancialGoalsTableTable> {
+  $$FinancialGoalsTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get goalType => $composableBuilder(
+    column: $table.goalType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get targetAmountMinor => $composableBuilder(
+    column: $table.targetAmountMinor,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get currencyCode => $composableBuilder(
+    column: $table.currencyCode,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get targetDate => $composableBuilder(
+    column: $table.targetDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get priority => $composableBuilder(
+    column: $table.priority,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get completedAt => $composableBuilder(
+    column: $table.completedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get cancelledAt => $composableBuilder(
+    column: $table.cancelledAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$AccountsTableTableOrderingComposer get linkedLiabilityAccountId {
+    final $$AccountsTableTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.linkedLiabilityAccountId,
+      referencedTable: $db.accountsTable,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AccountsTableTableOrderingComposer(
+            $db: $db,
+            $table: $db.accountsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$FinancialGoalsTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $FinancialGoalsTableTable> {
+  $$FinancialGoalsTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get goalType =>
+      $composableBuilder(column: $table.goalType, builder: (column) => column);
+
+  GeneratedColumn<int> get targetAmountMinor => $composableBuilder(
+    column: $table.targetAmountMinor,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get currencyCode => $composableBuilder(
+    column: $table.currencyCode,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get targetDate => $composableBuilder(
+    column: $table.targetDate,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get priority =>
+      $composableBuilder(column: $table.priority, builder: (column) => column);
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<String> get notes =>
+      $composableBuilder(column: $table.notes, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get completedAt => $composableBuilder(
+    column: $table.completedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get cancelledAt => $composableBuilder(
+    column: $table.cancelledAt,
+    builder: (column) => column,
+  );
+
+  $$AccountsTableTableAnnotationComposer get linkedLiabilityAccountId {
+    final $$AccountsTableTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.linkedLiabilityAccountId,
+      referencedTable: $db.accountsTable,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AccountsTableTableAnnotationComposer(
+            $db: $db,
+            $table: $db.accountsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<T> budgetItemsTableRefs<T extends Object>(
+    Expression<T> Function($$BudgetItemsTableTableAnnotationComposer a) f,
+  ) {
+    final $$BudgetItemsTableTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.budgetItemsTable,
+      getReferencedColumn: (t) => t.linkedGoalId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BudgetItemsTableTableAnnotationComposer(
+            $db: $db,
+            $table: $db.budgetItemsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> goalFundsTableRefs<T extends Object>(
+    Expression<T> Function($$GoalFundsTableTableAnnotationComposer a) f,
+  ) {
+    final $$GoalFundsTableTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.goalFundsTable,
+      getReferencedColumn: (t) => t.goalId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$GoalFundsTableTableAnnotationComposer(
+            $db: $db,
+            $table: $db.goalFundsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> goalFundEntries<T extends Object>(
+    Expression<T> Function($$GoalFundEntriesTableTableAnnotationComposer a) f,
+  ) {
+    final $$GoalFundEntriesTableTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.goalFundEntriesTable,
+          getReferencedColumn: (t) => t.goalId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$GoalFundEntriesTableTableAnnotationComposer(
+                $db: $db,
+                $table: $db.goalFundEntriesTable,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+
+  Expression<T> goalFundEntriesRelated<T extends Object>(
+    Expression<T> Function($$GoalFundEntriesTableTableAnnotationComposer a) f,
+  ) {
+    final $$GoalFundEntriesTableTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.goalFundEntriesTable,
+          getReferencedColumn: (t) => t.relatedGoalId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$GoalFundEntriesTableTableAnnotationComposer(
+                $db: $db,
+                $table: $db.goalFundEntriesTable,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+
+  Expression<T> goalTransactionAllocationsTableRefs<T extends Object>(
+    Expression<T> Function(
+      $$GoalTransactionAllocationsTableTableAnnotationComposer a,
+    )
+    f,
+  ) {
+    final $$GoalTransactionAllocationsTableTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.goalTransactionAllocationsTable,
+          getReferencedColumn: (t) => t.goalId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$GoalTransactionAllocationsTableTableAnnotationComposer(
+                $db: $db,
+                $table: $db.goalTransactionAllocationsTable,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+}
+
+class $$FinancialGoalsTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $FinancialGoalsTableTable,
+          FinancialGoalsTableData,
+          $$FinancialGoalsTableTableFilterComposer,
+          $$FinancialGoalsTableTableOrderingComposer,
+          $$FinancialGoalsTableTableAnnotationComposer,
+          $$FinancialGoalsTableTableCreateCompanionBuilder,
+          $$FinancialGoalsTableTableUpdateCompanionBuilder,
+          (FinancialGoalsTableData, $$FinancialGoalsTableTableReferences),
+          FinancialGoalsTableData,
+          PrefetchHooks Function({
+            bool linkedLiabilityAccountId,
+            bool budgetItemsTableRefs,
+            bool goalFundsTableRefs,
+            bool goalFundEntries,
+            bool goalFundEntriesRelated,
+            bool goalTransactionAllocationsTableRefs,
+          })
+        > {
+  $$FinancialGoalsTableTableTableManager(
+    _$AppDatabase db,
+    $FinancialGoalsTableTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$FinancialGoalsTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$FinancialGoalsTableTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$FinancialGoalsTableTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String> goalType = const Value.absent(),
+                Value<int> targetAmountMinor = const Value.absent(),
+                Value<String> currencyCode = const Value.absent(),
+                Value<int?> targetDate = const Value.absent(),
+                Value<String> priority = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<String?> linkedLiabilityAccountId = const Value.absent(),
+                Value<String?> notes = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> completedAt = const Value.absent(),
+                Value<DateTime?> cancelledAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => FinancialGoalsTableCompanion(
+                id: id,
+                name: name,
+                goalType: goalType,
+                targetAmountMinor: targetAmountMinor,
+                currencyCode: currencyCode,
+                targetDate: targetDate,
+                priority: priority,
+                status: status,
+                linkedLiabilityAccountId: linkedLiabilityAccountId,
+                notes: notes,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                completedAt: completedAt,
+                cancelledAt: cancelledAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String name,
+                required String goalType,
+                required int targetAmountMinor,
+                required String currencyCode,
+                Value<int?> targetDate = const Value.absent(),
+                Value<String> priority = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<String?> linkedLiabilityAccountId = const Value.absent(),
+                Value<String?> notes = const Value.absent(),
+                required DateTime createdAt,
+                required DateTime updatedAt,
+                Value<DateTime?> completedAt = const Value.absent(),
+                Value<DateTime?> cancelledAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => FinancialGoalsTableCompanion.insert(
+                id: id,
+                name: name,
+                goalType: goalType,
+                targetAmountMinor: targetAmountMinor,
+                currencyCode: currencyCode,
+                targetDate: targetDate,
+                priority: priority,
+                status: status,
+                linkedLiabilityAccountId: linkedLiabilityAccountId,
+                notes: notes,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                completedAt: completedAt,
+                cancelledAt: cancelledAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$FinancialGoalsTableTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback:
+              ({
+                linkedLiabilityAccountId = false,
+                budgetItemsTableRefs = false,
+                goalFundsTableRefs = false,
+                goalFundEntries = false,
+                goalFundEntriesRelated = false,
+                goalTransactionAllocationsTableRefs = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (budgetItemsTableRefs) db.budgetItemsTable,
+                    if (goalFundsTableRefs) db.goalFundsTable,
+                    if (goalFundEntries) db.goalFundEntriesTable,
+                    if (goalFundEntriesRelated) db.goalFundEntriesTable,
+                    if (goalTransactionAllocationsTableRefs)
+                      db.goalTransactionAllocationsTable,
+                  ],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (linkedLiabilityAccountId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn:
+                                        table.linkedLiabilityAccountId,
+                                    referencedTable:
+                                        $$FinancialGoalsTableTableReferences
+                                            ._linkedLiabilityAccountIdTable(db),
+                                    referencedColumn:
+                                        $$FinancialGoalsTableTableReferences
+                                            ._linkedLiabilityAccountIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (budgetItemsTableRefs)
+                        await $_getPrefetchedData<
+                          FinancialGoalsTableData,
+                          $FinancialGoalsTableTable,
+                          BudgetItemsTableData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$FinancialGoalsTableTableReferences
+                              ._budgetItemsTableRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$FinancialGoalsTableTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).budgetItemsTableRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.linkedGoalId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (goalFundsTableRefs)
+                        await $_getPrefetchedData<
+                          FinancialGoalsTableData,
+                          $FinancialGoalsTableTable,
+                          GoalFundsTableData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$FinancialGoalsTableTableReferences
+                              ._goalFundsTableRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$FinancialGoalsTableTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).goalFundsTableRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.goalId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (goalFundEntries)
+                        await $_getPrefetchedData<
+                          FinancialGoalsTableData,
+                          $FinancialGoalsTableTable,
+                          GoalFundEntriesTableData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$FinancialGoalsTableTableReferences
+                              ._goalFundEntriesTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$FinancialGoalsTableTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).goalFundEntries,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.goalId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (goalFundEntriesRelated)
+                        await $_getPrefetchedData<
+                          FinancialGoalsTableData,
+                          $FinancialGoalsTableTable,
+                          GoalFundEntriesTableData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$FinancialGoalsTableTableReferences
+                              ._goalFundEntriesRelatedTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$FinancialGoalsTableTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).goalFundEntriesRelated,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.relatedGoalId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (goalTransactionAllocationsTableRefs)
+                        await $_getPrefetchedData<
+                          FinancialGoalsTableData,
+                          $FinancialGoalsTableTable,
+                          GoalTransactionAllocationsTableData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$FinancialGoalsTableTableReferences
+                              ._goalTransactionAllocationsTableRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$FinancialGoalsTableTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).goalTransactionAllocationsTableRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.goalId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $$FinancialGoalsTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $FinancialGoalsTableTable,
+      FinancialGoalsTableData,
+      $$FinancialGoalsTableTableFilterComposer,
+      $$FinancialGoalsTableTableOrderingComposer,
+      $$FinancialGoalsTableTableAnnotationComposer,
+      $$FinancialGoalsTableTableCreateCompanionBuilder,
+      $$FinancialGoalsTableTableUpdateCompanionBuilder,
+      (FinancialGoalsTableData, $$FinancialGoalsTableTableReferences),
+      FinancialGoalsTableData,
+      PrefetchHooks Function({
+        bool linkedLiabilityAccountId,
+        bool budgetItemsTableRefs,
+        bool goalFundsTableRefs,
+        bool goalFundEntries,
+        bool goalFundEntriesRelated,
+        bool goalTransactionAllocationsTableRefs,
+      })
+    >;
 typedef $$BudgetItemsTableTableCreateCompanionBuilder =
     BudgetItemsTableCompanion Function({
       required String id,
@@ -10503,6 +14223,7 @@ typedef $$BudgetItemsTableTableCreateCompanionBuilder =
       Value<bool> rolloverEnabled,
       Value<int> displayOrder,
       Value<String?> notes,
+      Value<String?> linkedGoalId,
       required DateTime createdAt,
       required DateTime updatedAt,
       Value<int> rowid,
@@ -10519,6 +14240,7 @@ typedef $$BudgetItemsTableTableUpdateCompanionBuilder =
       Value<bool> rolloverEnabled,
       Value<int> displayOrder,
       Value<String?> notes,
+      Value<String?> linkedGoalId,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
       Value<int> rowid,
@@ -10583,6 +14305,24 @@ final class $$BudgetItemsTableTableReferences
       $_db.accountsTable,
     ).filter((f) => f.id.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_accountIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $FinancialGoalsTableTable _linkedGoalIdTable(_$AppDatabase db) => db
+      .financialGoalsTable
+      .createAlias('budget_items__linked_goal_id__financial_goals__id');
+
+  $$FinancialGoalsTableTableProcessedTableManager? get linkedGoalId {
+    final $_column = $_itemColumn<String>('linked_goal_id');
+    if ($_column == null) return null;
+    final manager = $$FinancialGoalsTableTableTableManager(
+      $_db,
+      $_db.financialGoalsTable,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_linkedGoalIdTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: [item]),
@@ -10752,6 +14492,29 @@ class $$BudgetItemsTableTableFilterComposer
           }) => $$AccountsTableTableFilterComposer(
             $db: $db,
             $table: $db.accountsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$FinancialGoalsTableTableFilterComposer get linkedGoalId {
+    final $$FinancialGoalsTableTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.linkedGoalId,
+      referencedTable: $db.financialGoalsTable,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FinancialGoalsTableTableFilterComposer(
+            $db: $db,
+            $table: $db.financialGoalsTable,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -10934,6 +14697,30 @@ class $$BudgetItemsTableTableOrderingComposer
     );
     return composer;
   }
+
+  $$FinancialGoalsTableTableOrderingComposer get linkedGoalId {
+    final $$FinancialGoalsTableTableOrderingComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.linkedGoalId,
+          referencedTable: $db.financialGoalsTable,
+          getReferencedColumn: (t) => t.id,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$FinancialGoalsTableTableOrderingComposer(
+                $db: $db,
+                $table: $db.financialGoalsTable,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return composer;
+  }
 }
 
 class $$BudgetItemsTableTableAnnotationComposer
@@ -11049,6 +14836,30 @@ class $$BudgetItemsTableTableAnnotationComposer
     return composer;
   }
 
+  $$FinancialGoalsTableTableAnnotationComposer get linkedGoalId {
+    final $$FinancialGoalsTableTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.linkedGoalId,
+          referencedTable: $db.financialGoalsTable,
+          getReferencedColumn: (t) => t.id,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$FinancialGoalsTableTableAnnotationComposer(
+                $db: $db,
+                $table: $db.financialGoalsTable,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return composer;
+  }
+
   Expression<T> rolloversFromItem<T extends Object>(
     Expression<T> Function($$BudgetRolloversTableTableAnnotationComposer a) f,
   ) {
@@ -11119,6 +14930,7 @@ class $$BudgetItemsTableTableTableManager
             bool budgetId,
             bool categoryId,
             bool accountId,
+            bool linkedGoalId,
             bool rolloversFromItem,
             bool rolloversToItem,
           })
@@ -11148,6 +14960,7 @@ class $$BudgetItemsTableTableTableManager
                 Value<bool> rolloverEnabled = const Value.absent(),
                 Value<int> displayOrder = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
+                Value<String?> linkedGoalId = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
@@ -11162,6 +14975,7 @@ class $$BudgetItemsTableTableTableManager
                 rolloverEnabled: rolloverEnabled,
                 displayOrder: displayOrder,
                 notes: notes,
+                linkedGoalId: linkedGoalId,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 rowid: rowid,
@@ -11178,6 +14992,7 @@ class $$BudgetItemsTableTableTableManager
                 Value<bool> rolloverEnabled = const Value.absent(),
                 Value<int> displayOrder = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
+                Value<String?> linkedGoalId = const Value.absent(),
                 required DateTime createdAt,
                 required DateTime updatedAt,
                 Value<int> rowid = const Value.absent(),
@@ -11192,6 +15007,7 @@ class $$BudgetItemsTableTableTableManager
                 rolloverEnabled: rolloverEnabled,
                 displayOrder: displayOrder,
                 notes: notes,
+                linkedGoalId: linkedGoalId,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 rowid: rowid,
@@ -11209,6 +15025,7 @@ class $$BudgetItemsTableTableTableManager
                 budgetId = false,
                 categoryId = false,
                 accountId = false,
+                linkedGoalId = false,
                 rolloversFromItem = false,
                 rolloversToItem = false,
               }) {
@@ -11275,6 +15092,21 @@ class $$BudgetItemsTableTableTableManager
                                     referencedColumn:
                                         $$BudgetItemsTableTableReferences
                                             ._accountIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+                        if (linkedGoalId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.linkedGoalId,
+                                    referencedTable:
+                                        $$BudgetItemsTableTableReferences
+                                            ._linkedGoalIdTable(db),
+                                    referencedColumn:
+                                        $$BudgetItemsTableTableReferences
+                                            ._linkedGoalIdTable(db)
                                             .id,
                                   )
                                   as T;
@@ -11350,6 +15182,7 @@ typedef $$BudgetItemsTableTableProcessedTableManager =
         bool budgetId,
         bool categoryId,
         bool accountId,
+        bool linkedGoalId,
         bool rolloversFromItem,
         bool rolloversToItem,
       })
@@ -14075,6 +17908,1436 @@ typedef $$RecurringOccurrencesTableTableProcessedTableManager =
         bool generatedTransactionId,
       })
     >;
+typedef $$GoalFundsTableTableCreateCompanionBuilder =
+    GoalFundsTableCompanion Function({
+      required String id,
+      required String goalId,
+      Value<int> currentAllocatedMinor,
+      required DateTime createdAt,
+      required DateTime updatedAt,
+      Value<int> rowid,
+    });
+typedef $$GoalFundsTableTableUpdateCompanionBuilder =
+    GoalFundsTableCompanion Function({
+      Value<String> id,
+      Value<String> goalId,
+      Value<int> currentAllocatedMinor,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
+
+final class $$GoalFundsTableTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $GoalFundsTableTable,
+          GoalFundsTableData
+        > {
+  $$GoalFundsTableTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $FinancialGoalsTableTable _goalIdTable(_$AppDatabase db) => db
+      .financialGoalsTable
+      .createAlias('goal_funds__goal_id__financial_goals__id');
+
+  $$FinancialGoalsTableTableProcessedTableManager get goalId {
+    final $_column = $_itemColumn<String>('goal_id')!;
+
+    final manager = $$FinancialGoalsTableTableTableManager(
+      $_db,
+      $_db.financialGoalsTable,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_goalIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$GoalFundsTableTableFilterComposer
+    extends Composer<_$AppDatabase, $GoalFundsTableTable> {
+  $$GoalFundsTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get currentAllocatedMinor => $composableBuilder(
+    column: $table.currentAllocatedMinor,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$FinancialGoalsTableTableFilterComposer get goalId {
+    final $$FinancialGoalsTableTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.goalId,
+      referencedTable: $db.financialGoalsTable,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FinancialGoalsTableTableFilterComposer(
+            $db: $db,
+            $table: $db.financialGoalsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$GoalFundsTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $GoalFundsTableTable> {
+  $$GoalFundsTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get currentAllocatedMinor => $composableBuilder(
+    column: $table.currentAllocatedMinor,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$FinancialGoalsTableTableOrderingComposer get goalId {
+    final $$FinancialGoalsTableTableOrderingComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.goalId,
+          referencedTable: $db.financialGoalsTable,
+          getReferencedColumn: (t) => t.id,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$FinancialGoalsTableTableOrderingComposer(
+                $db: $db,
+                $table: $db.financialGoalsTable,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return composer;
+  }
+}
+
+class $$GoalFundsTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $GoalFundsTableTable> {
+  $$GoalFundsTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get currentAllocatedMinor => $composableBuilder(
+    column: $table.currentAllocatedMinor,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  $$FinancialGoalsTableTableAnnotationComposer get goalId {
+    final $$FinancialGoalsTableTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.goalId,
+          referencedTable: $db.financialGoalsTable,
+          getReferencedColumn: (t) => t.id,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$FinancialGoalsTableTableAnnotationComposer(
+                $db: $db,
+                $table: $db.financialGoalsTable,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return composer;
+  }
+}
+
+class $$GoalFundsTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $GoalFundsTableTable,
+          GoalFundsTableData,
+          $$GoalFundsTableTableFilterComposer,
+          $$GoalFundsTableTableOrderingComposer,
+          $$GoalFundsTableTableAnnotationComposer,
+          $$GoalFundsTableTableCreateCompanionBuilder,
+          $$GoalFundsTableTableUpdateCompanionBuilder,
+          (GoalFundsTableData, $$GoalFundsTableTableReferences),
+          GoalFundsTableData,
+          PrefetchHooks Function({bool goalId})
+        > {
+  $$GoalFundsTableTableTableManager(
+    _$AppDatabase db,
+    $GoalFundsTableTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$GoalFundsTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$GoalFundsTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$GoalFundsTableTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> goalId = const Value.absent(),
+                Value<int> currentAllocatedMinor = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => GoalFundsTableCompanion(
+                id: id,
+                goalId: goalId,
+                currentAllocatedMinor: currentAllocatedMinor,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String goalId,
+                Value<int> currentAllocatedMinor = const Value.absent(),
+                required DateTime createdAt,
+                required DateTime updatedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => GoalFundsTableCompanion.insert(
+                id: id,
+                goalId: goalId,
+                currentAllocatedMinor: currentAllocatedMinor,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$GoalFundsTableTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({goalId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (goalId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.goalId,
+                                referencedTable: $$GoalFundsTableTableReferences
+                                    ._goalIdTable(db),
+                                referencedColumn:
+                                    $$GoalFundsTableTableReferences
+                                        ._goalIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$GoalFundsTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $GoalFundsTableTable,
+      GoalFundsTableData,
+      $$GoalFundsTableTableFilterComposer,
+      $$GoalFundsTableTableOrderingComposer,
+      $$GoalFundsTableTableAnnotationComposer,
+      $$GoalFundsTableTableCreateCompanionBuilder,
+      $$GoalFundsTableTableUpdateCompanionBuilder,
+      (GoalFundsTableData, $$GoalFundsTableTableReferences),
+      GoalFundsTableData,
+      PrefetchHooks Function({bool goalId})
+    >;
+typedef $$GoalFundEntriesTableTableCreateCompanionBuilder =
+    GoalFundEntriesTableCompanion Function({
+      required String id,
+      required String goalId,
+      required String entryType,
+      Value<String?> direction,
+      required int amountMinor,
+      Value<String?> linkedTransactionId,
+      Value<String?> relatedGoalId,
+      required int entryDate,
+      Value<String?> note,
+      required DateTime createdAt,
+      Value<DateTime?> deletedAt,
+      Value<int> rowid,
+    });
+typedef $$GoalFundEntriesTableTableUpdateCompanionBuilder =
+    GoalFundEntriesTableCompanion Function({
+      Value<String> id,
+      Value<String> goalId,
+      Value<String> entryType,
+      Value<String?> direction,
+      Value<int> amountMinor,
+      Value<String?> linkedTransactionId,
+      Value<String?> relatedGoalId,
+      Value<int> entryDate,
+      Value<String?> note,
+      Value<DateTime> createdAt,
+      Value<DateTime?> deletedAt,
+      Value<int> rowid,
+    });
+
+final class $$GoalFundEntriesTableTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $GoalFundEntriesTableTable,
+          GoalFundEntriesTableData
+        > {
+  $$GoalFundEntriesTableTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $FinancialGoalsTableTable _goalIdTable(_$AppDatabase db) => db
+      .financialGoalsTable
+      .createAlias('goal_fund_entries__goal_id__financial_goals__id');
+
+  $$FinancialGoalsTableTableProcessedTableManager get goalId {
+    final $_column = $_itemColumn<String>('goal_id')!;
+
+    final manager = $$FinancialGoalsTableTableTableManager(
+      $_db,
+      $_db.financialGoalsTable,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_goalIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $TransactionsTableTable _linkedTransactionIdTable(_$AppDatabase db) =>
+      db.transactionsTable.createAlias(
+        'goal_fund_entries__linked_transaction_id__transactions__id',
+      );
+
+  $$TransactionsTableTableProcessedTableManager? get linkedTransactionId {
+    final $_column = $_itemColumn<String>('linked_transaction_id');
+    if ($_column == null) return null;
+    final manager = $$TransactionsTableTableTableManager(
+      $_db,
+      $_db.transactionsTable,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_linkedTransactionIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $FinancialGoalsTableTable _relatedGoalIdTable(_$AppDatabase db) => db
+      .financialGoalsTable
+      .createAlias('goal_fund_entries__related_goal_id__financial_goals__id');
+
+  $$FinancialGoalsTableTableProcessedTableManager? get relatedGoalId {
+    final $_column = $_itemColumn<String>('related_goal_id');
+    if ($_column == null) return null;
+    final manager = $$FinancialGoalsTableTableTableManager(
+      $_db,
+      $_db.financialGoalsTable,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_relatedGoalIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$GoalFundEntriesTableTableFilterComposer
+    extends Composer<_$AppDatabase, $GoalFundEntriesTableTable> {
+  $$GoalFundEntriesTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get entryType => $composableBuilder(
+    column: $table.entryType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get direction => $composableBuilder(
+    column: $table.direction,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get amountMinor => $composableBuilder(
+    column: $table.amountMinor,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get entryDate => $composableBuilder(
+    column: $table.entryDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get note => $composableBuilder(
+    column: $table.note,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$FinancialGoalsTableTableFilterComposer get goalId {
+    final $$FinancialGoalsTableTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.goalId,
+      referencedTable: $db.financialGoalsTable,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FinancialGoalsTableTableFilterComposer(
+            $db: $db,
+            $table: $db.financialGoalsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$TransactionsTableTableFilterComposer get linkedTransactionId {
+    final $$TransactionsTableTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.linkedTransactionId,
+      referencedTable: $db.transactionsTable,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$TransactionsTableTableFilterComposer(
+            $db: $db,
+            $table: $db.transactionsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$FinancialGoalsTableTableFilterComposer get relatedGoalId {
+    final $$FinancialGoalsTableTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.relatedGoalId,
+      referencedTable: $db.financialGoalsTable,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FinancialGoalsTableTableFilterComposer(
+            $db: $db,
+            $table: $db.financialGoalsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$GoalFundEntriesTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $GoalFundEntriesTableTable> {
+  $$GoalFundEntriesTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get entryType => $composableBuilder(
+    column: $table.entryType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get direction => $composableBuilder(
+    column: $table.direction,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get amountMinor => $composableBuilder(
+    column: $table.amountMinor,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get entryDate => $composableBuilder(
+    column: $table.entryDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get note => $composableBuilder(
+    column: $table.note,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$FinancialGoalsTableTableOrderingComposer get goalId {
+    final $$FinancialGoalsTableTableOrderingComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.goalId,
+          referencedTable: $db.financialGoalsTable,
+          getReferencedColumn: (t) => t.id,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$FinancialGoalsTableTableOrderingComposer(
+                $db: $db,
+                $table: $db.financialGoalsTable,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return composer;
+  }
+
+  $$TransactionsTableTableOrderingComposer get linkedTransactionId {
+    final $$TransactionsTableTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.linkedTransactionId,
+      referencedTable: $db.transactionsTable,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$TransactionsTableTableOrderingComposer(
+            $db: $db,
+            $table: $db.transactionsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$FinancialGoalsTableTableOrderingComposer get relatedGoalId {
+    final $$FinancialGoalsTableTableOrderingComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.relatedGoalId,
+          referencedTable: $db.financialGoalsTable,
+          getReferencedColumn: (t) => t.id,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$FinancialGoalsTableTableOrderingComposer(
+                $db: $db,
+                $table: $db.financialGoalsTable,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return composer;
+  }
+}
+
+class $$GoalFundEntriesTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $GoalFundEntriesTableTable> {
+  $$GoalFundEntriesTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get entryType =>
+      $composableBuilder(column: $table.entryType, builder: (column) => column);
+
+  GeneratedColumn<String> get direction =>
+      $composableBuilder(column: $table.direction, builder: (column) => column);
+
+  GeneratedColumn<int> get amountMinor => $composableBuilder(
+    column: $table.amountMinor,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get entryDate =>
+      $composableBuilder(column: $table.entryDate, builder: (column) => column);
+
+  GeneratedColumn<String> get note =>
+      $composableBuilder(column: $table.note, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  $$FinancialGoalsTableTableAnnotationComposer get goalId {
+    final $$FinancialGoalsTableTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.goalId,
+          referencedTable: $db.financialGoalsTable,
+          getReferencedColumn: (t) => t.id,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$FinancialGoalsTableTableAnnotationComposer(
+                $db: $db,
+                $table: $db.financialGoalsTable,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return composer;
+  }
+
+  $$TransactionsTableTableAnnotationComposer get linkedTransactionId {
+    final $$TransactionsTableTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.linkedTransactionId,
+          referencedTable: $db.transactionsTable,
+          getReferencedColumn: (t) => t.id,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$TransactionsTableTableAnnotationComposer(
+                $db: $db,
+                $table: $db.transactionsTable,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return composer;
+  }
+
+  $$FinancialGoalsTableTableAnnotationComposer get relatedGoalId {
+    final $$FinancialGoalsTableTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.relatedGoalId,
+          referencedTable: $db.financialGoalsTable,
+          getReferencedColumn: (t) => t.id,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$FinancialGoalsTableTableAnnotationComposer(
+                $db: $db,
+                $table: $db.financialGoalsTable,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return composer;
+  }
+}
+
+class $$GoalFundEntriesTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $GoalFundEntriesTableTable,
+          GoalFundEntriesTableData,
+          $$GoalFundEntriesTableTableFilterComposer,
+          $$GoalFundEntriesTableTableOrderingComposer,
+          $$GoalFundEntriesTableTableAnnotationComposer,
+          $$GoalFundEntriesTableTableCreateCompanionBuilder,
+          $$GoalFundEntriesTableTableUpdateCompanionBuilder,
+          (GoalFundEntriesTableData, $$GoalFundEntriesTableTableReferences),
+          GoalFundEntriesTableData,
+          PrefetchHooks Function({
+            bool goalId,
+            bool linkedTransactionId,
+            bool relatedGoalId,
+          })
+        > {
+  $$GoalFundEntriesTableTableTableManager(
+    _$AppDatabase db,
+    $GoalFundEntriesTableTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$GoalFundEntriesTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$GoalFundEntriesTableTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$GoalFundEntriesTableTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> goalId = const Value.absent(),
+                Value<String> entryType = const Value.absent(),
+                Value<String?> direction = const Value.absent(),
+                Value<int> amountMinor = const Value.absent(),
+                Value<String?> linkedTransactionId = const Value.absent(),
+                Value<String?> relatedGoalId = const Value.absent(),
+                Value<int> entryDate = const Value.absent(),
+                Value<String?> note = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => GoalFundEntriesTableCompanion(
+                id: id,
+                goalId: goalId,
+                entryType: entryType,
+                direction: direction,
+                amountMinor: amountMinor,
+                linkedTransactionId: linkedTransactionId,
+                relatedGoalId: relatedGoalId,
+                entryDate: entryDate,
+                note: note,
+                createdAt: createdAt,
+                deletedAt: deletedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String goalId,
+                required String entryType,
+                Value<String?> direction = const Value.absent(),
+                required int amountMinor,
+                Value<String?> linkedTransactionId = const Value.absent(),
+                Value<String?> relatedGoalId = const Value.absent(),
+                required int entryDate,
+                Value<String?> note = const Value.absent(),
+                required DateTime createdAt,
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => GoalFundEntriesTableCompanion.insert(
+                id: id,
+                goalId: goalId,
+                entryType: entryType,
+                direction: direction,
+                amountMinor: amountMinor,
+                linkedTransactionId: linkedTransactionId,
+                relatedGoalId: relatedGoalId,
+                entryDate: entryDate,
+                note: note,
+                createdAt: createdAt,
+                deletedAt: deletedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$GoalFundEntriesTableTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback:
+              ({
+                goalId = false,
+                linkedTransactionId = false,
+                relatedGoalId = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (goalId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.goalId,
+                                    referencedTable:
+                                        $$GoalFundEntriesTableTableReferences
+                                            ._goalIdTable(db),
+                                    referencedColumn:
+                                        $$GoalFundEntriesTableTableReferences
+                                            ._goalIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+                        if (linkedTransactionId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.linkedTransactionId,
+                                    referencedTable:
+                                        $$GoalFundEntriesTableTableReferences
+                                            ._linkedTransactionIdTable(db),
+                                    referencedColumn:
+                                        $$GoalFundEntriesTableTableReferences
+                                            ._linkedTransactionIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+                        if (relatedGoalId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.relatedGoalId,
+                                    referencedTable:
+                                        $$GoalFundEntriesTableTableReferences
+                                            ._relatedGoalIdTable(db),
+                                    referencedColumn:
+                                        $$GoalFundEntriesTableTableReferences
+                                            ._relatedGoalIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $$GoalFundEntriesTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $GoalFundEntriesTableTable,
+      GoalFundEntriesTableData,
+      $$GoalFundEntriesTableTableFilterComposer,
+      $$GoalFundEntriesTableTableOrderingComposer,
+      $$GoalFundEntriesTableTableAnnotationComposer,
+      $$GoalFundEntriesTableTableCreateCompanionBuilder,
+      $$GoalFundEntriesTableTableUpdateCompanionBuilder,
+      (GoalFundEntriesTableData, $$GoalFundEntriesTableTableReferences),
+      GoalFundEntriesTableData,
+      PrefetchHooks Function({
+        bool goalId,
+        bool linkedTransactionId,
+        bool relatedGoalId,
+      })
+    >;
+typedef $$GoalTransactionAllocationsTableTableCreateCompanionBuilder =
+    GoalTransactionAllocationsTableCompanion Function({
+      required String id,
+      required String goalId,
+      required String transactionId,
+      required int amountMinor,
+      required DateTime createdAt,
+      Value<int> rowid,
+    });
+typedef $$GoalTransactionAllocationsTableTableUpdateCompanionBuilder =
+    GoalTransactionAllocationsTableCompanion Function({
+      Value<String> id,
+      Value<String> goalId,
+      Value<String> transactionId,
+      Value<int> amountMinor,
+      Value<DateTime> createdAt,
+      Value<int> rowid,
+    });
+
+final class $$GoalTransactionAllocationsTableTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $GoalTransactionAllocationsTableTable,
+          GoalTransactionAllocationsTableData
+        > {
+  $$GoalTransactionAllocationsTableTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $FinancialGoalsTableTable _goalIdTable(_$AppDatabase db) =>
+      db.financialGoalsTable.createAlias(
+        'goal_transaction_allocations__goal_id__financial_goals__id',
+      );
+
+  $$FinancialGoalsTableTableProcessedTableManager get goalId {
+    final $_column = $_itemColumn<String>('goal_id')!;
+
+    final manager = $$FinancialGoalsTableTableTableManager(
+      $_db,
+      $_db.financialGoalsTable,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_goalIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $TransactionsTableTable _transactionIdTable(_$AppDatabase db) =>
+      db.transactionsTable.createAlias(
+        'goal_transaction_allocations__transaction_id__transactions__id',
+      );
+
+  $$TransactionsTableTableProcessedTableManager get transactionId {
+    final $_column = $_itemColumn<String>('transaction_id')!;
+
+    final manager = $$TransactionsTableTableTableManager(
+      $_db,
+      $_db.transactionsTable,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_transactionIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$GoalTransactionAllocationsTableTableFilterComposer
+    extends Composer<_$AppDatabase, $GoalTransactionAllocationsTableTable> {
+  $$GoalTransactionAllocationsTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get amountMinor => $composableBuilder(
+    column: $table.amountMinor,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$FinancialGoalsTableTableFilterComposer get goalId {
+    final $$FinancialGoalsTableTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.goalId,
+      referencedTable: $db.financialGoalsTable,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FinancialGoalsTableTableFilterComposer(
+            $db: $db,
+            $table: $db.financialGoalsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$TransactionsTableTableFilterComposer get transactionId {
+    final $$TransactionsTableTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.transactionId,
+      referencedTable: $db.transactionsTable,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$TransactionsTableTableFilterComposer(
+            $db: $db,
+            $table: $db.transactionsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$GoalTransactionAllocationsTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $GoalTransactionAllocationsTableTable> {
+  $$GoalTransactionAllocationsTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get amountMinor => $composableBuilder(
+    column: $table.amountMinor,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$FinancialGoalsTableTableOrderingComposer get goalId {
+    final $$FinancialGoalsTableTableOrderingComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.goalId,
+          referencedTable: $db.financialGoalsTable,
+          getReferencedColumn: (t) => t.id,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$FinancialGoalsTableTableOrderingComposer(
+                $db: $db,
+                $table: $db.financialGoalsTable,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return composer;
+  }
+
+  $$TransactionsTableTableOrderingComposer get transactionId {
+    final $$TransactionsTableTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.transactionId,
+      referencedTable: $db.transactionsTable,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$TransactionsTableTableOrderingComposer(
+            $db: $db,
+            $table: $db.transactionsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$GoalTransactionAllocationsTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $GoalTransactionAllocationsTableTable> {
+  $$GoalTransactionAllocationsTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get amountMinor => $composableBuilder(
+    column: $table.amountMinor,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  $$FinancialGoalsTableTableAnnotationComposer get goalId {
+    final $$FinancialGoalsTableTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.goalId,
+          referencedTable: $db.financialGoalsTable,
+          getReferencedColumn: (t) => t.id,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$FinancialGoalsTableTableAnnotationComposer(
+                $db: $db,
+                $table: $db.financialGoalsTable,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return composer;
+  }
+
+  $$TransactionsTableTableAnnotationComposer get transactionId {
+    final $$TransactionsTableTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.transactionId,
+          referencedTable: $db.transactionsTable,
+          getReferencedColumn: (t) => t.id,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$TransactionsTableTableAnnotationComposer(
+                $db: $db,
+                $table: $db.transactionsTable,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return composer;
+  }
+}
+
+class $$GoalTransactionAllocationsTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $GoalTransactionAllocationsTableTable,
+          GoalTransactionAllocationsTableData,
+          $$GoalTransactionAllocationsTableTableFilterComposer,
+          $$GoalTransactionAllocationsTableTableOrderingComposer,
+          $$GoalTransactionAllocationsTableTableAnnotationComposer,
+          $$GoalTransactionAllocationsTableTableCreateCompanionBuilder,
+          $$GoalTransactionAllocationsTableTableUpdateCompanionBuilder,
+          (
+            GoalTransactionAllocationsTableData,
+            $$GoalTransactionAllocationsTableTableReferences,
+          ),
+          GoalTransactionAllocationsTableData,
+          PrefetchHooks Function({bool goalId, bool transactionId})
+        > {
+  $$GoalTransactionAllocationsTableTableTableManager(
+    _$AppDatabase db,
+    $GoalTransactionAllocationsTableTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$GoalTransactionAllocationsTableTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$GoalTransactionAllocationsTableTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$GoalTransactionAllocationsTableTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> goalId = const Value.absent(),
+                Value<String> transactionId = const Value.absent(),
+                Value<int> amountMinor = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => GoalTransactionAllocationsTableCompanion(
+                id: id,
+                goalId: goalId,
+                transactionId: transactionId,
+                amountMinor: amountMinor,
+                createdAt: createdAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String goalId,
+                required String transactionId,
+                required int amountMinor,
+                required DateTime createdAt,
+                Value<int> rowid = const Value.absent(),
+              }) => GoalTransactionAllocationsTableCompanion.insert(
+                id: id,
+                goalId: goalId,
+                transactionId: transactionId,
+                amountMinor: amountMinor,
+                createdAt: createdAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$GoalTransactionAllocationsTableTableReferences(
+                    db,
+                    table,
+                    e,
+                  ),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({goalId = false, transactionId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (goalId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.goalId,
+                                referencedTable:
+                                    $$GoalTransactionAllocationsTableTableReferences
+                                        ._goalIdTable(db),
+                                referencedColumn:
+                                    $$GoalTransactionAllocationsTableTableReferences
+                                        ._goalIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
+                    if (transactionId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.transactionId,
+                                referencedTable:
+                                    $$GoalTransactionAllocationsTableTableReferences
+                                        ._transactionIdTable(db),
+                                referencedColumn:
+                                    $$GoalTransactionAllocationsTableTableReferences
+                                        ._transactionIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$GoalTransactionAllocationsTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $GoalTransactionAllocationsTableTable,
+      GoalTransactionAllocationsTableData,
+      $$GoalTransactionAllocationsTableTableFilterComposer,
+      $$GoalTransactionAllocationsTableTableOrderingComposer,
+      $$GoalTransactionAllocationsTableTableAnnotationComposer,
+      $$GoalTransactionAllocationsTableTableCreateCompanionBuilder,
+      $$GoalTransactionAllocationsTableTableUpdateCompanionBuilder,
+      (
+        GoalTransactionAllocationsTableData,
+        $$GoalTransactionAllocationsTableTableReferences,
+      ),
+      GoalTransactionAllocationsTableData,
+      PrefetchHooks Function({bool goalId, bool transactionId})
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -14089,6 +19352,8 @@ class $AppDatabaseManager {
       $$TransactionsTableTableTableManager(_db, _db.transactionsTable);
   $$BudgetsTableTableTableManager get budgetsTable =>
       $$BudgetsTableTableTableManager(_db, _db.budgetsTable);
+  $$FinancialGoalsTableTableTableManager get financialGoalsTable =>
+      $$FinancialGoalsTableTableTableManager(_db, _db.financialGoalsTable);
   $$BudgetItemsTableTableTableManager get budgetItemsTable =>
       $$BudgetItemsTableTableTableManager(_db, _db.budgetItemsTable);
   $$BudgetRolloversTableTableTableManager get budgetRolloversTable =>
@@ -14105,5 +19370,15 @@ class $AppDatabaseManager {
       $$RecurringOccurrencesTableTableTableManager(
         _db,
         _db.recurringOccurrencesTable,
+      );
+  $$GoalFundsTableTableTableManager get goalFundsTable =>
+      $$GoalFundsTableTableTableManager(_db, _db.goalFundsTable);
+  $$GoalFundEntriesTableTableTableManager get goalFundEntriesTable =>
+      $$GoalFundEntriesTableTableTableManager(_db, _db.goalFundEntriesTable);
+  $$GoalTransactionAllocationsTableTableTableManager
+  get goalTransactionAllocationsTable =>
+      $$GoalTransactionAllocationsTableTableTableManager(
+        _db,
+        _db.goalTransactionAllocationsTable,
       );
 }

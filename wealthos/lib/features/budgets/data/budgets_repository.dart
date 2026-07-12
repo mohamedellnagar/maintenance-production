@@ -312,6 +312,7 @@ class BudgetsRepository {
             assignedAmountMinor: Value(input.assignedAmountMinor),
             rolloverEnabled: Value(input.rolloverEnabled),
             notes: Value(input.notes),
+            linkedGoalId: Value(input.linkedGoalId),
             updatedAt: Value(_now()),
           ),
         );
@@ -603,6 +604,7 @@ class BudgetsRepository {
     rolloverEnabled: Value(input.rolloverEnabled),
     displayOrder: Value(displayOrder),
     notes: Value(input.notes),
+    linkedGoalId: Value(input.linkedGoalId),
     createdAt: now,
     updatedAt: now,
   );
@@ -631,6 +633,7 @@ class BudgetsRepository {
     rolloverEnabled: row.rolloverEnabled,
     displayOrder: row.displayOrder,
     notes: row.notes,
+    linkedGoalId: row.linkedGoalId,
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
   );

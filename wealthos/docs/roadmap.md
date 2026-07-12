@@ -37,6 +37,17 @@ Budgets, and in-app insights. Schema **v3**. See `docs/recurring-model.md`.
 Deferred to a later recurring phase: forecasting/projections, variable-amount
 estimation, and device/push reminders.
 
+## Phase 1.4 — Financial Goals & Savings Funds V1 (this release) ✅
+
+Save toward goals via *virtual* savings funds that never create fake balances or
+change net worth. A fund ledger (contribute/withdraw/transfer/adjust) is the
+source of truth; available-to-allocate with an Allocation Shortfall warning;
+progress, required-monthly and projected-completion math; debt-payoff goals that
+separate *saved* from *actual debt reduced*; goal statuses with no destructive
+delete; a Goals tab, dashboard card, insights, and budget saving-item linkage.
+Schema **v4**. See `docs/goals-model.md`. Deferred to a later goals phase:
+recurring auto-contributions, planning-only over-allocation, and forecasting.
+
 ## Deliberately deferred
 
 Not built in this phase (only logical extension points left where useful):
@@ -44,8 +55,8 @@ Not built in this phase (only logical extension points left where useful):
 - Cloud login & sync, backend/API
 - AI / financial intelligence, bank linking, stock prices, online FX
 - Subscriptions, ads
-- Financial goals, loan repayment schedules, forecasting
-- Push / device notifications (recurring reminders are in-app only)
+- Loan repayment schedules, forecasting/projections
+- Push / device notifications (recurring & goal reminders are in-app only)
 - PDF/Excel export, cloud backup
 
 ## Candidate next steps

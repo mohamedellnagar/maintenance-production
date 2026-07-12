@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../features/accounts/data/accounts_repository.dart';
 import '../../features/budgets/data/budgets_repository.dart';
 import '../../features/categories/data/categories_repository.dart';
+import '../../features/goals/data/goals_repository.dart';
 import '../../features/recurring/application/recurrence_generation_service.dart';
 import '../../features/recurring/data/recurring_repository.dart';
 import '../../features/settings/data/settings_repository.dart';
@@ -58,6 +59,14 @@ final recurrenceGenerationServiceProvider =
                 .autoCreateRecurringEnabled,
       ),
     );
+
+final goalsRepositoryProvider = Provider<GoalsRepository>(
+  (ref) => GoalsRepository(
+    ref.watch(appDatabaseProvider),
+    ref.watch(accountsRepositoryProvider),
+    ref.watch(transactionsRepositoryProvider),
+  ),
+);
 
 final biometricServiceProvider = Provider<BiometricService>(
   (ref) => BiometricService(),

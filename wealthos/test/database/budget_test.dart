@@ -66,6 +66,10 @@ void main() {
             'recurring_rules',
             'recurring_rule_weekdays',
             'recurring_occurrences',
+            'financial_goals',
+            'goal_funds',
+            'goal_fund_entries',
+            'goal_transaction_allocations',
           ]),
         );
 
@@ -78,10 +82,19 @@ void main() {
             .toSet();
         expect(colNames, contains('auto_create_recurring_enabled'));
 
+        // The linked-goal column was added to budget_items.
+        final itemCols = await db
+            .customSelect('PRAGMA table_info(budget_items)')
+            .get();
+        expect(
+          itemCols.map((r) => r.read<String>('name')).toSet(),
+          contains('linked_goal_id'),
+        );
+
         final version = await db
             .customSelect('PRAGMA user_version')
             .getSingle();
-        expect(version.read<int>('user_version'), 3);
+        expect(version.read<int>('user_version'), 4);
       },
     );
   });

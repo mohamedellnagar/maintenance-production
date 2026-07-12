@@ -2132,6 +2132,726 @@ abstract class AppLocalizations {
   /// **'Occurrence not found.'**
   String get errorOccurrenceNotFound;
 
+  /// No description provided for @navGoals.
+  ///
+  /// In en, this message translates to:
+  /// **'Goals'**
+  String get navGoals;
+
+  /// No description provided for @goalsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Goals'**
+  String get goalsTitle;
+
+  /// No description provided for @goalsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No goals yet'**
+  String get goalsEmptyTitle;
+
+  /// No description provided for @goalsEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a goal to start saving toward what matters.'**
+  String get goalsEmptyMessage;
+
+  /// No description provided for @goalAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'New goal'**
+  String get goalAdd;
+
+  /// No description provided for @goalsSummaryTotalTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'Total target'**
+  String get goalsSummaryTotalTarget;
+
+  /// No description provided for @goalsSummaryAllocated.
+  ///
+  /// In en, this message translates to:
+  /// **'Allocated'**
+  String get goalsSummaryAllocated;
+
+  /// No description provided for @goalsSummaryRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining'**
+  String get goalsSummaryRemaining;
+
+  /// No description provided for @goalsSummaryUnallocated.
+  ///
+  /// In en, this message translates to:
+  /// **'Unallocated'**
+  String get goalsSummaryUnallocated;
+
+  /// No description provided for @goalsSummaryActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active goals'**
+  String get goalsSummaryActive;
+
+  /// No description provided for @goalsSummaryBehind.
+  ///
+  /// In en, this message translates to:
+  /// **'Behind plan'**
+  String get goalsSummaryBehind;
+
+  /// No description provided for @goalsSummaryNearest.
+  ///
+  /// In en, this message translates to:
+  /// **'Closest to done'**
+  String get goalsSummaryNearest;
+
+  /// No description provided for @goalsShortfallWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Allocated funds now exceed your eligible liquid balance.'**
+  String get goalsShortfallWarning;
+
+  /// No description provided for @goalsShortfallNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Allocations are virtual earmarks and don\'t reserve money at the bank.'**
+  String get goalsShortfallNote;
+
+  /// No description provided for @goalsSectionActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get goalsSectionActive;
+
+  /// No description provided for @goalsSectionPaused.
+  ///
+  /// In en, this message translates to:
+  /// **'Paused'**
+  String get goalsSectionPaused;
+
+  /// No description provided for @goalsSectionCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get goalsSectionCompleted;
+
+  /// No description provided for @goalsSectionArchived.
+  ///
+  /// In en, this message translates to:
+  /// **'Archived'**
+  String get goalsSectionArchived;
+
+  /// No description provided for @goalTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'Target'**
+  String get goalTarget;
+
+  /// No description provided for @goalFunded.
+  ///
+  /// In en, this message translates to:
+  /// **'Funded'**
+  String get goalFunded;
+
+  /// No description provided for @goalRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining'**
+  String get goalRemaining;
+
+  /// No description provided for @goalOverfunded.
+  ///
+  /// In en, this message translates to:
+  /// **'Overfunded'**
+  String get goalOverfunded;
+
+  /// No description provided for @goalRequiredMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Needed / month'**
+  String get goalRequiredMonthly;
+
+  /// No description provided for @goalProjectedCompletion.
+  ///
+  /// In en, this message translates to:
+  /// **'Projected completion'**
+  String get goalProjectedCompletion;
+
+  /// No description provided for @goalProjectionUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Can\'t estimate yet'**
+  String get goalProjectionUnavailable;
+
+  /// No description provided for @goalPriority.
+  ///
+  /// In en, this message translates to:
+  /// **'Priority'**
+  String get goalPriority;
+
+  /// No description provided for @goalTargetDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Target date'**
+  String get goalTargetDate;
+
+  /// No description provided for @goalNoTargetDate.
+  ///
+  /// In en, this message translates to:
+  /// **'No target date'**
+  String get goalNoTargetDate;
+
+  /// No description provided for @goalSavedForRepayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved for repayment'**
+  String get goalSavedForRepayment;
+
+  /// No description provided for @goalActualDebtReduced.
+  ///
+  /// In en, this message translates to:
+  /// **'Actual debt reduced'**
+  String get goalActualDebtReduced;
+
+  /// No description provided for @goalName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get goalName;
+
+  /// No description provided for @goalType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get goalType;
+
+  /// No description provided for @goalAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Target amount'**
+  String get goalAmount;
+
+  /// No description provided for @goalLinkedLiability.
+  ///
+  /// In en, this message translates to:
+  /// **'Debt to pay off'**
+  String get goalLinkedLiability;
+
+  /// No description provided for @goalSelectLiability.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a liability account'**
+  String get goalSelectLiability;
+
+  /// No description provided for @goalInitialAllocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Initial allocation'**
+  String get goalInitialAllocation;
+
+  /// No description provided for @goalNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get goalNotes;
+
+  /// No description provided for @goalReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Review'**
+  String get goalReview;
+
+  /// No description provided for @goalContribution.
+  ///
+  /// In en, this message translates to:
+  /// **'Contribution'**
+  String get goalContribution;
+
+  /// No description provided for @goalContributionAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount to allocate'**
+  String get goalContributionAmount;
+
+  /// No description provided for @goalWithdrawAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount to withdraw'**
+  String get goalWithdrawAmount;
+
+  /// No description provided for @goalTransferAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount to transfer'**
+  String get goalTransferAmount;
+
+  /// No description provided for @goalTransferTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer to'**
+  String get goalTransferTo;
+
+  /// No description provided for @goalReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Note (optional)'**
+  String get goalReason;
+
+  /// No description provided for @goalAvailableToAllocate.
+  ///
+  /// In en, this message translates to:
+  /// **'Available to allocate'**
+  String get goalAvailableToAllocate;
+
+  /// No description provided for @goalAddContribution.
+  ///
+  /// In en, this message translates to:
+  /// **'Add contribution'**
+  String get goalAddContribution;
+
+  /// No description provided for @goalWithdraw.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw'**
+  String get goalWithdraw;
+
+  /// No description provided for @goalTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer'**
+  String get goalTransfer;
+
+  /// No description provided for @goalPause.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get goalPause;
+
+  /// No description provided for @goalResume.
+  ///
+  /// In en, this message translates to:
+  /// **'Resume'**
+  String get goalResume;
+
+  /// No description provided for @goalComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark complete'**
+  String get goalComplete;
+
+  /// No description provided for @goalCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel goal'**
+  String get goalCancel;
+
+  /// No description provided for @goalArchive.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive'**
+  String get goalArchive;
+
+  /// No description provided for @goalConfirmComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark this goal as complete?'**
+  String get goalConfirmComplete;
+
+  /// No description provided for @goalConfirmCancelWithBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'This goal still holds allocated money. Choose what to do with it.'**
+  String get goalConfirmCancelWithBalance;
+
+  /// No description provided for @goalCancelUnallocate.
+  ///
+  /// In en, this message translates to:
+  /// **'Unallocate the balance and cancel'**
+  String get goalCancelUnallocate;
+
+  /// No description provided for @goalCancelKeep.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep it archived with its balance'**
+  String get goalCancelKeep;
+
+  /// No description provided for @goalConfirmDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this goal permanently? Only goals with no history can be deleted.'**
+  String get goalConfirmDelete;
+
+  /// No description provided for @goalConfirmCancelSimple.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel this goal? Its history is kept.'**
+  String get goalConfirmCancelSimple;
+
+  /// No description provided for @goalLedger.
+  ///
+  /// In en, this message translates to:
+  /// **'Fund activity'**
+  String get goalLedger;
+
+  /// No description provided for @goalNoActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'No activity yet.'**
+  String get goalNoActivity;
+
+  /// No description provided for @goalEntryDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleted'**
+  String get goalEntryDeleted;
+
+  /// No description provided for @goalEntryDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete entry'**
+  String get goalEntryDelete;
+
+  /// No description provided for @goalEntryRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore'**
+  String get goalEntryRestore;
+
+  /// No description provided for @goalContributions.
+  ///
+  /// In en, this message translates to:
+  /// **'Contributions'**
+  String get goalContributions;
+
+  /// No description provided for @goalWithdrawals.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdrawals'**
+  String get goalWithdrawals;
+
+  /// No description provided for @goalTransfers.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfers'**
+  String get goalTransfers;
+
+  /// No description provided for @goalDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal details'**
+  String get goalDetailsTitle;
+
+  /// No description provided for @goalSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal saved'**
+  String get goalSaved;
+
+  /// No description provided for @goalContributed.
+  ///
+  /// In en, this message translates to:
+  /// **'Contribution added'**
+  String get goalContributed;
+
+  /// No description provided for @goalWithdrew.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdrawal recorded'**
+  String get goalWithdrew;
+
+  /// No description provided for @goalTransferred.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer completed'**
+  String get goalTransferred;
+
+  /// No description provided for @goalStatusUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal updated'**
+  String get goalStatusUpdated;
+
+  /// No description provided for @goalTypeEmergencyFund.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency fund'**
+  String get goalTypeEmergencyFund;
+
+  /// No description provided for @goalTypeHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get goalTypeHome;
+
+  /// No description provided for @goalTypeCar.
+  ///
+  /// In en, this message translates to:
+  /// **'Car'**
+  String get goalTypeCar;
+
+  /// No description provided for @goalTypeTravel.
+  ///
+  /// In en, this message translates to:
+  /// **'Travel'**
+  String get goalTypeTravel;
+
+  /// No description provided for @goalTypeEducation.
+  ///
+  /// In en, this message translates to:
+  /// **'Education'**
+  String get goalTypeEducation;
+
+  /// No description provided for @goalTypeWedding.
+  ///
+  /// In en, this message translates to:
+  /// **'Wedding'**
+  String get goalTypeWedding;
+
+  /// No description provided for @goalTypeRetirement.
+  ///
+  /// In en, this message translates to:
+  /// **'Retirement'**
+  String get goalTypeRetirement;
+
+  /// No description provided for @goalTypeDebtPayoff.
+  ///
+  /// In en, this message translates to:
+  /// **'Debt payoff'**
+  String get goalTypeDebtPayoff;
+
+  /// No description provided for @goalTypePurchase.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase'**
+  String get goalTypePurchase;
+
+  /// No description provided for @goalTypeCustom.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom'**
+  String get goalTypeCustom;
+
+  /// No description provided for @goalPriorityLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Low'**
+  String get goalPriorityLow;
+
+  /// No description provided for @goalPriorityMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get goalPriorityMedium;
+
+  /// No description provided for @goalPriorityHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'High'**
+  String get goalPriorityHigh;
+
+  /// No description provided for @goalPriorityCritical.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical'**
+  String get goalPriorityCritical;
+
+  /// No description provided for @goalTrackCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get goalTrackCompleted;
+
+  /// No description provided for @goalTrackNoTargetDate.
+  ///
+  /// In en, this message translates to:
+  /// **'No deadline'**
+  String get goalTrackNoTargetDate;
+
+  /// No description provided for @goalTrackNoHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Not started'**
+  String get goalTrackNoHistory;
+
+  /// No description provided for @goalTrackAhead.
+  ///
+  /// In en, this message translates to:
+  /// **'Ahead of plan'**
+  String get goalTrackAhead;
+
+  /// No description provided for @goalTrackOnTrack.
+  ///
+  /// In en, this message translates to:
+  /// **'On track'**
+  String get goalTrackOnTrack;
+
+  /// No description provided for @goalTrackBehind.
+  ///
+  /// In en, this message translates to:
+  /// **'Behind plan'**
+  String get goalTrackBehind;
+
+  /// No description provided for @dashboardGoals.
+  ///
+  /// In en, this message translates to:
+  /// **'Goals'**
+  String get dashboardGoals;
+
+  /// No description provided for @goalsViewAll.
+  ///
+  /// In en, this message translates to:
+  /// **'View all'**
+  String get goalsViewAll;
+
+  /// No description provided for @budgetLinkedGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Linked goal'**
+  String get budgetLinkedGoal;
+
+  /// No description provided for @budgetLinkGoalNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No linked goal'**
+  String get budgetLinkGoalNone;
+
+  /// No description provided for @budgetGoalContributed.
+  ///
+  /// In en, this message translates to:
+  /// **'Contributed this month'**
+  String get budgetGoalContributed;
+
+  /// No description provided for @budgetGoalWithdrawn.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdrawn this month'**
+  String get budgetGoalWithdrawn;
+
+  /// No description provided for @budgetGoalRemainingPlanned.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining planned contribution'**
+  String get budgetGoalRemainingPlanned;
+
+  /// No description provided for @goalInsightShortfall.
+  ///
+  /// In en, this message translates to:
+  /// **'Allocated funds exceed your eligible liquid balance.'**
+  String get goalInsightShortfall;
+
+  /// No description provided for @goalInsightBehind.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is behind its plan.'**
+  String goalInsightBehind(String name);
+
+  /// No description provided for @goalInsightNearCompletion.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is almost funded.'**
+  String goalInsightNearCompletion(String name);
+
+  /// No description provided for @goalInsightCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is fully funded.'**
+  String goalInsightCompleted(String name);
+
+  /// No description provided for @goalInsightStalled.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} hasn\'t received a contribution in a while.'**
+  String goalInsightStalled(String name);
+
+  /// No description provided for @goalInsightDeadlineSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'{name}\'s target date is near with a lot still to save.'**
+  String goalInsightDeadlineSoon(String name);
+
+  /// No description provided for @goalInsightOverfunded.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is funded beyond its target.'**
+  String goalInsightOverfunded(String name);
+
+  /// No description provided for @goalInsightEmergencyLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Your emergency fund is below its target.'**
+  String get goalInsightEmergencyLow;
+
+  /// No description provided for @errorGoalTargetInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'The target amount must be greater than zero.'**
+  String get errorGoalTargetInvalid;
+
+  /// No description provided for @errorGoalLiabilityNotAllowed.
+  ///
+  /// In en, this message translates to:
+  /// **'Only a debt-payoff goal can link a liability account.'**
+  String get errorGoalLiabilityNotAllowed;
+
+  /// No description provided for @errorGoalNotLiability.
+  ///
+  /// In en, this message translates to:
+  /// **'The linked account must be a liability.'**
+  String get errorGoalNotLiability;
+
+  /// No description provided for @errorGoalNotActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Only active goals can receive contributions.'**
+  String get errorGoalNotActive;
+
+  /// No description provided for @errorGoalInsufficientFund.
+  ///
+  /// In en, this message translates to:
+  /// **'The goal doesn\'t have enough allocated funds.'**
+  String get errorGoalInsufficientFund;
+
+  /// No description provided for @errorGoalExceedsAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'That exceeds your funds available to allocate.'**
+  String get errorGoalExceedsAvailable;
+
+  /// No description provided for @errorGoalSameTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose two different goals to transfer between.'**
+  String get errorGoalSameTransfer;
+
+  /// No description provided for @errorGoalHasLedger.
+  ///
+  /// In en, this message translates to:
+  /// **'This goal has activity and can\'t be deleted. Cancel or archive it instead.'**
+  String get errorGoalHasLedger;
+
+  /// No description provided for @errorGoalAllocationExceedsTransaction.
+  ///
+  /// In en, this message translates to:
+  /// **'The linked amount exceeds the transaction\'s value.'**
+  String get errorGoalAllocationExceedsTransaction;
+
+  /// No description provided for @errorGoalAmountInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter an amount greater than zero.'**
+  String get errorGoalAmountInvalid;
+
+  /// No description provided for @errorGoalNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal not found.'**
+  String get errorGoalNotFound;
+
+  /// No description provided for @errorGoalEntryNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Fund entry not found.'**
+  String get errorGoalEntryNotFound;
+
   /// No description provided for @errorDatabase.
   ///
   /// In en, this message translates to:

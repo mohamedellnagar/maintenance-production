@@ -151,6 +151,43 @@ test/
 - recurring empty state + add CTA; rule-form validation on empty submit;
   Upcoming Bills card hidden when there is no recurring data.
 
+## Goals & savings funds tests (V1)
+
+`test/unit/goal_allocation_calculator_test.dart`
+- eligible liquid (positive cash/bank/wallet only; excludes liabilities,
+  investments, property, archived, negatives); total allocated; available;
+  shortfall detection and amount.
+
+`test/unit/goal_progress_calculator_test.dart`
+- funded/remaining/overfunded/ratio; required monthly (whole months, rounded up,
+  clamped ≥ 1, month-boundary); projection (zero → cannot estimate; from the
+  3-month average; transfers/withdrawals excluded); on-track statuses; actual
+  debt reduced since goal creation.
+
+`test/unit/goal_fund_test.dart`
+- fund balance from the ledger (contributions/transfers/withdrawals/adjustments,
+  soft-deleted → zero); the insight builder (shortfall, behind, near-completion,
+  deadline-soon, stalled, completed + overfunded, emergency-fund low).
+
+`test/database/goals_test.dart`
+- **v3→v4 migration** (goal tables + `budget_items.linked_goal_id`); goal CRUD;
+  fund created at zero; initial allocation; contribution (no transaction);
+  contribute-over-available rejected; withdrawal limit; atomic transfer +
+  preserved total; same-goal/over-balance transfer rejected; soft delete/restore
+  rebuilds the cache; `recomputeFund`; status transitions; paused rejects
+  contributions; delete-blocked-with-ledger; debt-only liability link + non-
+  liability rejection; transaction over-allocation rejection.
+
+`test/integration/goals_reactive_test.dart`
+- contribution flows into the goal view + summary; spending after allocation
+  raises the shortfall; inter-goal transfer preserves total allocated; a real
+  repayment updates a debt goal's actual-debt-reduced — all through live
+  providers.
+
+`test/widget/goals_test.dart`
+- goals empty state + add CTA; an active goal card renders; goal-form validation
+  on empty submit; dashboard goals card hidden with no goals.
+
 ## Quality gate
 
 ```bash

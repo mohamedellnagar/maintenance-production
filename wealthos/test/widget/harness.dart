@@ -11,6 +11,9 @@ import 'package:wealthos/features/accounts/application/accounts_providers.dart';
 import 'package:wealthos/features/accounts/domain/account.dart';
 import 'package:wealthos/features/categories/application/categories_providers.dart';
 import 'package:wealthos/features/categories/domain/category.dart';
+import 'package:wealthos/features/goals/application/goals_providers.dart';
+import 'package:wealthos/features/goals/domain/financial_goal.dart';
+import 'package:wealthos/features/goals/domain/goal_fund.dart';
 import 'package:wealthos/features/recurring/application/recurring_providers.dart';
 import 'package:wealthos/features/settings/application/settings_providers.dart';
 import 'package:wealthos/features/settings/domain/app_settings.dart';
@@ -44,6 +47,8 @@ class TestHarness {
     List<Transaction> transactions = const [],
     List<Category> categories = const [],
     Map<String, Transaction> transactionsById = const {},
+    List<FinancialGoal> goals = const [],
+    List<GoalFund> goalFunds = const [],
     List<Override> extraOverrides = const [],
   }) {
     final overrides = <Override>[
@@ -69,6 +74,11 @@ class TestHarness {
         allRulesProvider.overrideWith((ref) => Stream.value(const [])),
         allOccurrencesProvider.overrideWith((ref) => Stream.value(const [])),
         recurringBootstrapProvider.overrideWith((ref) async {}),
+        // Goals streams default to the passed data (empty by default) so pages
+        // that embed goals cards don't touch live Drift streams.
+        allGoalsProvider.overrideWith((ref) => Stream.value(goals)),
+        allFundsProvider.overrideWith((ref) => Stream.value(goalFunds)),
+        allGoalEntriesProvider.overrideWith((ref) => Stream.value(const [])),
       ],
       ...extraOverrides,
     ];

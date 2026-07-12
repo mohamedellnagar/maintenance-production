@@ -9,6 +9,7 @@ import '../../../core/money/money.dart';
 import '../../../core/routing/app_router.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/money_text.dart';
+import '../../goals/application/goals_providers.dart';
 import '../../recurring/application/recurring_providers.dart';
 import '../../recurring/domain/recurring_type.dart';
 import '../../recurring/presentation/widgets/occurrence_tile.dart';
@@ -160,6 +161,8 @@ class _ItemBody extends ConsumerWidget {
           const SizedBox(height: AppSpacing.sm),
           Text(item.notes!),
         ],
+        if (item.type == BudgetItemType.saving && item.linkedGoalId != null)
+          _LinkedGoalActivity(item: item, budget: budget),
         const SizedBox(height: AppSpacing.lg),
         if (!budget.status.isClosed)
           Row(
@@ -219,6 +222,68 @@ class _ItemBody extends ConsumerWidget {
         else
           for (final tx in contributing) TransactionTile(transaction: tx),
       ],
+    );
+  }
+}
+
+/// Shows a linked goal's contribution / withdrawal activity for the budget
+/// month. The assigned amount stays a plan; actual saving is the goal's
+/// contributions (withdrawals shown separately, never netted in).
+class _LinkedGoalActivity extends ConsumerWidget {
+  const _LinkedGoalActivity({required this.item, required this.budget});
+  final BudgetItem item;
+  final Budget budget;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final currency = budget.currencyCode;
+    final activity = ref.watch(
+      goalMonthActivityProvider((
+        goalId: item.linkedGoalId!,
+        year: budget.year,
+        month: budget.month,
+      )),
+    );
+    final goal = ref.watch(goalByIdProvider(item.linkedGoalId!)).value;
+    final remainingPlanned =
+        (item.assignedAmountMinor - activity.contributedMinor).clamp(
+          0,
+          item.assignedAmountMinor,
+        );
+    Money money(int m) => Money(amountMinor: m, currencyCode: currency);
+
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.md),
+      child: Card(
+        color: theme.colorScheme.surfaceContainerHighest,
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '${l.budgetLinkedGoal}: ${goal?.name ?? ''}',
+                style: theme.textTheme.titleSmall,
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              _Row(
+                label: l.budgetGoalContributed,
+                money: money(activity.contributedMinor),
+              ),
+              _Row(
+                label: l.budgetGoalWithdrawn,
+                money: money(activity.withdrawnMinor),
+              ),
+              _Row(
+                label: l.budgetGoalRemainingPlanned,
+                money: money(remainingPlanned),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

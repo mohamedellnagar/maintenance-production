@@ -13,6 +13,7 @@ class BudgetItemInput {
     this.customName,
     this.rolloverEnabled = false,
     this.notes,
+    this.linkedGoalId,
   });
 
   final BudgetItemType type;
@@ -22,6 +23,7 @@ class BudgetItemInput {
   final String? customName;
   final bool rolloverEnabled;
   final String? notes;
+  final String? linkedGoalId;
 }
 
 abstract final class BudgetItemValidator {

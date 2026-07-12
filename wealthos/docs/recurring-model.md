@@ -136,3 +136,10 @@ user, surfaced as an insight).
 `RecurringInsightBuilder` derives textual, in-app insights: overdue bill,
 multiple due today, income upcoming, auto-create failed, archived reference, and
 many unpaid. There are **no device/push notifications** in V1.
+
+## Goals integration (deferred)
+
+The recurring engine intentionally has **no** link to Financial Goals in V1 (no
+new "recurring goal contribution" type, no schema change here). The recommended
+flow is a recurring transfer into a savings account whose posted transaction the
+user links to a goal. See `goals-model.md`.

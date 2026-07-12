@@ -1,7 +1,41 @@
 # Database
 
-Local storage is **SQLite** via [Drift]. Schema version **3**. Foreign keys are
+Local storage is **SQLite** via [Drift]. Schema version **4**. Foreign keys are
 enabled (`PRAGMA foreign_keys = ON`). All money is stored as integer minor units.
+
+## Goals tables (v4)
+
+- **`financial_goals`** — `id`, `name`, `goal_type`
+  (`emergencyFund|home|car|travel|education|wedding|retirement|debtPayoff|
+  purchase|custom`), `target_amount_minor` (`> 0`), `currency_code`,
+  `target_date?` (epoch day), `priority` (`low|medium|high|critical`), `status`
+  (`draft|active|paused|completed|cancelled|archived`),
+  `linked_liability_account_id?→accounts`, `notes?`, timestamps,
+  `completed_at?`, `cancelled_at?`. CHECKs guard the enum columns and the target.
+- **`goal_funds`** — the 1:1 allocation bucket: `id`, `goal_id→financial_goals`
+  (`UNIQUE`), `current_allocated_minor` (cached ledger sum), timestamps.
+- **`goal_fund_entries`** — the fund **ledger** (source of truth): `id`,
+  `goal_id→financial_goals`, `entry_type`
+  (`contribution|withdrawal|transferIn|transferOut|adjustment`), `direction?`
+  (`increase|decrease`, adjustments only), `amount_minor` (`> 0`),
+  `linked_transaction_id?→transactions`, `related_goal_id?→financial_goals`
+  (transfers), `entry_date` (epoch day), `note?`, `created_at`, `deleted_at?`
+  (soft delete). A CHECK requires a `direction` for adjustments.
+- **`goal_transaction_allocations`** — links a contribution to a real
+  transaction without re-booking it: `id`, `goal_id`, `transaction_id`,
+  `amount_minor` (`> 0`), `created_at`, `UNIQUE(goal_id, transaction_id)`. The
+  repository keeps the sum of a transaction's allocations `≤` its amount.
+
+`budget_items` also gains **`linked_goal_id?→financial_goals`**.
+
+`schemaVersion` is **4**; `onUpgrade` creates the four goal tables when
+upgrading from `< 4` and adds `budget_items.linked_goal_id` (only when the table
+pre-existed — on a v1 upgrade it is created with the column already present).
+Migration tests cover **v3→v4** and **v1→latest**
+(`test/database/goals_test.dart`, `test/database/budget_test.dart`).
+Repository-enforced rules — ledger-derived balances, allocation-vs-available
+prevention, atomic transfers, transaction-allocation limits, and
+delete-blocked-when-ledger-exists — sit alongside these constraints.
 
 ## Recurring tables (v3)
 

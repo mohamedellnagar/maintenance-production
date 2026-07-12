@@ -1096,6 +1096,394 @@ class AppLocalizationsEn extends AppLocalizations {
   String get errorOccurrenceNotFound => 'Occurrence not found.';
 
   @override
+  String get navGoals => 'Goals';
+
+  @override
+  String get goalsTitle => 'Goals';
+
+  @override
+  String get goalsEmptyTitle => 'No goals yet';
+
+  @override
+  String get goalsEmptyMessage =>
+      'Create a goal to start saving toward what matters.';
+
+  @override
+  String get goalAdd => 'New goal';
+
+  @override
+  String get goalsSummaryTotalTarget => 'Total target';
+
+  @override
+  String get goalsSummaryAllocated => 'Allocated';
+
+  @override
+  String get goalsSummaryRemaining => 'Remaining';
+
+  @override
+  String get goalsSummaryUnallocated => 'Unallocated';
+
+  @override
+  String get goalsSummaryActive => 'Active goals';
+
+  @override
+  String get goalsSummaryBehind => 'Behind plan';
+
+  @override
+  String get goalsSummaryNearest => 'Closest to done';
+
+  @override
+  String get goalsShortfallWarning =>
+      'Allocated funds now exceed your eligible liquid balance.';
+
+  @override
+  String get goalsShortfallNote =>
+      'Allocations are virtual earmarks and don\'t reserve money at the bank.';
+
+  @override
+  String get goalsSectionActive => 'Active';
+
+  @override
+  String get goalsSectionPaused => 'Paused';
+
+  @override
+  String get goalsSectionCompleted => 'Completed';
+
+  @override
+  String get goalsSectionArchived => 'Archived';
+
+  @override
+  String get goalTarget => 'Target';
+
+  @override
+  String get goalFunded => 'Funded';
+
+  @override
+  String get goalRemaining => 'Remaining';
+
+  @override
+  String get goalOverfunded => 'Overfunded';
+
+  @override
+  String get goalRequiredMonthly => 'Needed / month';
+
+  @override
+  String get goalProjectedCompletion => 'Projected completion';
+
+  @override
+  String get goalProjectionUnavailable => 'Can\'t estimate yet';
+
+  @override
+  String get goalPriority => 'Priority';
+
+  @override
+  String get goalTargetDate => 'Target date';
+
+  @override
+  String get goalNoTargetDate => 'No target date';
+
+  @override
+  String get goalSavedForRepayment => 'Saved for repayment';
+
+  @override
+  String get goalActualDebtReduced => 'Actual debt reduced';
+
+  @override
+  String get goalName => 'Name';
+
+  @override
+  String get goalType => 'Type';
+
+  @override
+  String get goalAmount => 'Target amount';
+
+  @override
+  String get goalLinkedLiability => 'Debt to pay off';
+
+  @override
+  String get goalSelectLiability => 'Select a liability account';
+
+  @override
+  String get goalInitialAllocation => 'Initial allocation';
+
+  @override
+  String get goalNotes => 'Notes';
+
+  @override
+  String get goalReview => 'Review';
+
+  @override
+  String get goalContribution => 'Contribution';
+
+  @override
+  String get goalContributionAmount => 'Amount to allocate';
+
+  @override
+  String get goalWithdrawAmount => 'Amount to withdraw';
+
+  @override
+  String get goalTransferAmount => 'Amount to transfer';
+
+  @override
+  String get goalTransferTo => 'Transfer to';
+
+  @override
+  String get goalReason => 'Note (optional)';
+
+  @override
+  String get goalAvailableToAllocate => 'Available to allocate';
+
+  @override
+  String get goalAddContribution => 'Add contribution';
+
+  @override
+  String get goalWithdraw => 'Withdraw';
+
+  @override
+  String get goalTransfer => 'Transfer';
+
+  @override
+  String get goalPause => 'Pause';
+
+  @override
+  String get goalResume => 'Resume';
+
+  @override
+  String get goalComplete => 'Mark complete';
+
+  @override
+  String get goalCancel => 'Cancel goal';
+
+  @override
+  String get goalArchive => 'Archive';
+
+  @override
+  String get goalConfirmComplete => 'Mark this goal as complete?';
+
+  @override
+  String get goalConfirmCancelWithBalance =>
+      'This goal still holds allocated money. Choose what to do with it.';
+
+  @override
+  String get goalCancelUnallocate => 'Unallocate the balance and cancel';
+
+  @override
+  String get goalCancelKeep => 'Keep it archived with its balance';
+
+  @override
+  String get goalConfirmDelete =>
+      'Delete this goal permanently? Only goals with no history can be deleted.';
+
+  @override
+  String get goalConfirmCancelSimple =>
+      'Cancel this goal? Its history is kept.';
+
+  @override
+  String get goalLedger => 'Fund activity';
+
+  @override
+  String get goalNoActivity => 'No activity yet.';
+
+  @override
+  String get goalEntryDeleted => 'Deleted';
+
+  @override
+  String get goalEntryDelete => 'Delete entry';
+
+  @override
+  String get goalEntryRestore => 'Restore';
+
+  @override
+  String get goalContributions => 'Contributions';
+
+  @override
+  String get goalWithdrawals => 'Withdrawals';
+
+  @override
+  String get goalTransfers => 'Transfers';
+
+  @override
+  String get goalDetailsTitle => 'Goal details';
+
+  @override
+  String get goalSaved => 'Goal saved';
+
+  @override
+  String get goalContributed => 'Contribution added';
+
+  @override
+  String get goalWithdrew => 'Withdrawal recorded';
+
+  @override
+  String get goalTransferred => 'Transfer completed';
+
+  @override
+  String get goalStatusUpdated => 'Goal updated';
+
+  @override
+  String get goalTypeEmergencyFund => 'Emergency fund';
+
+  @override
+  String get goalTypeHome => 'Home';
+
+  @override
+  String get goalTypeCar => 'Car';
+
+  @override
+  String get goalTypeTravel => 'Travel';
+
+  @override
+  String get goalTypeEducation => 'Education';
+
+  @override
+  String get goalTypeWedding => 'Wedding';
+
+  @override
+  String get goalTypeRetirement => 'Retirement';
+
+  @override
+  String get goalTypeDebtPayoff => 'Debt payoff';
+
+  @override
+  String get goalTypePurchase => 'Purchase';
+
+  @override
+  String get goalTypeCustom => 'Custom';
+
+  @override
+  String get goalPriorityLow => 'Low';
+
+  @override
+  String get goalPriorityMedium => 'Medium';
+
+  @override
+  String get goalPriorityHigh => 'High';
+
+  @override
+  String get goalPriorityCritical => 'Critical';
+
+  @override
+  String get goalTrackCompleted => 'Completed';
+
+  @override
+  String get goalTrackNoTargetDate => 'No deadline';
+
+  @override
+  String get goalTrackNoHistory => 'Not started';
+
+  @override
+  String get goalTrackAhead => 'Ahead of plan';
+
+  @override
+  String get goalTrackOnTrack => 'On track';
+
+  @override
+  String get goalTrackBehind => 'Behind plan';
+
+  @override
+  String get dashboardGoals => 'Goals';
+
+  @override
+  String get goalsViewAll => 'View all';
+
+  @override
+  String get budgetLinkedGoal => 'Linked goal';
+
+  @override
+  String get budgetLinkGoalNone => 'No linked goal';
+
+  @override
+  String get budgetGoalContributed => 'Contributed this month';
+
+  @override
+  String get budgetGoalWithdrawn => 'Withdrawn this month';
+
+  @override
+  String get budgetGoalRemainingPlanned => 'Remaining planned contribution';
+
+  @override
+  String get goalInsightShortfall =>
+      'Allocated funds exceed your eligible liquid balance.';
+
+  @override
+  String goalInsightBehind(String name) {
+    return '$name is behind its plan.';
+  }
+
+  @override
+  String goalInsightNearCompletion(String name) {
+    return '$name is almost funded.';
+  }
+
+  @override
+  String goalInsightCompleted(String name) {
+    return '$name is fully funded.';
+  }
+
+  @override
+  String goalInsightStalled(String name) {
+    return '$name hasn\'t received a contribution in a while.';
+  }
+
+  @override
+  String goalInsightDeadlineSoon(String name) {
+    return '$name\'s target date is near with a lot still to save.';
+  }
+
+  @override
+  String goalInsightOverfunded(String name) {
+    return '$name is funded beyond its target.';
+  }
+
+  @override
+  String get goalInsightEmergencyLow =>
+      'Your emergency fund is below its target.';
+
+  @override
+  String get errorGoalTargetInvalid =>
+      'The target amount must be greater than zero.';
+
+  @override
+  String get errorGoalLiabilityNotAllowed =>
+      'Only a debt-payoff goal can link a liability account.';
+
+  @override
+  String get errorGoalNotLiability => 'The linked account must be a liability.';
+
+  @override
+  String get errorGoalNotActive =>
+      'Only active goals can receive contributions.';
+
+  @override
+  String get errorGoalInsufficientFund =>
+      'The goal doesn\'t have enough allocated funds.';
+
+  @override
+  String get errorGoalExceedsAvailable =>
+      'That exceeds your funds available to allocate.';
+
+  @override
+  String get errorGoalSameTransfer =>
+      'Choose two different goals to transfer between.';
+
+  @override
+  String get errorGoalHasLedger =>
+      'This goal has activity and can\'t be deleted. Cancel or archive it instead.';
+
+  @override
+  String get errorGoalAllocationExceedsTransaction =>
+      'The linked amount exceeds the transaction\'s value.';
+
+  @override
+  String get errorGoalAmountInvalid => 'Enter an amount greater than zero.';
+
+  @override
+  String get errorGoalNotFound => 'Goal not found.';
+
+  @override
+  String get errorGoalEntryNotFound => 'Fund entry not found.';
+
+  @override
   String get errorDatabase => 'A database error occurred.';
 
   @override

@@ -18,6 +18,10 @@ part 'app_database.g.dart';
     RecurringRulesTable,
     RecurringRuleWeekdaysTable,
     RecurringOccurrencesTable,
+    FinancialGoalsTable,
+    GoalFundsTable,
+    GoalFundEntriesTable,
+    GoalTransactionAllocationsTable,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -27,7 +31,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -51,6 +55,18 @@ class AppDatabase extends _$AppDatabase {
         await m.createTable(recurringRulesTable);
         await m.createTable(recurringRuleWeekdaysTable);
         await m.createTable(recurringOccurrencesTable);
+      }
+      // v3 → v4: financial goals + savings funds, and a budget-item link.
+      if (from < 4) {
+        await m.createTable(financialGoalsTable);
+        await m.createTable(goalFundsTable);
+        await m.createTable(goalFundEntriesTable);
+        await m.createTable(goalTransactionAllocationsTable);
+        // Only add the column when budget_items already existed (v2/v3). On a
+        // v1 upgrade the table is (re)created above with the column present.
+        if (from >= 2) {
+          await m.addColumn(budgetItemsTable, budgetItemsTable.linkedGoalId);
+        }
       }
     },
     beforeOpen: (OpeningDetails details) async {

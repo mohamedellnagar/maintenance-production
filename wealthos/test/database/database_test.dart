@@ -48,8 +48,8 @@ void main() {
   }
 
   group('migrations & schema', () {
-    test('schema version is 3 and all tables are queryable', () async {
-      expect(db.schemaVersion, 3);
+    test('schema version is 4 and all tables are queryable', () async {
+      expect(db.schemaVersion, 4);
       await db.select(db.accountsTable).get();
       await db.select(db.transactionsTable).get();
       await db.select(db.categoriesTable).get();
@@ -57,6 +57,10 @@ void main() {
       await db.select(db.recurringRulesTable).get();
       await db.select(db.recurringRuleWeekdaysTable).get();
       await db.select(db.recurringOccurrencesTable).get();
+      await db.select(db.financialGoalsTable).get();
+      await db.select(db.goalFundsTable).get();
+      await db.select(db.goalFundEntriesTable).get();
+      await db.select(db.goalTransactionAllocationsTable).get();
     });
   });
 

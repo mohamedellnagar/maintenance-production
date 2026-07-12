@@ -12,6 +12,7 @@ import '../../accounts/domain/account.dart';
 import '../../accounts/domain/account_type.dart';
 import '../../categories/application/categories_providers.dart';
 import '../../categories/domain/category.dart';
+import '../../goals/application/goals_providers.dart';
 import '../application/budget_controller.dart';
 import '../application/budgets_providers.dart';
 import '../domain/budget_item.dart';
@@ -36,6 +37,7 @@ class _BudgetItemFormPageState extends ConsumerState<BudgetItemFormPage> {
   BudgetItemType _type = BudgetItemType.expense;
   String? _categoryId;
   String? _accountId;
+  String? _linkedGoalId;
   bool _rollover = false;
   bool _submitting = false;
   bool _initialized = false;
@@ -52,6 +54,7 @@ class _BudgetItemFormPageState extends ConsumerState<BudgetItemFormPage> {
     _type = item.type;
     _categoryId = item.categoryId;
     _accountId = item.accountId;
+    _linkedGoalId = item.linkedGoalId;
     _rollover = item.rolloverEnabled;
     _nameController.text = item.customName ?? '';
     _notesController.text = item.notes ?? '';
@@ -83,6 +86,7 @@ class _BudgetItemFormPageState extends ConsumerState<BudgetItemFormPage> {
                 ? null
                 : _nameController.text.trim())
           : null,
+      linkedGoalId: _type == BudgetItemType.saving ? _linkedGoalId : null,
       rolloverEnabled: _type == BudgetItemType.expense && _rollover,
       notes: _notesController.text.trim().isEmpty
           ? null
@@ -169,11 +173,17 @@ class _BudgetItemFormPageState extends ConsumerState<BudgetItemFormPage> {
                 value: _accountId,
                 onChanged: (id) => setState(() => _accountId = id),
               ),
-            if (_type == BudgetItemType.saving)
+            if (_type == BudgetItemType.saving) ...[
               TextFormField(
                 controller: _nameController,
                 decoration: InputDecoration(labelText: l.budgetItemName),
               ),
+              const SizedBox(height: AppSpacing.md),
+              _GoalDropdown(
+                value: _linkedGoalId,
+                onChanged: (id) => setState(() => _linkedGoalId = id),
+              ),
+            ],
             const SizedBox(height: AppSpacing.lg),
             TextFormField(
               controller: _amountController,
@@ -263,6 +273,30 @@ class _CategoryDropdown extends ConsumerWidget {
       ],
       onChanged: onChanged,
       validator: (v) => v == null ? l.errorBudgetCategoryRequired : null,
+    );
+  }
+}
+
+class _GoalDropdown extends ConsumerWidget {
+  const _GoalDropdown({required this.value, required this.onChanged});
+
+  final String? value;
+  final ValueChanged<String?> onChanged;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
+    final goals = ref.watch(activeGoalViewsProvider);
+    final valid = goals.any((g) => g.goal.id == value) ? value : null;
+    return DropdownButtonFormField<String?>(
+      initialValue: valid,
+      decoration: InputDecoration(labelText: l.budgetLinkedGoal),
+      items: [
+        DropdownMenuItem(value: null, child: Text(l.budgetLinkGoalNone)),
+        for (final g in goals)
+          DropdownMenuItem(value: g.goal.id, child: Text(g.goal.name)),
+      ],
+      onChanged: onChanged,
     );
   }
 }

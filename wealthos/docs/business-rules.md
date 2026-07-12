@@ -193,3 +193,32 @@ brief:
   A rule with any posted occurrence cannot be hard-deleted (end it instead).
 - Recurring reminders are **in-app only** — there are no device/push
   notifications in V1.
+
+## Financial goals & savings funds (V1)
+
+A **Savings Fund** is a *virtual allocation bucket* attached 1:1 to a goal — not
+a bank account. Full rules are in `goals-model.md`; in brief:
+
+- Creating a goal, allocating to it, or transferring between goals **never
+  changes account balances or net worth**. A contribution is not an actual
+  expense; a withdrawal is not actual income; an inter-goal transfer creates
+  neither.
+- A fund's balance is **derived from its ledger** (`goal_fund_entries`); the
+  cached `goal_funds` value is kept in sync and rebuildable. Soft-deleted
+  entries count for nothing.
+- **Available to allocate** = eligible liquid assets − total allocated, where
+  eligible = positive cash/bank/wallet balances only. A contribution beyond the
+  available amount is **rejected**. If balances later drop below the allocated
+  total, an **Allocation Shortfall** warning is shown (allocations are never
+  auto-removed).
+- The **target amount** is the source of truth; for a debt-payoff goal it is a
+  fixed snapshot, with the linked liability's live balance shown separately.
+  **Saved for repayment** (earmarked) and **Actual debt reduced** (real
+  repayments) are distinct — earmarking is never a repayment.
+- Withdrawals and transfers are bounded by the fund balance; transfers are
+  atomic and preserve total allocation. A goal with any ledger history cannot be
+  hard-deleted (cancel or archive instead); the ledger is always preserved.
+- A budget saving item may link a goal; the assigned amount stays a plan and the
+  goal's monthly contributions are shown as actual saving (withdrawals shown
+  separately). `BudgetCalculator` is unchanged.
+- Goal reminders/insights are **in-app only** — no device notifications.

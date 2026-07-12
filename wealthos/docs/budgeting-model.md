@@ -104,6 +104,17 @@ recurring"**, matched to the month by due date and (for item details) to the
 item's category or liability account. Only when an occurrence is **posted** does
 it become a real transaction and flow into the budget's actuals like any other.
 
+## Linked saving goals (planned vs. actual)
+
+A **saving item** may set `linked_goal_id` (see `goals-model.md`). The assigned
+amount stays a **plan**; the goal's **actual saving this month** is derived from
+the fund's `contribution` entries dated in the month. Withdrawals and inter-goal
+transfers are shown separately and never netted into "contributed", so a
+transfer never reads as new saving. The item's details show *contributed this
+month*, *withdrawn this month*, and *remaining planned contribution*. This is a
+display-only overlay — `BudgetCalculator` and the expense/income actuals are
+unchanged.
+
 ## Worked example
 
 ```

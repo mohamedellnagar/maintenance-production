@@ -3,6 +3,45 @@
 All notable changes to WealthOS are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.4.0] — Financial Goals & Savings Funds V1
+
+### Added
+- **Three-layer model** — Account (real money), **Financial Goal** (a target),
+  and **Savings Fund** (a virtual 1:1 allocation bucket). Allocating money never
+  creates a transaction, moves an account, or changes net worth.
+- **Fund ledger** (`goal_fund_entries`) as the source of truth for a fund's
+  balance (contribution / withdrawal / transferIn / transferOut / adjustment,
+  each a positive amount with explicit direction); `goal_funds` holds a cached,
+  rebuildable balance. Soft-deleted entries contribute zero.
+- **`GoalAllocationCalculator`**: eligible liquid assets (positive cash/bank/
+  wallet balances only), total allocated, unallocated, and an **Allocation
+  Shortfall** when allocations exceed eligible liquid. Contributions beyond
+  available liquid are explicitly rejected.
+- **`GoalProgressCalculator`** (pure): funded / remaining / overfunded, required
+  monthly (whole months, rounded up), projected completion from the trailing
+  3-month contribution average (transfers/withdrawals excluded; "cannot
+  estimate" when zero), and an on-track status via central `GoalThresholds`.
+- **Transfers between goals** (atomic, cross-linked, total-allocation
+  preserving); withdrawals bounded by balance; adjustments with a required note.
+- **Debt-payoff goals** can link a liability and show **Saved for repayment**
+  vs. **Actual debt reduced** (real repayments via `TransactionSemantic`);
+  earmarking is never counted as repayment.
+- **Goal statuses** (draft/active/paused/completed/cancelled/archived) with no
+  hard delete once a ledger exists; cancel-with-balance offers keep or
+  un-allocate.
+- **Screens**: bottom-nav **Goals** tab (summary, sections, insights, cards),
+  create/edit form, goal details with fund ledger + actions (contribute,
+  withdraw, transfer, pause/resume, complete, cancel, archive, soft
+  delete/restore entries). Reactive **Goals** dashboard card. Budget saving
+  items can link a goal and show its monthly contributed/withdrawn.
+- **In-app insights** only: allocation shortfall, behind, near completion,
+  completed, stalled, deadline soon, overfunded, emergency-fund low.
+- **Database**: schema **v4** with `financial_goals`, `goal_funds`,
+  `goal_fund_entries`, `goal_transaction_allocations` and a
+  `budget_items.linked_goal_id` column; real v3→v4 and v1→latest migrations.
+- Full ar/en localization; ~55 new unit/database/integration/widget tests
+  (194 → 249); docs `goals-model.md` + `goals-implementation-plan.md`.
+
 ## [1.3.0] — Recurring Transactions & Bills Engine V1
 
 ### Added

@@ -173,6 +173,9 @@ class BudgetItemsTable extends Table {
       boolean().withDefault(const Constant(false))();
   IntColumn get displayOrder => integer().withDefault(const Constant(0))();
   TextColumn get notes => text().nullable()();
+  // Optional link from a saving item to a financial goal (added in v4).
+  TextColumn get linkedGoalId =>
+      text().nullable().references(FinancialGoalsTable, #id)();
   DateTimeColumn get createdAt => dateTime()();
   DateTimeColumn get updatedAt => dateTime()();
 
@@ -308,5 +311,122 @@ class RecurringOccurrencesTable extends Table {
     "CHECK (status IN ('scheduled','paid','skipped','cancelled'))",
     // Never generate the same occurrence twice.
     'UNIQUE (recurring_rule_id, original_due_date)',
+  ];
+}
+
+/// A financial goal: a *target* the user saves toward. It never holds real
+/// money — the money lives in accounts; a goal only tracks a target and its
+/// virtual allocation fund. `target_date` is an integer epoch-day.
+class FinancialGoalsTable extends Table {
+  @override
+  String get tableName => 'financial_goals';
+
+  TextColumn get id => text()();
+  TextColumn get name => text().withLength(min: 1, max: 100)();
+  TextColumn get goalType => text()();
+  IntColumn get targetAmountMinor => integer()();
+  TextColumn get currencyCode => text().withLength(min: 3, max: 3)();
+  IntColumn get targetDate => integer().nullable()(); // epoch day
+  TextColumn get priority => text().withDefault(const Constant('medium'))();
+  TextColumn get status => text().withDefault(const Constant('active'))();
+  TextColumn get linkedLiabilityAccountId =>
+      text().nullable().references(AccountsTable, #id)();
+  TextColumn get notes => text().nullable()();
+  DateTimeColumn get createdAt => dateTime()();
+  DateTimeColumn get updatedAt => dateTime()();
+  DateTimeColumn get completedAt => dateTime().nullable()();
+  DateTimeColumn get cancelledAt => dateTime().nullable()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+
+  @override
+  List<String> get customConstraints => <String>[
+    'CHECK (goal_type IN '
+        "('emergencyFund','home','car','travel','education','wedding',"
+        "'retirement','debtPayoff','purchase','custom'))",
+    "CHECK (priority IN ('low','medium','high','critical'))",
+    'CHECK (status IN '
+        "('draft','active','paused','completed','cancelled','archived'))",
+    'CHECK (target_amount_minor > 0)',
+  ];
+}
+
+/// The virtual allocation bucket for a goal (1:1). `current_allocated_minor` is
+/// a cached balance kept in sync with [GoalFundEntriesTable] (the ledger, which
+/// is the source of truth) and can be rebuilt from it.
+class GoalFundsTable extends Table {
+  @override
+  String get tableName => 'goal_funds';
+
+  TextColumn get id => text()();
+  TextColumn get goalId => text().references(FinancialGoalsTable, #id)();
+  IntColumn get currentAllocatedMinor =>
+      integer().withDefault(const Constant(0))();
+  DateTimeColumn get createdAt => dateTime()();
+  DateTimeColumn get updatedAt => dateTime()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+
+  @override
+  List<String> get customConstraints => <String>['UNIQUE (goal_id)'];
+}
+
+/// The movement ledger for a goal's fund. Every row stores a positive
+/// `amount_minor`; direction is explicit in `entry_type` (with `direction` for
+/// adjustments). Soft-deleted rows never count toward the balance.
+class GoalFundEntriesTable extends Table {
+  @override
+  String get tableName => 'goal_fund_entries';
+
+  TextColumn get id => text()();
+  @ReferenceName('goalFundEntries')
+  TextColumn get goalId => text().references(FinancialGoalsTable, #id)();
+  TextColumn get entryType => text()();
+  TextColumn get direction => text().nullable()(); // adjustments only
+  IntColumn get amountMinor => integer()();
+  TextColumn get linkedTransactionId =>
+      text().nullable().references(TransactionsTable, #id)();
+  @ReferenceName('goalFundEntriesRelated')
+  TextColumn get relatedGoalId =>
+      text().nullable().references(FinancialGoalsTable, #id)();
+  IntColumn get entryDate => integer()(); // epoch day
+  TextColumn get note => text().nullable()();
+  DateTimeColumn get createdAt => dateTime()();
+  DateTimeColumn get deletedAt => dateTime().nullable()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+
+  @override
+  List<String> get customConstraints => <String>[
+    'CHECK (entry_type IN '
+        "('contribution','withdrawal','transferIn','transferOut','adjustment'))",
+    'CHECK (amount_minor > 0)',
+    "CHECK (entry_type <> 'adjustment' OR direction IN ('increase','decrease'))",
+  ];
+}
+
+/// Links a goal contribution to a real transaction, without re-booking the
+/// transaction. The sum of a transaction's allocations must stay `<=` its
+/// amount (enforced in the repository).
+class GoalTransactionAllocationsTable extends Table {
+  @override
+  String get tableName => 'goal_transaction_allocations';
+
+  TextColumn get id => text()();
+  TextColumn get goalId => text().references(FinancialGoalsTable, #id)();
+  TextColumn get transactionId => text().references(TransactionsTable, #id)();
+  IntColumn get amountMinor => integer()();
+  DateTimeColumn get createdAt => dateTime()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+
+  @override
+  List<String> get customConstraints => <String>[
+    'CHECK (amount_minor > 0)',
+    'UNIQUE (goal_id, transaction_id)',
   ];
 }

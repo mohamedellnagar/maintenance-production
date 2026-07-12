@@ -45,6 +45,7 @@ class BudgetItem {
     this.accountId,
     this.customName,
     this.notes,
+    this.linkedGoalId,
   });
 
   final String id;
@@ -57,6 +58,9 @@ class BudgetItem {
   final bool rolloverEnabled;
   final int displayOrder;
   final String? notes;
+
+  /// Optional link from a saving item to a financial goal (V1).
+  final String? linkedGoalId;
   final DateTime createdAt;
   final DateTime updatedAt;
 }

@@ -43,7 +43,7 @@ lib/
     widgets/               # shared presentation widgets
   features/
     onboarding/ dashboard/ accounts/ transactions/ categories/ budgets/
-    recurring/ settings/
+    recurring/ goals/ settings/
       domain/ data/ application/ presentation/   # only where used
 ```
 
@@ -59,9 +59,9 @@ thin projection of the database.
 [GoRouter] with a single redirect: until `onboarding_completed` is true the app
 is pinned to `/onboarding`; afterwards `/onboarding` redirects home. The router
 refreshes when settings change. Main navigation is a `StatefulShellRoute`
-bottom-nav shell with five tabs — Dashboard, **Budget**, **Recurring**,
-Accounts, Settings — and detail/form screens push full-screen above the shell
-(root navigator).
+bottom-nav shell with six tabs — Dashboard, **Budget**, **Recurring**,
+**Goals**, Accounts, Settings — and detail/form screens push full-screen above
+the shell (root navigator).
 
 The **budgets** feature adds `BudgetCalculator` (pure month math),
 `BudgetInsightBuilder`, a `BudgetsRepository` (one-per-month, integrity, atomic
@@ -78,6 +78,15 @@ Occurrence display status is largely **derived** from the linked transaction's
 liveness, so delete/restore of a posted transaction reactively reopens/repays
 the occurrence with no extra writes. Unpaid occurrences never enter budget
 actuals or balances. See `recurring-model.md`.
+
+The **goals** feature adds pure `GoalAllocationCalculator` and
+`GoalProgressCalculator`, a `GoalsRepository` (a fund **ledger** as the source of
+truth with a cached balance, allocation-vs-available enforcement, atomic
+inter-goal transfers, transaction-allocation limits), and `GoalInsightBuilder`.
+A Savings Fund is a **virtual** allocation bucket — allocating money writes only
+a ledger entry, so accounts, balances and net worth are untouched. Goal views,
+the goals summary and the Allocation Shortfall warning are all derived reactively
+from goals + funds + entries + accounts + transactions. See `goals-model.md`.
 
 ## Error handling
 

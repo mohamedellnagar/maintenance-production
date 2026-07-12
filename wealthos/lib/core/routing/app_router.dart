@@ -12,6 +12,9 @@ import '../../features/budgets/presentation/budget_item_form_page.dart';
 import '../../features/budgets/presentation/budget_month_page.dart';
 import '../../features/budgets/presentation/close_month_page.dart';
 import '../../features/dashboard/presentation/dashboard_page.dart';
+import '../../features/goals/presentation/goal_details_page.dart';
+import '../../features/goals/presentation/goal_form_page.dart';
+import '../../features/goals/presentation/goals_home_page.dart';
 import '../../features/onboarding/presentation/onboarding_page.dart';
 import '../../features/recurring/presentation/occurrence_details_page.dart';
 import '../../features/recurring/presentation/recurring_home_page.dart';
@@ -27,6 +30,7 @@ abstract final class AppRoutes {
   static const String dashboard = '/';
   static const String budget = '/budget';
   static const String recurring = '/recurring';
+  static const String goals = '/goals';
   static const String accounts = '/accounts';
   static const String settings = '/settings';
 
@@ -47,6 +51,10 @@ abstract final class AppRoutes {
   static const String recurringRuleEdit = '/recurring/rules/:id/edit';
   static const String occurrenceDetail = '/recurring/occurrences/:id';
 
+  static const String goalAdd = '/goals/add';
+  static const String goalDetail = '/goals/:id';
+  static const String goalEdit = '/goals/:id/edit';
+
   static String accountDetailPath(String id) => '/accounts/$id';
   static String transactionDetailPath(String id) => '/transactions/$id';
   static String editTransactionPath(String id) => '/transactions/$id/edit';
@@ -55,6 +63,8 @@ abstract final class AppRoutes {
   static String recurringRuleDetailPath(String id) => '/recurring/rules/$id';
   static String recurringRuleEditPath(String id) => '/recurring/rules/$id/edit';
   static String occurrenceDetailPath(String id) => '/recurring/occurrences/$id';
+  static String goalDetailPath(String id) => '/goals/$id';
+  static String goalEditPath(String id) => '/goals/$id/edit';
 }
 
 final _rootKey = GlobalKey<NavigatorState>();
@@ -165,6 +175,25 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     (s) => OccurrenceDetailsPage(
                       occurrenceId: s.pathParameters['id']!,
                     ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.goals,
+                builder: (_, _) => const GoalsHomePage(),
+                routes: [
+                  pushRoute('add', (_) => const GoalFormPage()),
+                  pushRoute(
+                    ':id/edit',
+                    (s) => GoalFormPage(goalId: s.pathParameters['id']),
+                  ),
+                  pushRoute(
+                    ':id',
+                    (s) => GoalDetailsPage(goalId: s.pathParameters['id']!),
                   ),
                 ],
               ),

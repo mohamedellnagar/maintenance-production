@@ -32,6 +32,11 @@ The first release works **fully offline**: no account, no internet, no cloud.
   balances until posted (one atomic transaction, no double-posting), with
   snooze/skip/pause, optional auto-create, and an Upcoming Bills dashboard card
   (`docs/recurring-model.md`).
+- 🎯 **Goals & savings funds** — save toward targets via *virtual* allocation
+  funds that never create fake balances or change net worth; a fund ledger
+  (contribute/withdraw/transfer), available-to-allocate with an Allocation
+  Shortfall warning, progress + projected completion, and debt-payoff goals that
+  separate *saved* from *actual debt reduced* (`docs/goals-model.md`).
 - 🌍 **Bilingual** — real Arabic + English strings (RTL/LTR), no hardcoded UI
   text.
 - 🎨 **Material 3** — light/dark themes, accessible gain/loss cues (never
@@ -92,7 +97,7 @@ lib/
   core/       money, database, errors, localization, routing, security,
               theme, utils, widgets, di
   features/   onboarding, dashboard, accounts, transactions, categories,
-              budgets, recurring, settings
+              budgets, recurring, goals, settings
               (each: domain / data / application / presentation)
 test/         unit / database / integration / widget
 docs/         architecture, database, business-rules, testing, roadmap, plans
@@ -102,11 +107,12 @@ docs/         architecture, database, business-rules, testing, roadmap, plans
 
 **Included:** offline core — money, database, accounts, transactions, balances,
 net worth, monthly cash flow, monthly budgets, recurring transactions & bills,
-onboarding, dashboard, settings, localization, theming, biometric lock, tests.
+financial goals & savings funds, onboarding, dashboard, settings, localization,
+theming, biometric lock, tests.
 
 **Not included (deferred):** cloud login/sync, backend/API, AI, bank linking,
-stock prices, online FX, subscriptions, ads, goals, loan schedules,
-forecasting, push/device notifications, PDF/Excel export, cloud backup. See
+stock prices, online FX, subscriptions, ads, loan schedules, forecasting,
+push/device notifications, PDF/Excel export, cloud backup. See
 `docs/roadmap.md`.
 
 ## Documentation
@@ -118,6 +124,8 @@ forecasting, push/device notifications, PDF/Excel export, cloud backup. See
   debt-payment, double-counting, closed months (with worked examples)
 - `docs/recurring-model.md` — rules vs. occurrences vs. transactions,
   recurrence math, generation, posting, auto-create, insights
+- `docs/goals-model.md` — goal vs. fund vs. account, the fund ledger,
+  available-to-allocate, allocation shortfall, progress/projection, debt goals
 - `docs/database.md` — schema, constraints, migrations, seeding, integrity
 - `docs/business-rules.md` — money, accounts, transactions, net worth rules
 - `docs/testing.md` — what is tested and how
