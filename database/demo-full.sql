@@ -1,6 +1,5 @@
--- ملف ديمو كامل: قاعدة + جداول + بيانات تجريبية — الصقه مرة واحدة في MySQL
-CREATE DATABASE IF NOT EXISTS `demo-db` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `demo-db`;
+-- بيانات ديمو كاملة (جداول + بيانات). شغّل أولاً: USE `<اسم قاعدتك>`;
+-- ثم الصق هذا الملف بالكامل.
 
 
 CREATE TABLE users (
