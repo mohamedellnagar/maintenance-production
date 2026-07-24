@@ -1,4 +1,6 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { Capacitor } from '@capacitor/core'
+import { App as CapApp } from '@capacitor/app'
 import { useStore } from './store.jsx'
 import { makeT } from './i18n.js'
 import { BottomNav } from './ui.jsx'
@@ -37,6 +39,18 @@ export default function App() {
   }), [actions, state.activeMonthId])
 
   const onTab = (name) => { setTab(name); setStack([]) }
+
+  // Android hardware back button: pop the nav stack, then fall back to Home, then exit.
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform()) return
+    let handle
+    CapApp.addListener('backButton', () => {
+      if (stack.length) setStack((s) => s.slice(0, -1))
+      else if (tab !== 'home') onTab('home')
+      else CapApp.exitApp()
+    }).then((h) => { handle = h })
+    return () => { handle && handle.remove() }
+  }, [stack, tab])
 
   if (!splashDone) {
     return <div className="phone"><Splash onDone={() => setSplashDone(true)} /></div>

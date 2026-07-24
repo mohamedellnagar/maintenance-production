@@ -1,0 +1,9 @@
+{
+  "appId": "com.kakeibo.journal",
+  "appName": "Kakeibo Journal",
+  "webDir": "dist",
+  "backgroundColor": "#1F3A5F",
+  "android": {
+    "backgroundColor": "#1F3A5F"
+  }
+}
